@@ -1,6 +1,6 @@
 import nodemailer from "nodemailer";
 import type { Transporter } from "nodemailer";
-import prisma from "./db.js";
+import { prisma } from "./db.js";
 
 let cachedTransporter: Transporter | null = null;
 let cachedFrom: string = "";
@@ -87,13 +87,17 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
   }
 }
 
-async function getSiteName(name: String) {
-  const placeName = await prisma.siteSettings.findFirst({
-    where: { siteName: `${name}` },
-  });
-  console.log(placeName);
+export async function getSiteName(name: String) {
+  try {
+    const placeName = await prisma.siteSettings.findFirst({
+      where: { siteName: `${name}` },
+    });
 
-  return placeName || "KitchenAsty";
+    return placeName;
+  } catch (error) {
+    console.log("failed to grab name", error);
+    return "KitchenAsty";
+  }
 }
 
 // Email Templates
