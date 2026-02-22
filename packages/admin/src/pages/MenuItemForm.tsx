@@ -98,7 +98,7 @@ export default function MenuItemForm() {
       setCategories(catRes.data);
       setAllergens(allRes.data);
       setMealtimes(mtRes.data);
-    }).catch(() => {});
+    }).catch(() => { });
   }, []);
 
   useEffect(() => {
@@ -398,6 +398,7 @@ export default function MenuItemForm() {
                     onClick={handleImageRemove}
                     disabled={uploading}
                     className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 disabled:opacity-50"
+                    aria-label="Remove image"
                   >
                     X
                   </button>
@@ -518,7 +519,7 @@ export default function MenuItemForm() {
                         <span className="text-xs text-gray-500">Default</span>
                       </label>
                       {opt.values.length > 1 && (
-                        <button type="button" onClick={() => removeOptionValue(optIdx, valIdx)} className="text-red-400 hover:text-red-600 text-xs">
+                        <button type="button" onClick={() => removeOptionValue(optIdx, valIdx)} className="text-red-400 hover:text-red-600 text-xs" aria-label={`Remove value ${val.name || valIdx + 1}`}>
                           X
                         </button>
                       )}

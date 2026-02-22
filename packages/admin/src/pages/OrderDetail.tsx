@@ -91,7 +91,7 @@ export default function OrderDetailPage() {
   if (loading) {
     return (
       <div className="flex justify-center py-12">
-        <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" role="status" aria-label="Loading" />
       </div>
     );
   }
@@ -110,7 +110,7 @@ export default function OrderDetailPage() {
   return (
     <div>
       <div className="flex items-center gap-4 mb-6">
-        <Link to="/orders" className="text-gray-400 hover:text-gray-600">
+        <Link to="/orders" className="text-gray-400 hover:text-gray-600" aria-label="Back to orders">
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
@@ -202,11 +202,11 @@ export default function OrderDetailPage() {
                   key={status}
                   disabled={updating || order.status === status}
                   onClick={() => updateStatus(status)}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    order.status === status
+                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${order.status === status
                       ? STATUS_COLORS[status] + ' cursor-default'
                       : 'text-gray-600 hover:bg-gray-100 disabled:opacity-40'
-                  }`}
+                    }`}
+                  aria-label={`Set status to ${status.replace(/_/g, ' ')}`}
                 >
                   {status.replace(/_/g, ' ')}
                 </button>

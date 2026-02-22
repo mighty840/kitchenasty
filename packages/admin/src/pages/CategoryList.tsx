@@ -90,9 +90,8 @@ export default function CategoryList() {
                       : '-'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      cat.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${cat.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      }`}>
                       {cat.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </td>
@@ -100,10 +99,10 @@ export default function CategoryList() {
                     {cat.sortOrder}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm space-x-3">
-                    <Link to={`/menu/categories/${cat.id}`} className="text-primary-600 hover:text-primary-900 font-medium">
+                    <Link to={`/menu/categories/${cat.id}`} className="text-primary-600 hover:text-primary-900 font-medium" aria-label={`Edit category ${cat.name}`}>
                       Edit
                     </Link>
-                    <button onClick={() => handleDelete(cat.id, cat.name)} className="text-red-600 hover:text-red-900 font-medium">
+                    <button onClick={() => handleDelete(cat.id, cat.name)} className="text-red-600 hover:text-red-900 font-medium" aria-label={`Delete category ${cat.name}`}>
                       Delete
                     </button>
                   </td>

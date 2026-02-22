@@ -77,6 +77,7 @@ export default function OrderList() {
           value={statusFilter}
           onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
+          aria-label="Filter by status"
         >
           <option value="">All Statuses</option>
           <option value="PENDING">Pending</option>
@@ -92,6 +93,7 @@ export default function OrderList() {
           value={typeFilter}
           onChange={(e) => { setTypeFilter(e.target.value); setPage(1); }}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
+          aria-label="Filter by order type"
         >
           <option value="">All Types</option>
           <option value="DELIVERY">Delivery</option>
@@ -101,7 +103,7 @@ export default function OrderList() {
 
       {loading && (
         <div className="flex justify-center py-12">
-          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" role="status" aria-label="Loading" />
         </div>
       )}
 
@@ -135,7 +137,7 @@ export default function OrderList() {
                     <td className="px-4 py-3 font-mono text-xs">
                       {order.orderNumber}
                       {order.scheduledAt && (
-                        <span className="ml-1.5 inline-flex items-center text-indigo-600" title={`Scheduled: ${new Date(order.scheduledAt).toLocaleString()}`}>
+                        <span className="ml-1.5 inline-flex items-center text-indigo-600" title={`Scheduled: ${new Date(order.scheduledAt).toLocaleString()}`} aria-label={`Scheduled: ${new Date(order.scheduledAt).toLocaleString()}`}>
                           &#128339;
                         </span>
                       )}
@@ -144,9 +146,8 @@ export default function OrderList() {
                       {order.customer ? order.customer.name : <span className="text-gray-400">Guest</span>}
                     </td>
                     <td className="px-4 py-3">
-                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                        order.orderType === 'DELIVERY' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
-                      }`}>
+                      <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${order.orderType === 'DELIVERY' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
+                        }`}>
                         {order.orderType}
                       </span>
                     </td>

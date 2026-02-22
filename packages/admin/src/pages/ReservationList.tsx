@@ -91,6 +91,7 @@ export default function ReservationList() {
           value={statusFilter}
           onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
+          aria-label="Filter by status"
         >
           <option value="">All Statuses</option>
           <option value="PENDING">Pending</option>
@@ -104,6 +105,7 @@ export default function ReservationList() {
           value={dateFilter}
           onChange={(e) => { setDateFilter(e.target.value); setPage(1); }}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
+          aria-label="Filter by date"
         />
         {dateFilter && (
           <button
@@ -117,7 +119,7 @@ export default function ReservationList() {
 
       {loading && (
         <div className="flex justify-center py-12">
-          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" role="status" aria-label="Loading" />
         </div>
       )}
 
@@ -175,6 +177,7 @@ export default function ReservationList() {
                           <button
                             onClick={() => updateStatus(r.id, 'CONFIRMED')}
                             className="text-xs px-2 py-1 bg-blue-50 text-blue-700 rounded hover:bg-blue-100"
+                            aria-label={`Confirm reservation for ${r.customer.name}`}
                           >
                             Confirm
                           </button>
@@ -183,6 +186,7 @@ export default function ReservationList() {
                           <button
                             onClick={() => updateStatus(r.id, 'SEATED')}
                             className="text-xs px-2 py-1 bg-purple-50 text-purple-700 rounded hover:bg-purple-100"
+                            aria-label={`Seat reservation for ${r.customer.name}`}
                           >
                             Seat
                           </button>
@@ -191,6 +195,7 @@ export default function ReservationList() {
                           <button
                             onClick={() => updateStatus(r.id, 'COMPLETED')}
                             className="text-xs px-2 py-1 bg-green-50 text-green-700 rounded hover:bg-green-100"
+                            aria-label={`Complete reservation for ${r.customer.name}`}
                           >
                             Complete
                           </button>
@@ -199,6 +204,7 @@ export default function ReservationList() {
                           <button
                             onClick={() => updateStatus(r.id, 'CANCELLED')}
                             className="text-xs px-2 py-1 bg-red-50 text-red-700 rounded hover:bg-red-100"
+                            aria-label={`Cancel reservation for ${r.customer.name}`}
                           >
                             Cancel
                           </button>

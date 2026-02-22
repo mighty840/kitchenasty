@@ -19,9 +19,9 @@ interface Pagination {
 
 function StarRating({ rating }: { rating: number }) {
   return (
-    <span className="text-yellow-400">
+    <span className="text-yellow-400" aria-label={`${rating} out of 5 stars`}>
       {Array.from({ length: 5 }, (_, i) => (
-        <span key={i}>{i < rating ? '★' : '☆'}</span>
+        <span key={i} aria-hidden="true">{i < rating ? '★' : '☆'}</span>
       ))}
     </span>
   );
@@ -95,6 +95,7 @@ export default function ReviewList() {
           value={filter}
           onChange={(e) => { setFilter(e.target.value); setPage(1); }}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
+          aria-label="Filter by approval status"
         >
           <option value="">All Reviews</option>
           <option value="true">Approved</option>
@@ -104,7 +105,7 @@ export default function ReviewList() {
 
       {loading && (
         <div className="flex justify-center py-12">
-          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" role="status" aria-label="Loading" />
         </div>
       )}
 
@@ -129,9 +130,8 @@ export default function ReviewList() {
                       {review.location.name} &middot; {new Date(review.createdAt).toLocaleDateString()}
                     </div>
                   </div>
-                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                    review.isApproved ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
-                  }`}>
+                  <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${review.isApproved ? 'bg-green-100 text-green-700' : 'bg-yellow-100 text-yellow-700'
+                    }`}>
                     {review.isApproved ? 'Approved' : 'Pending'}
                   </span>
                 </div>
@@ -143,6 +143,7 @@ export default function ReviewList() {
                     <button
                       onClick={() => moderate(review.id, true)}
                       className="text-xs px-3 py-1 bg-green-50 text-green-700 rounded hover:bg-green-100"
+                      aria-label={`Approve review by ${review.customer.name}`}
                     >
                       Approve
                     </button>
@@ -151,6 +152,7 @@ export default function ReviewList() {
                     <button
                       onClick={() => moderate(review.id, false)}
                       className="text-xs px-3 py-1 bg-yellow-50 text-yellow-700 rounded hover:bg-yellow-100"
+                      aria-label={`Unapprove review by ${review.customer.name}`}
                     >
                       Unapprove
                     </button>
@@ -158,6 +160,7 @@ export default function ReviewList() {
                   <button
                     onClick={() => deleteReview(review.id)}
                     className="text-xs px-3 py-1 bg-red-50 text-red-700 rounded hover:bg-red-100"
+                    aria-label={`Delete review by ${review.customer.name}`}
                   >
                     Delete
                   </button>

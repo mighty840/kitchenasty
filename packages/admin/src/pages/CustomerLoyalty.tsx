@@ -88,6 +88,7 @@ export default function CustomerLoyalty() {
             onChange={(e) => setSearchEmail(e.target.value)}
             onKeyDown={(e) => e.key === 'Enter' && searchCustomer()}
             className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500"
+            aria-label="Search customer by email"
           />
           <button
             onClick={searchCustomer}
@@ -129,6 +130,7 @@ export default function CustomerLoyalty() {
                   value={adjustPoints}
                   onChange={(e) => setAdjustPoints(e.target.value)}
                   className="w-40 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500"
+                  aria-label="Points to adjust"
                 />
                 <input
                   type="text"
@@ -136,6 +138,7 @@ export default function CustomerLoyalty() {
                   value={adjustDesc}
                   onChange={(e) => setAdjustDesc(e.target.value)}
                   className="flex-1 px-3 py-2 border border-gray-300 rounded-lg text-sm outline-none focus:ring-2 focus:ring-primary-500"
+                  aria-label="Adjustment reason"
                 />
                 <button
                   onClick={handleAdjust}

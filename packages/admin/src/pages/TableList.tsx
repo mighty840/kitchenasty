@@ -225,9 +225,8 @@ export default function TableList() {
                     {table.capacity} {table.capacity === 1 ? 'seat' : 'seats'}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
-                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                      table.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                    }`}>
+                    <span className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${table.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                      }`}>
                       {table.isActive ? 'Active' : 'Inactive'}
                     </span>
                   </td>
@@ -235,10 +234,10 @@ export default function TableList() {
                     {table._count.reservations}
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap text-right text-sm space-x-3">
-                    <button onClick={() => openEditForm(table)} className="text-primary-600 hover:text-primary-900 font-medium">
+                    <button onClick={() => openEditForm(table)} className="text-primary-600 hover:text-primary-900 font-medium" aria-label={`Edit table ${table.name}`}>
                       Edit
                     </button>
-                    <button onClick={() => handleDelete(table.id, table.name)} className="text-red-600 hover:text-red-900 font-medium">
+                    <button onClick={() => handleDelete(table.id, table.name)} className="text-red-600 hover:text-red-900 font-medium" aria-label={`Delete table ${table.name}`}>
                       Delete
                     </button>
                   </td>

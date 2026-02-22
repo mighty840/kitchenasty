@@ -84,7 +84,7 @@ export default function ReservationDetail() {
   if (loading) {
     return (
       <div className="flex justify-center py-12">
-        <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" role="status" aria-label="Loading" />
       </div>
     );
   }
@@ -103,7 +103,7 @@ export default function ReservationDetail() {
   return (
     <div>
       <div className="flex items-center gap-4 mb-6">
-        <Link to="/reservations" className="text-gray-400 hover:text-gray-600">
+        <Link to="/reservations" className="text-gray-400 hover:text-gray-600" aria-label="Back to reservations">
           <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
             <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M15 19l-7-7 7-7" />
           </svg>
@@ -190,11 +190,11 @@ export default function ReservationDetail() {
                   key={status}
                   disabled={updating || reservation.status === status}
                   onClick={() => updateReservation({ status })}
-                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${
-                    reservation.status === status
+                  className={`w-full text-left px-3 py-2 rounded-lg text-sm font-medium transition-colors ${reservation.status === status
                       ? STATUS_COLORS[status] + ' cursor-default'
                       : 'text-gray-600 hover:bg-gray-100 disabled:opacity-40'
-                  }`}
+                    }`}
+                  aria-label={`Set status to ${status} for ${reservation.customer.name}'s reservation`}
                 >
                   {status}
                 </button>
@@ -210,6 +210,7 @@ export default function ReservationDetail() {
               onChange={(e) => updateReservation({ tableId: e.target.value || null })}
               disabled={updating}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
+              aria-label="Assign table"
             >
               <option value="">No table assigned</option>
               {tables.map((table) => (

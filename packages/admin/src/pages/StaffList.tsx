@@ -100,11 +100,13 @@ export default function StaffList() {
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none w-64"
+          aria-label="Search staff by name or email"
         />
         <select
           value={roleFilter}
           onChange={(e) => { setRoleFilter(e.target.value); setPage(1); }}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
+          aria-label="Filter by role"
         >
           <option value="">All Roles</option>
           <option value="SUPER_ADMIN">Super Admin</option>
@@ -115,7 +117,7 @@ export default function StaffList() {
 
       {loading && (
         <div className="flex justify-center py-12">
-          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" role="status" aria-label="Loading" />
         </div>
       )}
 
@@ -155,11 +157,11 @@ export default function StaffList() {
                     <td className="px-4 py-3">
                       <button
                         onClick={() => toggleActive(member.id, !member.isActive)}
-                        className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                          member.isActive
+                        className={`text-xs px-2 py-0.5 rounded-full font-medium ${member.isActive
                             ? 'bg-green-100 text-green-700'
                             : 'bg-gray-100 text-gray-500'
-                        }`}
+                          }`}
+                        aria-label={`${member.isActive ? 'Deactivate' : 'Activate'} ${member.name}`}
                       >
                         {member.isActive ? 'Active' : 'Inactive'}
                       </button>

@@ -54,7 +54,7 @@ export default function MenuItemList() {
   useEffect(() => {
     api.get<{ data: Category[] }>('/menu/categories')
       .then((res) => setCategories(res.data))
-      .catch(() => {});
+      .catch(() => { });
   }, []);
 
   useEffect(() => {
@@ -91,11 +91,13 @@ export default function MenuItemList() {
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          aria-label="Search menu items"
         />
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
           className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
+          aria-label="Filter by category"
         >
           <option value="">All Categories</option>
           {categories.map((c) => (
@@ -159,15 +161,13 @@ export default function MenuItemList() {
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex gap-1">
-                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                          item.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
-                        }`}>
+                        <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${item.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
+                          }`}>
                           {item.isActive ? 'Active' : 'Inactive'}
                         </span>
                         {item.trackStock && (
-                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${
-                            item.stockQty > 0 ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'
-                          }`}>
+                          <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${item.stockQty > 0 ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'
+                            }`}>
                             Stock: {item.stockQty}
                           </span>
                         )}
@@ -177,10 +177,10 @@ export default function MenuItemList() {
                       {item._count.options} options &middot; {item._count.allergens} allergens
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm space-x-3">
-                      <Link to={`/menu/items/${item.id}`} className="text-primary-600 hover:text-primary-900 font-medium">
+                      <Link to={`/menu/items/${item.id}`} className="text-primary-600 hover:text-primary-900 font-medium" aria-label={`Edit ${item.name}`}>
                         Edit
                       </Link>
-                      <button onClick={() => handleDelete(item.id, item.name)} className="text-red-600 hover:text-red-900 font-medium">
+                      <button onClick={() => handleDelete(item.id, item.name)} className="text-red-600 hover:text-red-900 font-medium" aria-label={`Delete ${item.name}`}>
                         Delete
                       </button>
                     </td>

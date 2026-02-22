@@ -83,7 +83,7 @@ export default function CouponList() {
 
       {loading && (
         <div className="flex justify-center py-12">
-          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" role="status" aria-label="Loading" />
         </div>
       )}
 
@@ -121,8 +121,8 @@ export default function CouponList() {
                       {coupon.type === 'PERCENTAGE'
                         ? `${coupon.value}%`
                         : coupon.type === 'FIXED'
-                        ? `$${coupon.value.toFixed(2)}`
-                        : '—'}
+                          ? `$${coupon.value.toFixed(2)}`
+                          : '—'}
                     </td>
                     <td className="px-4 py-3 text-gray-600">
                       {coupon.minOrder > 0 ? `$${coupon.minOrder.toFixed(2)}` : '—'}
@@ -133,11 +133,11 @@ export default function CouponList() {
                     <td className="px-4 py-3">
                       <button
                         onClick={() => toggleActive(coupon.id, !coupon.isActive)}
-                        className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                          coupon.isActive
+                        className={`text-xs px-2 py-0.5 rounded-full font-medium ${coupon.isActive
                             ? 'bg-green-100 text-green-700'
                             : 'bg-gray-100 text-gray-500'
-                        }`}
+                          }`}
+                        aria-label={`${coupon.isActive ? 'Deactivate' : 'Activate'} coupon ${coupon.code}`}
                       >
                         {coupon.isActive ? 'Active' : 'Inactive'}
                       </button>
@@ -146,6 +146,7 @@ export default function CouponList() {
                       <Link
                         to={`/coupons/${coupon.id}`}
                         className="text-primary-600 hover:text-primary-700 text-xs font-medium"
+                        aria-label={`Edit coupon ${coupon.code}`}
                       >
                         Edit
                       </Link>

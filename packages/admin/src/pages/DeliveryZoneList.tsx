@@ -166,7 +166,7 @@ export default function DeliveryZoneList() {
 
       {loading && (
         <div className="flex justify-center py-12">
-          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" role="status" aria-label="Loading" />
         </div>
       )}
 
@@ -195,9 +195,9 @@ export default function DeliveryZoneList() {
                   <td className="px-4 py-3">
                     <button
                       onClick={() => toggleActive(zone)}
-                      className={`text-xs px-2 py-0.5 rounded-full font-medium ${
-                        zone.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
-                      }`}
+                      className={`text-xs px-2 py-0.5 rounded-full font-medium ${zone.isActive ? 'bg-green-100 text-green-700' : 'bg-gray-100 text-gray-500'
+                        }`}
+                      aria-label={`${zone.isActive ? 'Deactivate' : 'Activate'} zone ${zone.name}`}
                     >
                       {zone.isActive ? 'Active' : 'Inactive'}
                     </button>
@@ -206,6 +206,7 @@ export default function DeliveryZoneList() {
                     <button
                       onClick={() => deleteZone(zone.id)}
                       className="text-red-600 hover:text-red-700 text-xs font-medium"
+                      aria-label={`Delete zone ${zone.name}`}
                     >
                       Delete
                     </button>

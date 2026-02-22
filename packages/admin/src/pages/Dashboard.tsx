@@ -91,7 +91,7 @@ export default function Dashboard() {
         return res.json();
       })
       .then((result) => setAnalytics(result.data))
-      .catch(() => {})
+      .catch(() => { })
       .finally(() => setAnalyticsLoading(false));
   }, [token, analyticsDays]);
 
@@ -103,7 +103,7 @@ export default function Dashboard() {
           {['Orders Today', 'Revenue', 'Reservations', 'Active Items'].map((label) => (
             <div key={label} className="bg-white rounded-lg shadow p-6 animate-pulse">
               <p className="text-sm text-gray-500">{label}</p>
-              <div className="h-9 bg-gray-200 rounded mt-2 w-20" />
+              <div className="h-9 bg-gray-200 rounded mt-2 w-20" role="status" aria-label="Loading" />
             </div>
           ))}
         </div>
@@ -134,20 +134,22 @@ export default function Dashboard() {
     <div>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-semibold text-gray-800">Dashboard</h2>
-        <div className="flex bg-gray-100 rounded-lg p-1">
+        <div className="flex bg-gray-100 rounded-lg p-1" role="tablist">
           <button
             onClick={() => setTab('overview')}
-            className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
-              tab === 'overview' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
-            }`}
+            className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${tab === 'overview' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
+              }`}
+            role="tab"
+            aria-selected={tab === 'overview'}
           >
             Overview
           </button>
           <button
             onClick={() => setTab('analytics')}
-            className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${
-              tab === 'analytics' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
-            }`}
+            className={`px-4 py-1.5 text-sm font-medium rounded-md transition-colors ${tab === 'analytics' ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
+              }`}
+            role="tab"
+            aria-selected={tab === 'analytics'}
           >
             Analytics
           </button>
@@ -291,7 +293,7 @@ function AnalyticsPanel({
   if (loading) {
     return (
       <div className="flex justify-center py-12">
-        <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+        <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" role="status" aria-label="Loading" />
       </div>
     );
   }
@@ -326,9 +328,9 @@ function AnalyticsPanel({
             <button
               key={d}
               onClick={() => onDaysChange(d)}
-              className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${
-                days === d ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
-              }`}
+              className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${days === d ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
+                }`}
+              aria-label={`Show last ${d} days`}
             >
               {d}d
             </button>

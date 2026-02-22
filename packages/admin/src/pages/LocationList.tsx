@@ -133,11 +133,10 @@ export default function LocationList() {
                   </td>
                   <td className="px-6 py-4 whitespace-nowrap">
                     <span
-                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${
-                        loc.isActive
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium ${loc.isActive
                           ? 'bg-green-100 text-green-800'
                           : 'bg-red-100 text-red-800'
-                      }`}
+                        }`}
                     >
                       {loc.isActive ? 'Active' : 'Inactive'}
                     </span>
@@ -150,23 +149,25 @@ export default function LocationList() {
                     <button
                       onClick={() => toggleBusy(loc)}
                       disabled={togglingBusy === loc.id}
-                      className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${
-                        loc.isBusy
+                      className={`px-2.5 py-1 rounded text-xs font-medium transition-colors ${loc.isBusy
                           ? 'bg-red-100 text-red-700 hover:bg-red-200'
                           : 'bg-gray-100 text-gray-600 hover:bg-gray-200'
-                      } disabled:opacity-50`}
+                        } disabled:opacity-50`}
+                      aria-label={`${loc.isBusy ? 'Turn off' : 'Turn on'} busy mode for ${loc.name}`}
                     >
                       {loc.isBusy ? 'Busy ON' : 'Busy OFF'}
                     </button>
                     <Link
                       to={`/locations/${loc.id}/tables`}
                       className="text-gray-600 hover:text-gray-900 font-medium"
+                      aria-label={`View tables for ${loc.name}`}
                     >
                       Tables
                     </Link>
                     <Link
                       to={`/locations/${loc.id}`}
                       className="text-primary-600 hover:text-primary-900 font-medium"
+                      aria-label={`Edit ${loc.name}`}
                     >
                       Edit
                     </Link>

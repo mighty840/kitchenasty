@@ -7,7 +7,7 @@ interface AutomationRule {
   name: string;
   event: string;
   conditions: Record<string, unknown> | null;
-  actions: Array<{ type: string; [key: string]: unknown }>;
+  actions: Array<{ type: string;[key: string]: unknown }>;
   isActive: boolean;
   createdAt: string;
 }
@@ -68,7 +68,7 @@ export default function AutomationRuleList() {
 
       {loading && (
         <div className="flex justify-center py-12">
-          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" role="status" aria-label="Loading" />
         </div>
       )}
 
@@ -112,11 +112,11 @@ export default function AutomationRuleList() {
                   <td className="px-4 py-3">
                     <button
                       onClick={() => toggleActive(rule)}
-                      className={`text-xs px-2.5 py-1 rounded-full font-medium ${
-                        rule.isActive
+                      className={`text-xs px-2.5 py-1 rounded-full font-medium ${rule.isActive
                           ? 'bg-green-100 text-green-700'
                           : 'bg-gray-100 text-gray-500'
-                      }`}
+                        }`}
+                      aria-label={`${rule.isActive ? 'Deactivate' : 'Activate'} rule ${rule.name}`}
                     >
                       {rule.isActive ? 'Active' : 'Inactive'}
                     </button>
@@ -125,12 +125,14 @@ export default function AutomationRuleList() {
                     <Link
                       to={`/automation/${rule.id}`}
                       className="text-primary-600 hover:text-primary-700 text-xs font-medium"
+                      aria-label={`Edit rule ${rule.name}`}
                     >
                       Edit
                     </Link>
                     <button
                       onClick={() => deleteRule(rule.id)}
                       className="text-red-600 hover:text-red-700 text-xs font-medium"
+                      aria-label={`Delete rule ${rule.name}`}
                     >
                       Delete
                     </button>
