@@ -1,0 +1,54 @@
+name: Mobile Builds
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+jobs:
+  build-android:
+    name: Build Android Bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+      - run: npm ci
+      - name: Build shared package
+        run: npm run build -w packages/shared
+      - name: Export Android bundle
+        run: npx -w packages/mobile expo export --platform android --output-dir dist-android
+      - name: Upload Android bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: android-bundle
+          path: packages/mobile/dist-android/
+          retention-days: 14
+
+  build-ios:
+    name: Build iOS Bundle
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Build shared package
+        run: npm run build -w packages/shared
+      - name: Export iOS bundle
+        run: npx -w packages/mobile expo export --platform ios --output-dir dist-ios
+      - name: Upload iOS bundle
+        uses: actions/upload-artifact@v4
+        with:
+          name: ios-bundle
+          path: packages/mobile/dist-ios/
+          retention-days: 14
