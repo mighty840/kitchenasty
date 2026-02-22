@@ -87,13 +87,13 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
   }
 }
 
-async function getSiteName(name: String | undefined) {
-  const siteName = await prisma.siteSettings.findFirst({
+async function getSiteName(name: String) {
+  const placeName = await prisma.siteSettings.findFirst({
     where: { siteName: `${name}` },
   });
-  console.log(siteName);
+  console.log(placeName);
 
-  return siteName || "KitchenAsty";
+  return placeName || "KitchenAsty";
 }
 
 // Email Templates
