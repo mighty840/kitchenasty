@@ -33,7 +33,7 @@ export default function ReservationsScreen() {
 
   useEffect(() => {
     locationApi.getAll().then((res) => {
-      setLocations((res.data || []).filter((l) => l.isActive));
+      setLocations((res.data || []).filter((l: Location) => l.isActive));
     });
     if (token) {
       reservationApi.getMine().then((res) => {

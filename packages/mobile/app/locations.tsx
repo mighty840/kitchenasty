@@ -16,7 +16,7 @@ export default function LocationsScreen() {
   useEffect(() => {
     locationApi
       .getAll()
-      .then((res) => setLocations((res.data || []).filter((l) => l.isActive)))
+      .then((res) => setLocations((res.data || []).filter((l: Location) => l.isActive)))
       .catch(() => {})
       .finally(() => setLoading(false));
   }, []);

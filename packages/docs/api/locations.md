@@ -1,6 +1,6 @@
-# Locations API
+# 📍 Locations API
 
-## List Locations
+## 📋 List Locations
 
 ```
 GET /api/locations
@@ -32,7 +32,7 @@ Public. Returns all active locations.
 }
 ```
 
-## Get Location
+## 🔍 Get Location
 
 ```
 GET /api/locations/:id
@@ -40,7 +40,7 @@ GET /api/locations/:id
 
 Public. Returns a single location with full details.
 
-## Create Location
+## ➕ Create Location
 
 ```
 POST /api/locations
@@ -66,7 +66,7 @@ Authorization: Bearer <manager-token>
 }
 ```
 
-## Update Location
+## ✏️ Update Location
 
 ```
 PATCH /api/locations/:id
@@ -75,22 +75,22 @@ Authorization: Bearer <manager-token>
 
 Partial updates supported — only include fields to change.
 
-## Delete Location
+## 🗑️ Delete Location
 
 ```
 DELETE /api/locations/:id
 Authorization: Bearer <super-admin-token>
 ```
 
-## Delivery Zones
+## 🚚 Delivery Zones
 
-### List Delivery Zones
+### 📋 List Delivery Zones
 
 ```
 GET /api/locations/:locationId/delivery-zones
 ```
 
-### Check Delivery Zone
+### 📍 Check Delivery Zone
 
 ```
 GET /api/locations/:locationId/delivery-zones/check?lat=40.7128&lng=-74.0060
@@ -98,7 +98,7 @@ GET /api/locations/:locationId/delivery-zones/check?lat=40.7128&lng=-74.0060
 
 Public. Checks if coordinates fall within a delivery zone and returns the applicable delivery fee.
 
-### Create Delivery Zone
+### ➕ Create Delivery Zone
 
 ```
 POST /api/locations/:locationId/delivery-zones
@@ -115,28 +115,28 @@ Authorization: Bearer <manager-token>
 }
 ```
 
-### Update / Delete Delivery Zone
+### ✏️🗑️ Update / Delete Delivery Zone
 
 ```
 PATCH /api/locations/:locationId/delivery-zones/:zoneId
 DELETE /api/locations/:locationId/delivery-zones/:zoneId
 ```
 
-## Tables
+## 🪑 Tables
 
-### List Tables
+### 📋 List Tables
 
 ```
 GET /api/locations/:locationId/tables
 ```
 
-### Get Table
+### 🔍 Get Table
 
 ```
 GET /api/locations/:locationId/tables/:tableId
 ```
 
-### Create Table
+### ➕ Create Table
 
 ```
 POST /api/locations/:locationId/tables
@@ -151,23 +151,23 @@ Authorization: Bearer <manager-token>
 }
 ```
 
-### Update / Delete Table
+### ✏️🗑️ Update / Delete Table
 
 ```
 PATCH /api/locations/:locationId/tables/:tableId
 DELETE /api/locations/:locationId/tables/:tableId
 ```
 
-## Permissions Summary
+## 🔒 Permissions Summary
 
 | Action | Required Role |
 |--------|--------------|
-| List / get locations | Public |
-| Create / update locations | Manager, Super Admin |
-| Delete locations | Super Admin |
-| List / check delivery zones | Public |
-| Manage delivery zones | Manager, Super Admin |
-| Delete delivery zones | Super Admin |
-| List / get tables | Public |
-| Manage tables | Manager, Super Admin |
-| Delete tables | Super Admin |
+| 🌐 List / get locations | Public |
+| ✏️ Create / update locations | Manager, Super Admin |
+| 🗑️ Delete locations | Super Admin |
+| 🌐 List / check delivery zones | Public |
+| ✏️ Manage delivery zones | Manager, Super Admin |
+| 🗑️ Delete delivery zones | Super Admin |
+| 🌐 List / get tables | Public |
+| ✏️ Manage tables | Manager, Super Admin |
+| 🗑️ Delete tables | Super Admin |

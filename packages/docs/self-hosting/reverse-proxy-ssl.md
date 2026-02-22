@@ -1,4 +1,4 @@
-# Reverse Proxy & SSL
+# 🔒 Reverse Proxy & SSL
 
 A reverse proxy sits between the internet and your KitchenAsty containers. It handles HTTPS encryption, routes requests to the correct service, and provides a professional setup with proper SSL certificates.
 
@@ -6,18 +6,18 @@ We cover two options: **Caddy** (easiest, recommended) and **Nginx + Certbot** (
 
 ---
 
-## Option A: Caddy (Recommended)
+## 🅰️ Option A: Caddy (Recommended)
 
 [Caddy](https://caddyserver.com) is a modern web server that automatically obtains and renews SSL certificates from Let's Encrypt. It requires almost no configuration.
 
-### Why Caddy?
+### ✨ Why Caddy?
 
-- **Automatic HTTPS** — no manual certificate setup or renewal cron jobs
-- **Simple configuration** — a few lines vs. hundreds for Nginx
-- **HTTP/2 and HTTP/3** out of the box
-- **Automatic redirects** — HTTP to HTTPS happens automatically
+- 🔒 **Automatic HTTPS** — no manual certificate setup or renewal cron jobs
+- 📝 **Simple configuration** — a few lines vs. hundreds for Nginx
+- ⚡ **HTTP/2 and HTTP/3** out of the box
+- 🔄 **Automatic redirects** — HTTP to HTTPS happens automatically
 
-### Install Caddy
+### 📦 Install Caddy
 
 On your server:
 
@@ -42,11 +42,11 @@ sudo apt update
 sudo apt install -y caddy
 ```
 
-::: tip
+::: tip 💡
 If `apt install caddy` isn't available on your distro, download the binary from [caddyserver.com/download](https://caddyserver.com/download).
 :::
 
-### Configure Caddy
+### ⚙️ Configure Caddy
 
 Edit the Caddyfile:
 
@@ -74,12 +74,12 @@ api.yourdomain.com {
 ```
 
 That's the entire configuration. Caddy will:
-1. Automatically obtain SSL certificates from Let's Encrypt
-2. Redirect HTTP to HTTPS
-3. Renew certificates before they expire
-4. Enable HTTP/2
+1. 🔒 Automatically obtain SSL certificates from Let's Encrypt
+2. 🔄 Redirect HTTP to HTTPS
+3. ♻️ Renew certificates before they expire
+4. ⚡ Enable HTTP/2
 
-### Connect Caddy to Docker Network
+### 🔗 Connect Caddy to Docker Network
 
 Caddy needs to reach the Docker containers. The easiest way is to add Caddy to the same Docker network:
 
@@ -126,7 +126,7 @@ api.yourdomain.com {
 }
 ```
 
-### Start Caddy
+### 🚀 Start Caddy
 
 ```bash
 sudo systemctl enable caddy
@@ -136,15 +136,15 @@ sudo systemctl restart caddy
 sudo systemctl status caddy
 ```
 
-### Verify HTTPS
+### ✅ Verify HTTPS
 
 Wait 30-60 seconds for certificates to be issued, then visit:
 
-- `https://admin.yourdomain.com` — should show the Admin login
-- `https://order.yourdomain.com` — should show the Storefront
-- `https://api.yourdomain.com/api/health` — should return `{"status":"ok"}`
+- 🔒 `https://admin.yourdomain.com` — should show the Admin login
+- 🔒 `https://order.yourdomain.com` — should show the Storefront
+- 🔒 `https://api.yourdomain.com/api/health` — should return `{"status":"ok"}`
 
-### Caddy Logs
+### 📋 Caddy Logs
 
 ```bash
 sudo journalctl -u caddy -f
@@ -152,18 +152,18 @@ sudo journalctl -u caddy -f
 
 ---
 
-## Option B: Nginx + Certbot
+## 🅱️ Option B: Nginx + Certbot
 
 If you prefer Nginx (the industry standard) or already have it installed, follow this section.
 
-### Install Nginx
+### 📦 Install Nginx
 
 ```bash
 sudo apt install -y nginx
 sudo systemctl enable nginx
 ```
 
-### Install Certbot
+### 🔒 Install Certbot
 
 Certbot automates Let's Encrypt certificate issuance and renewal.
 
@@ -171,7 +171,7 @@ Certbot automates Let's Encrypt certificate issuance and renewal.
 sudo apt install -y certbot python3-certbot-nginx
 ```
 
-### Create Nginx Configuration
+### ⚙️ Create Nginx Configuration
 
 First, expose the Docker container ports on `127.0.0.1` only. Edit `docker-compose.prod.yml`:
 
@@ -304,7 +304,7 @@ server {
 }
 ```
 
-### Enable the Site
+### ✅ Enable the Site
 
 ```bash
 # Enable the config
@@ -321,7 +321,7 @@ sudo nginx -t
 sudo systemctl reload nginx
 ```
 
-### Obtain SSL Certificates
+### 🔐 Obtain SSL Certificates
 
 Run Certbot to automatically get certificates and modify the Nginx config for HTTPS:
 
@@ -336,12 +336,12 @@ sudo certbot --nginx \
 ```
 
 Certbot will:
-1. Verify you own each domain (via HTTP challenge)
-2. Obtain certificates from Let's Encrypt
-3. Modify the Nginx config to use HTTPS
-4. Add automatic HTTP-to-HTTPS redirects
+1. ✅ Verify you own each domain (via HTTP challenge)
+2. 🔒 Obtain certificates from Let's Encrypt
+3. ⚙️ Modify the Nginx config to use HTTPS
+4. 🔄 Add automatic HTTP-to-HTTPS redirects
 
-### Verify Automatic Renewal
+### ♻️ Verify Automatic Renewal
 
 Certbot sets up a systemd timer for automatic renewal. Verify it's active:
 
@@ -354,19 +354,19 @@ sudo certbot renew --dry-run
 
 Let's Encrypt certificates are valid for 90 days. Certbot renews them automatically when they have less than 30 days remaining.
 
-### Verify HTTPS
+### ✅ Verify HTTPS
 
 Visit your sites in a browser:
 
-- `https://admin.yourdomain.com`
-- `https://order.yourdomain.com`
-- `https://api.yourdomain.com/api/health`
+- 🔒 `https://admin.yourdomain.com`
+- 🔒 `https://order.yourdomain.com`
+- 🔒 `https://api.yourdomain.com/api/health`
 
 You should see a padlock icon in the address bar.
 
 ---
 
-## Updating CORS After SSL Setup
+## 🔗 Updating CORS After SSL Setup
 
 Now that your sites use HTTPS, update the `CORS_ORIGINS` in your `.env` file:
 
@@ -380,9 +380,9 @@ Then restart the API server:
 docker compose -f docker-compose.prod.yml restart server
 ```
 
-## Troubleshooting
+## 🔧 Troubleshooting
 
-### "Connection refused" errors
+### ❌ "Connection refused" errors
 
 Ensure the Docker containers are running and ports are exposed on `127.0.0.1`:
 
@@ -391,16 +391,16 @@ docker compose -f docker-compose.prod.yml ps
 curl http://127.0.0.1:3000/api/health
 ```
 
-### Certificate issuance fails
+### 🔐 Certificate issuance fails
 
-- Ensure DNS records point to your server (check with `dig admin.yourdomain.com`)
-- Ensure ports 80 and 443 are open in the firewall (`sudo ufw status`)
-- Ensure no other process is using port 80 (`sudo lsof -i :80`)
+- ✅ Ensure DNS records point to your server (check with `dig admin.yourdomain.com`)
+- ✅ Ensure ports 80 and 443 are open in the firewall (`sudo ufw status`)
+- ✅ Ensure no other process is using port 80 (`sudo lsof -i :80`)
 
-### WebSocket connections fail
+### 🔌 WebSocket connections fail
 
 If the kitchen display or live order tracking doesn't work, verify the `/socket.io/` proxy block is present in your config and includes the `Upgrade` and `Connection` headers.
 
-## Next Step
+## ➡️ Next Step
 
 Continue to **[Backups](/self-hosting/backups)** to set up automatic database backups.

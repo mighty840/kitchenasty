@@ -1,8 +1,8 @@
-# CORS & Security
+# 🛡️ CORS & Security
 
 KitchenAsty includes several security measures out of the box.
 
-## CORS
+## 🌐 CORS
 
 Cross-Origin Resource Sharing is configured via the `CORS_ORIGINS` environment variable:
 
@@ -18,19 +18,19 @@ In production, set this to your actual domain(s):
 CORS_ORIGINS=https://admin.yourrestaurant.com,https://order.yourrestaurant.com
 ```
 
-## Helmet
+## 🪖 Helmet
 
 [Helmet](https://helmetjs.github.io/) sets various HTTP security headers:
 
-- `X-Content-Type-Options: nosniff`
-- `X-Frame-Options: SAMEORIGIN`
-- `Strict-Transport-Security` (in production)
-- Content Security Policy headers
+- 🔒 `X-Content-Type-Options: nosniff`
+- 🖼️ `X-Frame-Options: SAMEORIGIN`
+- 🔐 `Strict-Transport-Security` (in production)
+- 📜 Content Security Policy headers
 - And more
 
 Helmet is enabled by default with standard settings.
 
-## Rate Limiting
+## 🚦 Rate Limiting
 
 API endpoints are rate-limited to prevent abuse:
 
@@ -50,15 +50,15 @@ API endpoints are rate-limited to prevent abuse:
 
 Rate limiting is disabled in the `test` environment to avoid interfering with automated tests.
 
-## Request Logging
+## 📋 Request Logging
 
 HTTP request logging uses [Morgan](https://github.com/expressjs/morgan) in `dev` format. Logging is disabled in the `test` environment.
 
-## Production Security Tips
+## 🔐 Production Security Tips
 
-- Set a strong, unique `JWT_SECRET` (at least 32 characters)
-- Use HTTPS in production — terminate TLS at your reverse proxy (nginx, Cloudflare, etc.)
-- Restrict `CORS_ORIGINS` to your actual frontend domains
-- Keep dependencies updated with `npm audit`
-- Consider increasing rate limits for high-traffic locations or adding per-user limits
-- Use a web application firewall (WAF) for additional protection
+- 🔑 Set a strong, unique `JWT_SECRET` (at least 32 characters)
+- 🔒 Use HTTPS in production — terminate TLS at your reverse proxy (nginx, Cloudflare, etc.)
+- 🌐 Restrict `CORS_ORIGINS` to your actual frontend domains
+- 📦 Keep dependencies updated with `npm audit`
+- 🚦 Consider increasing rate limits for high-traffic locations or adding per-user limits
+- 🧱 Use a web application firewall (WAF) for additional protection

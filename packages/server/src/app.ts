@@ -43,6 +43,18 @@ export function createApp() {
     app.use(morgan('dev'));
   }
 
+  // Health check (before rate limiter so monitoring/readiness probes always work)
+  app.get('/api/health', (_req, res) => {
+    res.json({
+      success: true,
+      data: {
+        status: 'ok',
+        timestamp: new Date().toISOString(),
+        version: '1.0.0',
+      },
+    });
+  });
+
   // Rate limiting
   if (process.env.NODE_ENV !== 'test') {
     const limiter = rateLimit({
@@ -72,18 +84,6 @@ export function createApp() {
     customCss: '.swagger-ui .topbar { display: none }',
     customSiteTitle: 'KitchenAsty API Documentation',
   }));
-
-  // Health check
-  app.get('/api/health', (_req, res) => {
-    res.json({
-      success: true,
-      data: {
-        status: 'ok',
-        timestamp: new Date().toISOString(),
-        version: '1.0.0',
-      },
-    });
-  });
 
   // OpenAPI spec endpoint
   app.get('/api/openapi.json', (_req, res) => {

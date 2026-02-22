@@ -1,8 +1,8 @@
-# Testing
+# 🧪 Testing
 
 KitchenAsty has three levels of testing: unit, integration, and end-to-end.
 
-## Test Structure
+## 📁 Test Structure
 
 ```
 packages/server/src/__tests__/
@@ -12,7 +12,7 @@ packages/server/src/__tests__/
 e2e/                # Playwright E2E tests
 ```
 
-## Running Tests
+## ▶️ Running Tests
 
 ```bash
 # All tests (unit + integration)
@@ -37,18 +37,18 @@ npm run test:unit -w packages/server
 npm run test:integration -w packages/server
 ```
 
-## Test Frameworks
+## 🔧 Test Frameworks
 
 | Level | Framework | Location |
 |-------|-----------|----------|
-| Unit | Vitest | `packages/server/src/__tests__/unit/` |
-| Integration | Vitest | `packages/server/src/__tests__/integration/` |
-| Shared | Vitest | `packages/shared/src/__tests__/` |
-| E2E | Playwright | `e2e/` |
+| 🧩 Unit | Vitest | `packages/server/src/__tests__/unit/` |
+| 🔗 Integration | Vitest | `packages/server/src/__tests__/integration/` |
+| 📦 Shared | Vitest | `packages/shared/src/__tests__/` |
+| 🌐 E2E | Playwright | `e2e/` |
 
-## Writing Tests
+## ✍️ Writing Tests
 
-### Unit Tests
+### 🧩 Unit Tests
 
 Unit tests cover individual functions without external dependencies:
 
@@ -67,7 +67,7 @@ describe('calculateTotal', () => {
 });
 ```
 
-### Integration Tests
+### 🔗 Integration Tests
 
 Integration tests use a real PostgreSQL database:
 
@@ -91,7 +91,7 @@ describe('POST /api/auth/customer/register', () => {
 });
 ```
 
-### E2E Tests
+### 🌐 E2E Tests
 
 Playwright tests exercise the full stack through the browser:
 
@@ -105,14 +105,14 @@ test('customer can place an order', async ({ page }) => {
 });
 ```
 
-## CI Pipeline
+## 🔄 CI Pipeline
 
 Tests run automatically on every push and pull request. See [CI/CD](/deployment/ci-cd) for the pipeline configuration.
 
 The CI runs:
 
-1. TypeScript type checking
-2. Unit tests
-3. Integration tests
-4. E2E tests (with a PostgreSQL service container)
-5. Security audit
+1. 📝 TypeScript type checking
+2. 🧩 Unit tests
+3. 🔗 Integration tests
+4. 🌐 E2E tests (with a PostgreSQL service container)
+5. 🔒 Security audit

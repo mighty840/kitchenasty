@@ -1,6 +1,6 @@
-# Payments API
+# 💳 Payments API
 
-## Create Stripe Payment Intent
+## 💰 Create Stripe Payment Intent
 
 ```
 POST /api/payments/create-intent
@@ -28,7 +28,7 @@ Authorization: Bearer <token> (optional)
 
 Use the `clientSecret` with Stripe.js on the frontend to complete payment.
 
-## Stripe Webhook
+## 🔔 Stripe Webhook
 
 ```
 POST /api/payments/webhook
@@ -39,13 +39,13 @@ Called by Stripe when a payment event occurs. The endpoint verifies the webhook 
 
 Handled events:
 
-- `payment_intent.succeeded` — Marks the payment as completed and updates the order.
+- ✅ `payment_intent.succeeded` — Marks the payment as completed and updates the order.
 
 ::: warning
 This endpoint expects a raw request body (not JSON-parsed). It is registered before the JSON body parser in the middleware stack.
 :::
 
-## Mark Cash Payment
+## 💵 Mark Cash Payment
 
 ```
 POST /api/payments/cash
@@ -63,7 +63,7 @@ Authorization: Bearer <staff-token>
 
 Staff marks that cash has been received for an order.
 
-## Create PayPal Payment
+## 🅿️ Create PayPal Payment
 
 ```
 POST /api/payments/paypal/create
@@ -89,7 +89,7 @@ Authorization: Bearer <token> (optional)
 }
 ```
 
-## Capture PayPal Payment
+## ✅ Capture PayPal Payment
 
 ```
 POST /api/payments/paypal/capture
@@ -106,11 +106,11 @@ Authorization: Bearer <token> (optional)
 
 Called after the customer approves payment on PayPal.
 
-## Permissions Summary
+## 🔒 Permissions Summary
 
 | Action | Required Role |
 |--------|--------------|
-| Create Stripe intent | Customer or guest |
-| Stripe webhook | Stripe (signature verified) |
-| Mark cash payment | Staff |
-| Create/capture PayPal | Customer or guest |
+| 💳 Create Stripe intent | Customer or guest |
+| 🔔 Stripe webhook | Stripe (signature verified) |
+| 💵 Mark cash payment | Staff |
+| 🅿️ Create/capture PayPal | Customer or guest |

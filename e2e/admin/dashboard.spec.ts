@@ -38,10 +38,11 @@ test.describe('Admin Dashboard', () => {
 
   test('sidebar has navigation links', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('link', { name: 'Dashboard' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Locations' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Menu' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Orders' })).toBeVisible();
-    await expect(page.getByRole('link', { name: 'Reservations' })).toBeVisible();
+    const nav = page.locator('nav');
+    await expect(nav.getByRole('link', { name: 'Dashboard' })).toBeVisible();
+    await expect(nav.getByRole('link', { name: 'Locations' })).toBeVisible();
+    await expect(nav.getByRole('link', { name: 'Menu' })).toBeVisible();
+    await expect(nav.getByRole('link', { name: 'Orders' })).toBeVisible();
+    await expect(nav.getByRole('link', { name: 'Reservations' })).toBeVisible();
   });
 });

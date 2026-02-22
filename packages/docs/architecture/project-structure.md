@@ -1,8 +1,8 @@
-# Project Structure
+# 🏗️ Project Structure
 
 KitchenAsty is organized as an npm workspaces monorepo.
 
-## Directory Tree
+## 📂 Directory Tree
 
 ```
 kitchenasty/
@@ -64,7 +64,7 @@ kitchenasty/
 └── tsconfig.json        # Base TypeScript config
 ```
 
-## Package Responsibilities
+## 📦 Package Responsibilities
 
 | Package | Purpose | Port |
 |---------|---------|------|
@@ -74,7 +74,7 @@ kitchenasty/
 | `packages/shared` | TypeScript types shared between packages | — |
 | `packages/docs` | Developer documentation (VitePress) | 5175 |
 
-## Key Configuration Files
+## 🔧 Key Configuration Files
 
 | File | Purpose |
 |------|---------|

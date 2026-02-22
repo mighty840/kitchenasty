@@ -1,6 +1,6 @@
-# Automation API
+# 🤖 Automation API
 
-## List Rules
+## 📋 List Rules
 
 ```
 GET /api/automation-rules
@@ -33,14 +33,14 @@ Returns all automation rules.
 }
 ```
 
-## Get Rule
+## 🔍 Get Rule
 
 ```
 GET /api/automation-rules/:id
 Authorization: Bearer <manager-token>
 ```
 
-## Create Rule
+## ➕ Create Rule
 
 ```
 POST /api/automation-rules
@@ -65,32 +65,32 @@ Authorization: Bearer <manager-token>
 }
 ```
 
-## Update Rule
+## ✏️ Update Rule
 
 ```
 PATCH /api/automation-rules/:id
 Authorization: Bearer <manager-token>
 ```
 
-## Delete Rule
+## 🗑️ Delete Rule
 
 ```
 DELETE /api/automation-rules/:id
 Authorization: Bearer <super-admin-token>
 ```
 
-## Event Reference
+## 📡 Event Reference
 
 | Event | Fires When |
 |-------|-----------|
-| `order.created` | New order is placed |
-| `order.statusChanged` | Order status is updated |
-| `reservation.created` | New reservation is submitted |
-| `review.submitted` | Customer submits a review |
+| 📦 `order.created` | New order is placed |
+| 🔄 `order.statusChanged` | Order status is updated |
+| 📅 `reservation.created` | New reservation is submitted |
+| ⭐ `review.submitted` | Customer submits a review |
 
-## Action Reference
+## ⚡ Action Reference
 
-### Email Action
+### 📧 Email Action
 
 ```json
 {
@@ -101,7 +101,7 @@ Authorization: Bearer <super-admin-token>
 }
 ```
 
-### Webhook Action
+### 🌐 Webhook Action
 
 ```json
 {
@@ -113,7 +113,7 @@ Authorization: Bearer <super-admin-token>
 
 The full event data is sent as the request body.
 
-### SMS Action
+### 📱 SMS Action
 
 ```json
 {
@@ -123,10 +123,10 @@ The full event data is sent as the request body.
 }
 ```
 
-## Permissions Summary
+## 🔒 Permissions Summary
 
 | Action | Required Role |
 |--------|--------------|
-| List / get rules | Manager, Super Admin |
-| Create / update rules | Manager, Super Admin |
-| Delete rules | Super Admin |
+| 📋 List / get rules | Manager, Super Admin |
+| ➕ Create / update rules | Manager, Super Admin |
+| 🗑️ Delete rules | Super Admin |

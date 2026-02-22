@@ -32,7 +32,7 @@ export default function ItemDetailScreen() {
         // Pre-select default values
         const defaults: Record<string, string[]> = {};
         for (const opt of res.data!.options) {
-          const defaultVal = opt.values.find((v) => v.isDefault);
+          const defaultVal = opt.values.find((v: MenuOptionValue) => v.isDefault);
           if (defaultVal) {
             defaults[opt.id] = [defaultVal.id];
           }

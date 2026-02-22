@@ -1,6 +1,6 @@
-# Reviews API
+# ⭐ Reviews API
 
-## List Public Reviews
+## 🌐 List Public Reviews
 
 ```
 GET /api/reviews/location/:locationId
@@ -28,7 +28,7 @@ Public. Returns approved reviews for a location.
 }
 ```
 
-## Submit Review
+## ✍️ Submit Review
 
 ```
 POST /api/reviews
@@ -50,7 +50,7 @@ Authorization: Bearer <customer-token>
 
 Reviews are created with `isApproved: false` and must be moderated by staff.
 
-## List All Reviews (Staff)
+## 📋 List All Reviews (Staff)
 
 ```
 GET /api/reviews
@@ -59,7 +59,7 @@ Authorization: Bearer <staff-token>
 
 Returns all reviews including unapproved ones.
 
-## Moderate Review
+## ✅ Moderate Review
 
 ```
 PATCH /api/reviews/:id
@@ -74,7 +74,7 @@ Authorization: Bearer <staff-token>
 }
 ```
 
-## Delete Review
+## 🗑️ Delete Review
 
 ```
 DELETE /api/reviews/:id
@@ -83,12 +83,12 @@ Authorization: Bearer <manager-token>
 
 Manager or Super Admin only.
 
-## Permissions Summary
+## 🔒 Permissions Summary
 
 | Action | Required Role |
 |--------|--------------|
-| View public reviews | Public |
-| Submit review | Authenticated customer |
-| List all reviews | Staff |
-| Moderate review | Staff |
-| Delete review | Manager, Super Admin |
+| 🌐 View public reviews | Public |
+| ✍️ Submit review | Authenticated customer |
+| 📋 List all reviews | Staff |
+| ✅ Moderate review | Staff |
+| 🗑️ Delete review | Manager, Super Admin |

@@ -23,7 +23,7 @@ export default function MenuScreen() {
   const loadCategories = useCallback(async () => {
     try {
       const res = await menuApi.getCategories();
-      setCategories((res.data || []).filter((c) => c.isActive && !c.parentId));
+      setCategories((res.data || []).filter((c: Category) => c.isActive && !c.parentId));
     } catch {}
   }, []);
 
@@ -34,7 +34,7 @@ export default function MenuScreen() {
         search: debouncedSearch || undefined,
         limit: 50,
       });
-      setItems((res.data || []).filter((i) => i.isActive && (!i.trackStock || i.stockQty > 0)));
+      setItems((res.data || []).filter((i: MenuItem) => i.isActive && (!i.trackStock || i.stockQty > 0)));
     } catch {}
     setLoading(false);
     setRefreshing(false);

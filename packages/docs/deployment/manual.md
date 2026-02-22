@@ -1,8 +1,8 @@
-# Manual Deployment
+# 🖥️ Manual Deployment
 
 For deployments without Docker.
 
-## Build All Packages
+## 📦 Build All Packages
 
 ```bash
 npm ci
@@ -12,9 +12,9 @@ npm run build
 
 This builds shared, server, admin, and storefront packages.
 
-## Run the API Server
+## 🚀 Run the API Server
 
-### PM2 (recommended)
+### 🟢 PM2 (recommended)
 
 ```bash
 npm install -g pm2
@@ -26,7 +26,7 @@ pm2 start packages/server/dist/index.js --name kitchenasty-api \
   --env JWT_SECRET=...
 ```
 
-### systemd
+### ⚙️ systemd
 
 Create `/etc/systemd/system/kitchenasty-api.service`:
 
@@ -52,7 +52,7 @@ sudo systemctl enable kitchenasty-api
 sudo systemctl start kitchenasty-api
 ```
 
-## Serve Frontend with nginx
+## 🌐 Serve Frontend with nginx
 
 The admin and storefront build outputs are static files in `packages/admin/dist/` and `packages/storefront/dist/`.
 
@@ -116,7 +116,7 @@ server {
 }
 ```
 
-## Database Migrations
+## 🗄️ Database Migrations
 
 Run migrations before starting the server:
 

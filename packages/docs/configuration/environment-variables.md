@@ -1,8 +1,8 @@
-# Environment Variables
+# 🔐 Environment Variables
 
 All server configuration is managed through environment variables in `packages/server/.env`.
 
-## Core
+## ⚙️ Core
 
 | Variable | Description | Default | Required |
 |----------|------------|---------|----------|
@@ -11,14 +11,14 @@ All server configuration is managed through environment variables in `packages/s
 | `CORS_ORIGINS` | Comma-separated allowed origins | `http://localhost:5173,http://localhost:5174` | Yes |
 | `DATABASE_URL` | PostgreSQL connection string | — | Yes |
 
-## Authentication
+## 🔑 Authentication
 
 | Variable | Description | Default | Required |
 |----------|------------|---------|----------|
 | `JWT_SECRET` | Secret key for signing JWT tokens | — | Yes |
 | `JWT_EXPIRES_IN` | Token expiration duration | `7d` | No |
 
-## Payments
+## 💳 Payments
 
 | Variable | Description | Default | Required |
 |----------|------------|---------|----------|
@@ -27,7 +27,7 @@ All server configuration is managed through environment variables in `packages/s
 | `PAYPAL_CLIENT_ID` | PayPal REST API client ID | — | No |
 | `PAYPAL_CLIENT_SECRET` | PayPal REST API secret | — | No |
 
-## Social Login
+## 🔗 Social Login
 
 | Variable | Description | Default | Required |
 |----------|------------|---------|----------|
@@ -37,7 +37,7 @@ All server configuration is managed through environment variables in `packages/s
 | `FACEBOOK_APP_ID` | Facebook app ID | — | No |
 | `FACEBOOK_APP_SECRET` | Facebook app secret | — | No |
 
-## Email
+## 📧 Email
 
 | Variable | Description | Default | Required |
 |----------|------------|---------|----------|
@@ -47,7 +47,7 @@ All server configuration is managed through environment variables in `packages/s
 | `SMTP_PASS` | SMTP password | — | No |
 | `EMAIL_FROM` | Default "from" address | — | No |
 
-## Example `.env` File
+## 📄 Example `.env` File
 
 ```dotenv
 PORT=3000

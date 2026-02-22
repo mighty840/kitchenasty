@@ -1,8 +1,8 @@
-# Settings API
+# ⚙️ Settings API
 
 All settings endpoints require authentication. Endpoints are grouped by settings category with role-based access control.
 
-## Branding (existing)
+## 🎨 Branding (existing)
 
 ### `GET /api/settings`
 Returns site branding settings (public, no auth required).
@@ -11,14 +11,14 @@ Returns site branding settings (public, no auth required).
 Update branding settings. **Auth:** Staff+
 
 ### `POST /api/settings/logo`
-Upload site logo. **Auth:** Staff+
+🖼️ Upload site logo. **Auth:** Staff+
 
 ### `POST /api/settings/favicon`
-Upload site favicon. **Auth:** Staff+
+🌐 Upload site favicon. **Auth:** Staff+
 
 ---
 
-## General Settings
+## 🏢 General Settings
 
 ### `GET /api/settings/general`
 **Auth:** MANAGER, SUPER_ADMIN
@@ -49,7 +49,7 @@ Update general settings. All fields are optional.
 
 ---
 
-## Order Settings
+## 📦 Order Settings
 
 ### `GET /api/settings/order`
 **Auth:** MANAGER, SUPER_ADMIN
@@ -74,7 +74,7 @@ Update general settings. All fields are optional.
 
 ---
 
-## Reservation Settings
+## 📅 Reservation Settings
 
 ### `GET /api/settings/reservation`
 **Auth:** MANAGER, SUPER_ADMIN
@@ -96,7 +96,7 @@ Update general settings. All fields are optional.
 
 ---
 
-## Mail Settings
+## 📧 Mail Settings
 
 ### `GET /api/settings/mail`
 **Auth:** SUPER_ADMIN
@@ -111,7 +111,7 @@ If `smtpPass` contains `...`, the existing value is preserved.
 ### `POST /api/settings/mail/test`
 **Auth:** SUPER_ADMIN
 
-Send a test email to verify SMTP configuration.
+🧪 Send a test email to verify SMTP configuration.
 
 **Body:**
 ```json
@@ -130,7 +130,7 @@ Send a test email to verify SMTP configuration.
 
 ---
 
-## Payment Settings
+## 💳 Payment Settings
 
 ### `GET /api/settings/payment`
 **Auth:** SUPER_ADMIN
@@ -159,7 +159,7 @@ Masked secret values (containing `...`) are preserved on save.
 
 ---
 
-## Review Settings
+## ⭐ Review Settings
 
 ### `GET /api/settings/review`
 **Auth:** MANAGER, SUPER_ADMIN
@@ -179,7 +179,7 @@ Masked secret values (containing `...`) are preserved on save.
 
 ---
 
-## Advanced Settings
+## 🔧 Advanced Settings
 
 ### `GET /api/settings/advanced`
 **Auth:** SUPER_ADMIN

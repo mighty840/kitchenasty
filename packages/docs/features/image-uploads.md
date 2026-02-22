@@ -1,8 +1,8 @@
-# Image Uploads
+# 🖼️ Image Uploads
 
 KitchenAsty supports image uploads for menu items via a multipart form data API.
 
-## Upload an Image
+## ⬆️ Upload an Image
 
 ```
 POST /api/menu/items/:id/image
@@ -24,7 +24,7 @@ Form field: image
 }
 ```
 
-## Delete an Image
+## 🗑️ Delete an Image
 
 ```
 DELETE /api/menu/items/:id/image
@@ -33,7 +33,7 @@ Authorization: Bearer <staff-token>
 
 Removes the image file from disk and clears the `image` field on the menu item.
 
-## Serving Images
+## 🌐 Serving Images
 
 Uploaded images are served statically at `/uploads/`:
 
@@ -43,7 +43,7 @@ GET /uploads/a1b2c3d4-e5f6-7890-abcd-ef1234567890.jpg
 
 No authentication is required to view uploaded images.
 
-## Accepted Formats
+## 🎨 Accepted Formats
 
 | Format | MIME Type |
 |--------|-----------|
@@ -52,21 +52,21 @@ No authentication is required to view uploaded images.
 | WebP | `image/webp` |
 | GIF | `image/gif` |
 
-## Limits
+## 📏 Limits
 
 | Constraint | Value |
 |-----------|-------|
-| Max file size | 5 MB |
-| Naming | UUID-based (no filename collisions) |
+| 📦 Max file size | 5 MB |
+| 🔤 Naming | UUID-based (no filename collisions) |
 
-## Permissions
+## 🔐 Permissions
 
 | Action | Who Can Do It |
 |--------|--------------|
-| Upload image | Manager, Super Admin |
-| Delete image | Manager, Super Admin |
-| View image | Anyone |
+| ⬆️ Upload image | Manager, Super Admin |
+| 🗑️ Delete image | Manager, Super Admin |
+| 👁️ View image | Anyone |
 
-## Configuration
+## ⚙️ Configuration
 
 See [File Uploads](/configuration/file-uploads) for storage configuration and Docker volume setup.

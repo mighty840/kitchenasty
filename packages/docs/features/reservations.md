@@ -1,8 +1,10 @@
-# Reservations
+# 🪑 Reservations
 
 KitchenAsty includes a table reservation system with availability checking and staff management.
 
-## Tables
+![Admin Reservations](/screenshots/admin-reservations.png)
+
+## 🪑 Tables
 
 Each location has tables with a name and capacity:
 
@@ -15,22 +17,24 @@ Each location has tables with a name and capacity:
 
 Table names are unique within a location.
 
-## Booking Flow
+## 📋 Booking Flow
 
-1. **Check availability** — `GET /api/reservations/availability?locationId=...&date=...&time=...&partySize=...`
-2. **Create reservation** — `POST /api/reservations` with location, date, time, and party size
-3. **Staff confirms** — Update status to `CONFIRMED` via admin
-4. **Day of visit** — Staff marks as `SEATED`, then `COMPLETED`
+1. 🔍 **Check availability** — `GET /api/reservations/availability?locationId=...&date=...&time=...&partySize=...`
+2. ✏️ **Create reservation** — `POST /api/reservations` with location, date, time, and party size
+3. ✅ **Staff confirms** — Update status to `CONFIRMED` via admin
+4. 🍽️ **Day of visit** — Staff marks as `SEATED`, then `COMPLETED`
 
-## Availability Check
+## 🔍 Availability Check
 
 The availability endpoint returns whether tables are available for the requested date, time, and party size. It checks:
 
-- Tables with sufficient capacity
-- No conflicting reservations at the same time
-- Table is active
+- 🪑 Tables with sufficient capacity
+- 🚫 No conflicting reservations at the same time
+- ✅ Table is active
 
-## Reservation Status Lifecycle
+![Storefront Reservations](/screenshots/storefront-reservations.png)
+
+## 🔄 Reservation Status Lifecycle
 
 ```
 PENDING → CONFIRMED → SEATED → COMPLETED
@@ -39,13 +43,13 @@ PENDING → CONFIRMED → SEATED → COMPLETED
 
 | Status | Description |
 |--------|------------|
-| `PENDING` | Customer submitted, awaiting staff confirmation |
-| `CONFIRMED` | Staff confirmed the reservation |
-| `SEATED` | Customer has arrived and been seated |
-| `COMPLETED` | Meal finished, table cleared |
-| `CANCELLED` | Reservation cancelled |
+| `PENDING` | ⏳ Customer submitted, awaiting staff confirmation |
+| `CONFIRMED` | ✅ Staff confirmed the reservation |
+| `SEATED` | 🪑 Customer has arrived and been seated |
+| `COMPLETED` | ✔️ Meal finished, table cleared |
+| `CANCELLED` | ❌ Reservation cancelled |
 
-## Reservation Fields
+## 📝 Reservation Fields
 
 | Field | Description |
 |-------|------------|
@@ -57,16 +61,16 @@ PENDING → CONFIRMED → SEATED → COMPLETED
 | `partySize` | Number of guests |
 | `comment` | Special requests |
 
-## Staff Management
+## 👥 Staff Management
 
 Staff can:
 
-- View all reservations for their location
-- Confirm or cancel pending reservations
-- Assign tables
-- Update status as the reservation progresses
-- Delete reservations
+- 📋 View all reservations for their location
+- ✅ Confirm or cancel pending reservations
+- 🪑 Assign tables
+- 🔄 Update status as the reservation progresses
+- 🗑️ Delete reservations
 
-## API
+## 📡 API
 
 See [Reservations API](/api/reservations) for the complete endpoint reference.

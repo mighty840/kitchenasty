@@ -1,14 +1,14 @@
-# API Overview
+# 🔌 API Overview
 
 KitchenAsty exposes a RESTful JSON API at `/api/`.
 
-## Base URL
+## 🌐 Base URL
 
 ```
 http://localhost:3000/api
 ```
 
-## Authentication
+## 🔐 Authentication
 
 Protected endpoints require a JWT token in the `Authorization` header:
 
@@ -18,11 +18,11 @@ Authorization: Bearer <token>
 
 Obtain a token via the [Authentication](/api/authentication) endpoints.
 
-## Response Format
+## 📦 Response Format
 
 All responses follow a consistent shape:
 
-### Success
+### ✅ Success
 
 ```json
 {
@@ -31,7 +31,7 @@ All responses follow a consistent shape:
 }
 ```
 
-### Success with Pagination
+### 📄 Success with Pagination
 
 ```json
 {
@@ -46,7 +46,7 @@ All responses follow a consistent shape:
 }
 ```
 
-### Error
+### ❌ Error
 
 ```json
 {
@@ -55,7 +55,7 @@ All responses follow a consistent shape:
 }
 ```
 
-## Pagination
+## 📑 Pagination
 
 List endpoints support pagination via query parameters:
 
@@ -64,20 +64,20 @@ List endpoints support pagination via query parameters:
 | `page` | Page number | `1` |
 | `limit` | Items per page | `20` |
 
-## Common HTTP Status Codes
+## 🔢 Common HTTP Status Codes
 
 | Code | Meaning |
 |------|---------|
-| `200` | Success |
-| `201` | Created |
-| `400` | Bad request (validation error) |
-| `401` | Unauthorized (missing or invalid token) |
-| `403` | Forbidden (insufficient permissions) |
-| `404` | Not found |
-| `429` | Too many requests (rate limited) |
-| `500` | Internal server error |
+| `200` | ✅ Success |
+| `201` | ✅ Created |
+| `400` | ⚠️ Bad request (validation error) |
+| `401` | 🔒 Unauthorized (missing or invalid token) |
+| `403` | 🚫 Forbidden (insufficient permissions) |
+| `404` | 🔍 Not found |
+| `429` | ⏱️ Too many requests (rate limited) |
+| `500` | 💥 Internal server error |
 
-## Rate Limiting
+## ⏱️ Rate Limiting
 
 All `/api/` endpoints are rate-limited:
 
@@ -85,14 +85,14 @@ All `/api/` endpoints are rate-limited:
 - Returns `429` with a JSON error when exceeded
 - Standard `RateLimit-*` headers are included in responses
 
-## OpenAPI / Swagger
+## 📚 OpenAPI / Swagger
 
 Interactive API documentation is available at:
 
-- **Swagger UI**: http://localhost:3000/api/docs
-- **OpenAPI JSON**: http://localhost:3000/api/openapi.json
+- 🖥️ **Swagger UI**: http://localhost:3000/api/docs
+- 📋 **OpenAPI JSON**: http://localhost:3000/api/openapi.json
 
-## Health Check
+## 💚 Health Check
 
 ```
 GET /api/health

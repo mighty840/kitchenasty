@@ -13,7 +13,7 @@ test.describe('Storefront Menu Page', () => {
 
   test('displays All category button', async ({ page }) => {
     await page.goto('/menu');
-    await expect(page.getByRole('button', { name: /All/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'All', exact: true })).toBeVisible();
   });
 
   test('displays category sidebar on desktop', async ({ page }) => {
@@ -63,7 +63,7 @@ test.describe('Storefront Menu Page', () => {
     await page.goto('/menu');
     const toggleBtn = page.getByRole('button', { name: 'Categories' });
     await toggleBtn.click();
-    await expect(page.getByRole('button', { name: /All/ })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'All', exact: true })).toBeVisible();
   });
 
   test('displays description text', async ({ page }) => {

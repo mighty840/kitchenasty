@@ -1,8 +1,8 @@
-# CI / CD
+# 🔄 CI / CD
 
 KitchenAsty uses **GitHub Actions** for continuous integration. The pipeline is defined in `.github/workflows/ci.yml`.
 
-## Pipeline Overview
+## 🗺️ Pipeline Overview
 
 ```
 ┌──────┐   ┌────────────┐   ┌──────────────────┐   ┌─────────┐
@@ -16,24 +16,24 @@ KitchenAsty uses **GitHub Actions** for continuous integration. The pipeline is 
               └───────┘    └──────────┘
 ```
 
-## Jobs
+## 🏃 Jobs
 
-### Lint
+### 🧹 Lint
 
 - Installs dependencies
 - Generates Prisma client
 - Runs TypeScript type checking on all packages (`shared`, `server`, `admin`, `storefront`)
 
-### Unit Tests
+### 🧪 Unit Tests
 
 - Runs shared package tests with Vitest
 - Runs server unit tests (`src/__tests__/unit`)
 
-### Integration Tests
+### 🔗 Integration Tests
 
 - Runs server integration tests (`src/__tests__/integration`)
 
-### E2E Tests
+### 🎭 E2E Tests
 
 - Starts a PostgreSQL service container
 - Pushes schema and seeds the database
@@ -41,18 +41,18 @@ KitchenAsty uses **GitHub Actions** for continuous integration. The pipeline is 
 - Runs Playwright E2E tests
 - Uploads test results as an artifact
 
-### Security Audit
+### 🔐 Security Audit
 
 - Runs `npm audit` at high severity level
 - Non-blocking (uses `|| true`)
 
-### Build
+### 🏗️ Build
 
 - Depends on: Lint, Unit Tests, Integration Tests
 - Builds all packages in order: shared → server → admin → storefront
 - Uploads admin and storefront builds as artifacts
 
-## Adding Auto-Deploy
+## 🚀 Adding Auto-Deploy
 
 To extend the pipeline for automatic deployment, add a deploy job after build:
 
@@ -77,7 +77,7 @@ deploy:
     # - Deploy to cloud platform
 ```
 
-## Environment Variables for CI
+## 🔐 Environment Variables for CI
 
 The E2E job uses these environment variables:
 

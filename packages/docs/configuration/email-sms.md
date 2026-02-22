@@ -1,8 +1,8 @@
-# Email & SMS
+# 📧 Email & SMS
 
 KitchenAsty can send transactional emails and SMS messages through the [Automation](/features/automation) system.
 
-## SMTP Configuration
+## 📬 SMTP Configuration
 
 ```dotenv
 SMTP_HOST=smtp.example.com
@@ -12,7 +12,7 @@ SMTP_PASS=your-password
 EMAIL_FROM=noreply@kitchenasty.com
 ```
 
-## Development Email
+## 🧪 Development Email
 
 For local development, use [Mailhog](https://github.com/mailhog/MailHog) to capture emails without sending them:
 
@@ -30,7 +30,7 @@ SMTP_PORT=1025
 
 View captured emails at http://localhost:8025.
 
-## Email Templates
+## 📝 Email Templates
 
 Emails are sent through automation rules. The automation action `type: "email"` supports template variables that are replaced at send time:
 
@@ -45,7 +45,7 @@ Emails are sent through automation rules. The automation action `type: "email"` 
 
 See [Automation](/features/automation) for details on creating email rules.
 
-## SMS
+## 📱 SMS
 
 SMS can be sent via automation actions with `type: "sms"`. Configure your SMS provider credentials:
 

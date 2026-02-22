@@ -1,10 +1,10 @@
-# Database Schema
+# 📊 Database Schema
 
 The database schema is defined in `prisma/schema.prisma` using Prisma ORM. It targets PostgreSQL 16.
 
-## Models by Domain
+## 📋 Models by Domain
 
-### Users & Authentication
+### 👤 Users & Authentication
 
 | Model | Table | Description |
 |-------|-------|------------|
@@ -13,7 +13,7 @@ The database schema is defined in `prisma/schema.prisma` using Prisma ORM. It ta
 | `CustomerGroup` | `customer_groups` | Customer segmentation |
 | `Address` | `addresses` | Customer delivery addresses |
 
-### Locations
+### 📍 Locations
 
 | Model | Table | Description |
 |-------|-------|------------|
@@ -21,7 +21,7 @@ The database schema is defined in `prisma/schema.prisma` using Prisma ORM. It ta
 | `OperatingHour` | `operating_hours` | Per-day open/close times |
 | `DeliveryZone` | `delivery_zones` | Delivery areas with fees |
 
-### Menu
+### 🍽️ Menu
 
 | Model | Table | Description |
 |-------|-------|------------|
@@ -34,7 +34,7 @@ The database schema is defined in `prisma/schema.prisma` using Prisma ORM. It ta
 | `Allergen` | `allergens` | Allergen types |
 | `MenuItemAllergen` | `menu_item_allergens` | Item ↔ allergen junction |
 
-### Orders & Payments
+### 🛒 Orders & Payments
 
 | Model | Table | Description |
 |-------|-------|------------|
@@ -43,14 +43,14 @@ The database schema is defined in `prisma/schema.prisma` using Prisma ORM. It ta
 | `OrderItemOption` | `order_item_options` | Selected options per line item |
 | `Payment` | `payments` | Payment records (Stripe, PayPal, cash) |
 
-### Reservations
+### 🪑 Reservations
 
 | Model | Table | Description |
 |-------|-------|------------|
 | `Table` | `tables` | Restaurant tables |
 | `Reservation` | `reservations` | Table reservations |
 
-### Marketing & Engagement
+### 📣 Marketing & Engagement
 
 | Model | Table | Description |
 |-------|-------|------------|
@@ -59,7 +59,7 @@ The database schema is defined in `prisma/schema.prisma` using Prisma ORM. It ta
 | `LoyaltyTransaction` | `loyalty_transactions` | Loyalty point history |
 | `AutomationRule` | `automation_rules` | Event-driven automation |
 
-## Enums
+## 🏷️ Enums
 
 | Enum | Values |
 |------|--------|
@@ -73,17 +73,17 @@ The database schema is defined in `prisma/schema.prisma` using Prisma ORM. It ta
 | `MenuOptionDisplayType` | `SELECT`, `RADIO`, `CHECKBOX`, `QUANTITY` |
 | `LoyaltyTransactionType` | `EARN`, `REDEEM`, `ADJUST` |
 
-## Key Relationships
+## 🔗 Key Relationships
 
-- `User` belongs to a `Location` (optional staff assignment)
-- `Customer` has many `Address`, `Order`, `Reservation`, `Review`, `LoyaltyTransaction`
-- `Location` has many `Category`, `MenuItem`, `Table`, `DeliveryZone`, `OperatingHour`, `Order`, `Reservation`, `Review`
-- `Category` has self-referential parent/children for nesting
-- `MenuItem` belongs to `Category`, has many `MenuOption`, `MenuItemMealtime`, `MenuItemAllergen`
-- `Order` has many `OrderItem`, `Payment`, `Review`, `LoyaltyTransaction`
-- `OrderItem` has many `OrderItemOption` (snapshot of selected options)
+- 👤 `User` belongs to a `Location` (optional staff assignment)
+- 🛍️ `Customer` has many `Address`, `Order`, `Reservation`, `Review`, `LoyaltyTransaction`
+- 📍 `Location` has many `Category`, `MenuItem`, `Table`, `DeliveryZone`, `OperatingHour`, `Order`, `Reservation`, `Review`
+- 📂 `Category` has self-referential parent/children for nesting
+- 🍔 `MenuItem` belongs to `Category`, has many `MenuOption`, `MenuItemMealtime`, `MenuItemAllergen`
+- 📦 `Order` has many `OrderItem`, `Payment`, `Review`, `LoyaltyTransaction`
+- 📋 `OrderItem` has many `OrderItemOption` (snapshot of selected options)
 
-## Cascade Behaviors
+## 🗑️ Cascade Behaviors
 
 The following relations use `onDelete: Cascade`:
 

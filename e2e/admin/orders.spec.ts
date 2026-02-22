@@ -3,7 +3,7 @@ import { test, expect } from './fixtures.js';
 test.describe('Admin Order List', () => {
   test('navigates to orders page via sidebar', async ({ page }) => {
     await page.goto('/');
-    await page.getByRole('link', { name: 'Orders' }).click();
+    await page.locator('nav').getByRole('link', { name: 'Orders' }).click();
     await expect(page).toHaveURL('/orders');
     await expect(page.getByRole('heading', { name: 'Orders' })).toBeVisible();
   });

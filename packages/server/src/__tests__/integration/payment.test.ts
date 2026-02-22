@@ -21,18 +21,20 @@ vi.mock('../../lib/db.js', () => {
 });
 
 vi.mock('../../lib/stripe.js', () => {
-  return {
-    default: {
-      paymentIntents: {
-        create: vi.fn().mockResolvedValue({
-          id: 'pi_test_123',
-          client_secret: 'pi_test_123_secret_abc',
-        }),
-      },
-      webhooks: {
-        constructEvent: vi.fn(),
-      },
+  const mockStripe = {
+    paymentIntents: {
+      create: vi.fn().mockResolvedValue({
+        id: 'pi_test_123',
+        client_secret: 'pi_test_123_secret_abc',
+      }),
     },
+    webhooks: {
+      constructEvent: vi.fn(),
+    },
+  };
+  return {
+    default: mockStripe,
+    getStripe: vi.fn().mockResolvedValue(mockStripe),
   };
 });
 

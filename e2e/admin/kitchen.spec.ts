@@ -8,10 +8,10 @@ test.describe('Kitchen Display', () => {
 
   test('displays four status columns', async ({ page }) => {
     await page.goto('/kitchen');
-    await expect(page.getByText('New')).toBeVisible();
-    await expect(page.getByText('Confirmed')).toBeVisible();
-    await expect(page.getByText('Preparing')).toBeVisible();
-    await expect(page.getByText('Ready')).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'New' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Confirmed' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Preparing' })).toBeVisible();
+    await expect(page.getByRole('heading', { name: 'Ready' })).toBeVisible();
   });
 
   test('has refresh button', async ({ page }) => {

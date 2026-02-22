@@ -40,13 +40,13 @@ export default defineConfig({
       command: 'npm run dev:admin',
       url: 'http://localhost:5173',
       reuseExistingServer: !process.env.CI,
-      timeout: 15000,
+      timeout: 60000,
     },
     {
       command: 'npm run dev:storefront',
       url: 'http://localhost:5174',
       reuseExistingServer: !process.env.CI,
-      timeout: 15000,
+      timeout: 60000,
     },
   ],
 });

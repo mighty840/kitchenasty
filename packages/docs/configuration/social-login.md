@@ -1,10 +1,10 @@
-# Social Login
+# 🔗 Social Login
 
 KitchenAsty supports customer login via **Google** and **Facebook** using Passport.js OAuth strategies.
 
-## Google OAuth
+## 🟢 Google OAuth
 
-### 1. Create credentials
+### 1. 🔧 Create credentials
 
 1. Go to [Google Cloud Console](https://console.cloud.google.com)
 2. Create a project or select an existing one
@@ -12,7 +12,7 @@ KitchenAsty supports customer login via **Google** and **Facebook** using Passpo
 4. Create an **OAuth 2.0 Client ID** (Web application)
 5. Add authorized redirect URI: `http://localhost:3000/api/auth/google/callback`
 
-### 2. Configure environment
+### 2. ⚙️ Configure environment
 
 ```dotenv
 BASE_URL=http://localhost:3000
@@ -20,7 +20,7 @@ GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=your-client-secret
 ```
 
-### 3. Usage
+### 3. 🚀 Usage
 
 Direct customers to:
 
@@ -30,9 +30,9 @@ GET /api/auth/google
 
 After authenticating with Google, the user is redirected to the callback URL and receives a JWT token.
 
-## Facebook Login
+## 🔵 Facebook Login
 
-### 1. Create an app
+### 1. 🔧 Create an app
 
 1. Go to [Facebook Developers](https://developers.facebook.com)
 2. Create a new app and select **Consumer** type
@@ -40,7 +40,7 @@ After authenticating with Google, the user is redirected to the callback URL and
 4. In Settings → Basic, note your App ID and App Secret
 5. Add valid OAuth redirect URI: `http://localhost:3000/api/auth/facebook/callback`
 
-### 2. Configure environment
+### 2. ⚙️ Configure environment
 
 ```dotenv
 BASE_URL=http://localhost:3000
@@ -48,7 +48,7 @@ FACEBOOK_APP_ID=your-app-id
 FACEBOOK_APP_SECRET=your-app-secret
 ```
 
-### 3. Usage
+### 3. 🚀 Usage
 
 Direct customers to:
 
@@ -56,7 +56,7 @@ Direct customers to:
 GET /api/auth/facebook
 ```
 
-## How It Works
+## 🔄 How It Works
 
 1. Customer clicks "Login with Google/Facebook"
 2. Browser redirects to the OAuth provider

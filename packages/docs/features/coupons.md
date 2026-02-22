@@ -1,16 +1,18 @@
-# Coupons
+# 🏷️ Coupons
 
 Staff can create discount coupons that customers apply at checkout.
 
-## Coupon Types
+![Admin Coupons](/screenshots/admin-coupons.png)
+
+## 🎫 Coupon Types
 
 | Type | Behavior |
 |------|---------|
-| `PERCENTAGE` | Discount by percentage (e.g., 10% off) |
-| `FIXED` | Discount by a fixed amount (e.g., $5 off) |
-| `FREE_DELIVERY` | Waive the delivery fee |
+| `PERCENTAGE` | 📊 Discount by percentage (e.g., 10% off) |
+| `FIXED` | 💵 Discount by a fixed amount (e.g., $5 off) |
+| `FREE_DELIVERY` | 🚚 Waive the delivery fee |
 
-## Coupon Fields
+## 📝 Coupon Fields
 
 | Field | Description |
 |-------|------------|
@@ -26,19 +28,19 @@ Staff can create discount coupons that customers apply at checkout.
 | `expiresAt` | Expiration date (optional) |
 | `isActive` | Enable/disable the coupon |
 
-## Validation Rules
+## ✅ Validation Rules
 
 When a customer applies a coupon, the system checks:
 
-1. **Code exists** and is active
-2. **Date range** — current time is between `startsAt` and `expiresAt`
-3. **Usage limit** — `usageCount` < `usageLimit`
-4. **Per-customer limit** — customer hasn't exceeded `perCustomer` uses
-5. **Minimum order** — cart subtotal ≥ `minOrder`
+1. 🔍 **Code exists** and is active
+2. 📅 **Date range** — current time is between `startsAt` and `expiresAt`
+3. 🔢 **Usage limit** — `usageCount` < `usageLimit`
+4. 👤 **Per-customer limit** — customer hasn't exceeded `perCustomer` uses
+5. 💰 **Minimum order** — cart subtotal ≥ `minOrder`
 
 If validation fails, the API returns a descriptive error message.
 
-## Applying at Checkout
+## 🛒 Applying at Checkout
 
 ```
 POST /api/coupons/validate
@@ -50,15 +52,15 @@ POST /api/coupons/validate
 
 Returns the discount amount if valid. The coupon is linked to the order when it's created.
 
-## Permissions
+## 🔐 Permissions
 
 | Action | Who Can Do It |
 |--------|--------------|
-| Validate coupon | Anyone |
-| List coupons | Staff |
-| Create/update coupons | Staff |
-| Delete coupons | Manager, Super Admin |
+| ✅ Validate coupon | Anyone |
+| 📋 List coupons | Staff |
+| ✏️ Create/update coupons | Staff |
+| 🗑️ Delete coupons | Manager, Super Admin |
 
-## API
+## 📡 API
 
 See [Coupons API](/api/coupons) for the complete endpoint reference.

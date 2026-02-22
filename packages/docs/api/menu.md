@@ -1,8 +1,8 @@
-# Menu API
+# 🍔 Menu API
 
-## Categories
+## 📂 Categories
 
-### List Categories
+### 📋 List Categories
 
 ```
 GET /api/menu/categories
@@ -10,7 +10,7 @@ GET /api/menu/categories
 
 Public. Returns all categories.
 
-### Get Category
+### 🔍 Get Category
 
 ```
 GET /api/menu/categories/:id
@@ -18,7 +18,7 @@ GET /api/menu/categories/:id
 
 Public. Returns a category with its menu items.
 
-### Create Category
+### ➕ Create Category
 
 ```
 POST /api/menu/categories
@@ -37,23 +37,23 @@ Authorization: Bearer <manager-token>
 }
 ```
 
-### Update Category
+### ✏️ Update Category
 
 ```
 PATCH /api/menu/categories/:id
 Authorization: Bearer <manager-token>
 ```
 
-### Delete Category
+### 🗑️ Delete Category
 
 ```
 DELETE /api/menu/categories/:id
 Authorization: Bearer <super-admin-token>
 ```
 
-## Menu Items
+## 🍽️ Menu Items
 
-### List Items
+### 📋 List Items
 
 ```
 GET /api/menu/items?categoryId=...&search=...&page=1&limit=20
@@ -61,7 +61,7 @@ GET /api/menu/items?categoryId=...&search=...&page=1&limit=20
 
 Public. Supports filtering by category and text search.
 
-### Get Item
+### 🔍 Get Item
 
 ```
 GET /api/menu/items/:id
@@ -69,7 +69,7 @@ GET /api/menu/items/:id
 
 Public. Returns item with options, allergens, and mealtimes.
 
-### Create Item
+### ➕ Create Item
 
 ```
 POST /api/menu/items
@@ -100,21 +100,21 @@ Authorization: Bearer <manager-token>
 }
 ```
 
-### Update Item
+### ✏️ Update Item
 
 ```
 PATCH /api/menu/items/:id
 Authorization: Bearer <manager-token>
 ```
 
-### Delete Item
+### 🗑️ Delete Item
 
 ```
 DELETE /api/menu/items/:id
 Authorization: Bearer <super-admin-token>
 ```
 
-### Upload Item Image
+### 🖼️ Upload Item Image
 
 ```
 POST /api/menu/items/:id/image
@@ -124,16 +124,16 @@ Content-Type: multipart/form-data
 Form field: image
 ```
 
-### Delete Item Image
+### 🗑️ Delete Item Image
 
 ```
 DELETE /api/menu/items/:id/image
 Authorization: Bearer <manager-token>
 ```
 
-## Allergens
+## ⚠️ Allergens
 
-### List Allergens
+### 📋 List Allergens
 
 ```
 GET /api/menu/allergens
@@ -141,7 +141,7 @@ GET /api/menu/allergens
 
 Public.
 
-### Create Allergen
+### ➕ Create Allergen
 
 ```
 POST /api/menu/allergens
@@ -154,16 +154,16 @@ Authorization: Bearer <manager-token>
 }
 ```
 
-### Delete Allergen
+### 🗑️ Delete Allergen
 
 ```
 DELETE /api/menu/allergens/:id
 Authorization: Bearer <super-admin-token>
 ```
 
-## Mealtimes
+## 🕐 Mealtimes
 
-### List Mealtimes
+### 📋 List Mealtimes
 
 ```
 GET /api/menu/mealtimes
@@ -171,7 +171,7 @@ GET /api/menu/mealtimes
 
 Public.
 
-### Create Mealtime
+### ➕ Create Mealtime
 
 ```
 POST /api/menu/mealtimes
@@ -187,24 +187,24 @@ Authorization: Bearer <manager-token>
 }
 ```
 
-### Update Mealtime
+### ✏️ Update Mealtime
 
 ```
 PATCH /api/menu/mealtimes/:id
 Authorization: Bearer <manager-token>
 ```
 
-### Delete Mealtime
+### 🗑️ Delete Mealtime
 
 ```
 DELETE /api/menu/mealtimes/:id
 Authorization: Bearer <super-admin-token>
 ```
 
-## Permissions Summary
+## 🔒 Permissions Summary
 
 | Action | Required Role |
 |--------|--------------|
-| Read categories, items, allergens, mealtimes | Public |
-| Create / update | Manager, Super Admin |
-| Delete | Super Admin |
+| 🌐 Read categories, items, allergens, mealtimes | Public |
+| ✏️ Create / update | Manager, Super Admin |
+| 🗑️ Delete | Super Admin |

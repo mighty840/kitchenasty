@@ -1,6 +1,6 @@
-# Loyalty API
+# 🏆 Loyalty API
 
-## Get Balance
+## 💰 Get Balance
 
 ```
 GET /api/loyalty/balance
@@ -29,7 +29,7 @@ Returns the customer's current loyalty point balance.
 }
 ```
 
-## Redeem Points
+## 🎁 Redeem Points
 
 ```
 POST /api/loyalty/redeem
@@ -62,7 +62,7 @@ Authorization: Bearer <customer-token>
 }
 ```
 
-## Adjust Points (Admin)
+## ⚙️ Adjust Points (Admin)
 
 ```
 POST /api/loyalty/customers/:id/adjust
@@ -97,18 +97,18 @@ Use negative values to deduct points.
 }
 ```
 
-## Permissions Summary
+## 🔒 Permissions Summary
 
 | Action | Required Role |
 |--------|--------------|
-| Get balance | Authenticated customer |
-| Redeem points | Authenticated customer |
-| Adjust points | Manager, Super Admin |
+| 💰 Get balance | Authenticated customer |
+| 🎁 Redeem points | Authenticated customer |
+| ⚙️ Adjust points | Manager, Super Admin |
 
-## Error Cases
+## ⚠️ Error Cases
 
 | Scenario | Status | Error |
 |----------|--------|-------|
-| Insufficient points | `400` | Not enough loyalty points |
-| Customer not found | `404` | Customer not found |
-| Invalid points value | `400` | Points must be a positive number |
+| ❌ Insufficient points | `400` | Not enough loyalty points |
+| 🔍 Customer not found | `404` | Customer not found |
+| ⚠️ Invalid points value | `400` | Points must be a positive number |

@@ -1,8 +1,8 @@
-# Real-Time Events
+# ⚡ Real-Time Events
 
 KitchenAsty uses [Socket.IO](https://socket.io/) for real-time communication between the server and connected clients (admin dashboard, kitchen display).
 
-## Architecture
+## 🏗️ Architecture
 
 ```
 ┌──────────────┐     Socket.IO      ┌──────────────┐
@@ -15,28 +15,28 @@ KitchenAsty uses [Socket.IO](https://socket.io/) for real-time communication bet
                                     changes
 ```
 
-## Rooms
+## 🏠 Rooms
 
 | Room | Format | Purpose |
 |------|--------|---------|
 | Kitchen | `kitchen:{locationId}` | Kitchen display for a location |
 | Order | `order:{orderId}` | Updates for a specific order |
 
-## Client → Server Events
+## 📤 Client → Server Events
 
 | Event | Payload | Description |
 |-------|---------|------------|
 | `join:kitchen` | `{ locationId: string }` | Join the kitchen room for a location |
 | `join:order` | `{ orderId: string }` | Subscribe to updates for a specific order |
 
-## Server → Client Events
+## 📥 Server → Client Events
 
 | Event | Payload | Description |
 |-------|---------|------------|
 | `order:created` | Full order object | New order placed at this location |
 | `order:updated` | Full order object | Order status or details changed |
 
-## Server-Side Integration
+## 🖥️ Server-Side Integration
 
 Events are emitted from controllers when orders are created or updated:
 
@@ -49,7 +49,7 @@ io.to(`kitchen:${order.locationId}`).emit('order:updated', order);
 io.to(`order:${order.id}`).emit('order:updated', order);
 ```
 
-## React Client Integration
+## ⚛️ React Client Integration
 
 ```typescript
 import { io } from 'socket.io-client';
@@ -70,7 +70,7 @@ socket.on('order:updated', (order) => {
 });
 ```
 
-## Automation Events
+## 🤖 Automation Events
 
 Separately from Socket.IO, the server uses Node.js `EventEmitter` for the automation system. These are internal server events that trigger automation rules:
 

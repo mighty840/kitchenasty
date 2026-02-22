@@ -1,23 +1,27 @@
-# Introduction
+# 🚀 Introduction
 
 KitchenAsty is a self-hosted, open-source restaurant ordering platform built with a modern TypeScript stack. It gives restaurant owners full control over online ordering, kitchen operations, reservations, and customer engagement — without monthly SaaS fees.
 
-## Key Features
+![KitchenAsty Storefront](/screenshots/storefront-home.png)
 
-- **Online Ordering** — Delivery & pickup with guest checkout and scheduled orders
-- **Kitchen Display** — Real-time order board powered by Socket.IO
-- **Multi-Location** — Independent menus, hours, delivery zones, and staff per location
-- **Payments** — Stripe, PayPal, and cash with webhook-driven status updates
-- **Reservations** — Table booking with availability checks and party size validation
-- **Reviews & Ratings** — Customer reviews with staff moderation
-- **Loyalty Program** — Points-based earn/redeem system
-- **Coupons** — Percentage, fixed, and free-delivery discounts
-- **Automation** — Event-driven rules for email, webhooks, and SMS notifications
-- **Analytics** — Revenue, order, and customer stats with date-range charts
-- **Internationalization** — 6 languages out of the box (EN, ES, FR, DE, IT, PT)
-- **Admin Dashboard** — Full back-office for managing every aspect of the platform
+## ✨ Key Features
 
-## Architecture Overview
+- 🛒 **Online Ordering** — Delivery & pickup with guest checkout and scheduled orders
+- 🍳 **Kitchen Display** — Real-time order board powered by Socket.IO
+- 📍 **Multi-Location** — Independent menus, hours, delivery zones, and staff per location
+- 💳 **Payments** — Stripe, PayPal, and cash with webhook-driven status updates
+- 📅 **Reservations** — Table booking with availability checks and party size validation
+- ⭐ **Reviews & Ratings** — Customer reviews with staff moderation
+- 🎁 **Loyalty Program** — Points-based earn/redeem system
+- 🏷️ **Coupons** — Percentage, fixed, and free-delivery discounts
+- ⚡ **Automation** — Event-driven rules for email, webhooks, and SMS notifications
+- 📊 **Analytics** — Revenue, order, and customer stats with date-range charts
+- 🌍 **Internationalization** — 6 languages out of the box (EN, ES, FR, DE, IT, PT)
+- 🛠️ **Admin Dashboard** — Full back-office for managing every aspect of the platform
+
+![Admin Dashboard](/screenshots/admin-dashboard.png)
+
+## 🏗️ Architecture Overview
 
 KitchenAsty is a monorepo with four packages:
 
@@ -42,8 +46,8 @@ kitchenasty/
 | Containerization | Docker, Docker Compose |
 | CI/CD | GitHub Actions |
 
-## Next Steps
+## 👉 Next Steps
 
-- [Requirements](/guide/requirements) — What you need before installing
-- [Install with Docker](/guide/installation-docker) — Fastest way to get running
-- [Install Manually](/guide/installation-manual) — For development or custom setups
+- 📋 [Requirements](/guide/requirements) — What you need before installing
+- 🐳 [Install with Docker](/guide/installation-docker) — Fastest way to get running
+- 🔧 [Install Manually](/guide/installation-manual) — For development or custom setups

@@ -1,31 +1,33 @@
-# Kitchen Display
+# 🍳 Kitchen Display
 
 The Kitchen Display System (KDS) is a real-time order board powered by Socket.IO. It shows incoming orders to kitchen staff and allows status updates without refreshing the page.
 
-## How It Works
+![Admin Kitchen Display](/screenshots/admin-kitchen.png)
 
-1. A customer places an order via the storefront
-2. The server emits a Socket.IO event to the `kitchen` room
-3. The admin kitchen display board receives the event and adds the order
-4. Kitchen staff update the order status (e.g., Preparing → Ready)
-5. Status updates are broadcast in real-time to all connected clients
+## ⚙️ How It Works
 
-## Socket.IO Events
+1. 🛒 A customer places an order via the storefront
+2. 📡 The server emits a Socket.IO event to the `kitchen` room
+3. 📺 The admin kitchen display board receives the event and adds the order
+4. 👨‍🍳 Kitchen staff update the order status (e.g., Preparing → Ready)
+5. 🔄 Status updates are broadcast in real-time to all connected clients
 
-### Server → Client
+## 📡 Socket.IO Events
 
-| Event | Payload | Description |
-|-------|---------|------------|
-| `order:created` | Order object | New order placed |
-| `order:updated` | Order object | Order status changed |
-
-### Client → Server
+### ⬇️ Server → Client
 
 | Event | Payload | Description |
 |-------|---------|------------|
-| `join:kitchen` | `{ locationId }` | Join the kitchen room for a location |
+| `order:created` | Order object | 🆕 New order placed |
+| `order:updated` | Order object | 🔄 Order status changed |
 
-## Kitchen Room
+### ⬆️ Client → Server
+
+| Event | Payload | Description |
+|-------|---------|------------|
+| `join:kitchen` | `{ locationId }` | 🔗 Join the kitchen room for a location |
+
+## 🏠 Kitchen Room
 
 Each location has its own kitchen room. When a staff member opens the kitchen display, the client joins:
 
@@ -35,7 +37,7 @@ socket.emit('join:kitchen', { locationId: 'location-id' });
 
 Events are only broadcast to clients in the relevant location's room.
 
-## Status Updates from Kitchen
+## 🔄 Status Updates from Kitchen
 
 Staff click status buttons on the kitchen display to advance the order through its lifecycle:
 
@@ -45,7 +47,7 @@ PENDING → CONFIRMED → PREPARING → READY
 
 Each status change calls `PATCH /api/orders/:id/status` and triggers real-time events.
 
-## Integration
+## 🔌 Integration
 
 The kitchen display is part of the admin dashboard. It uses React with Socket.IO client to maintain a live connection to the server.
 

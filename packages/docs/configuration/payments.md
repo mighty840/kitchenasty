@@ -1,10 +1,10 @@
-# Payments
+# 💳 Payments
 
 KitchenAsty supports three payment methods: **Stripe**, **PayPal**, and **Cash**.
 
-## Stripe
+## 💰 Stripe
 
-### Setup
+### 🛠️ Setup
 
 1. Create a [Stripe account](https://dashboard.stripe.com)
 2. Get your API keys from the Stripe Dashboard
@@ -15,7 +15,7 @@ STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
 ```
 
-### Webhooks
+### 🔔 Webhooks
 
 Stripe notifies KitchenAsty of payment status changes via webhooks.
 
@@ -30,7 +30,7 @@ For local development, use the [Stripe CLI](https://stripe.com/docs/stripe-cli):
 stripe listen --forward-to localhost:3000/api/payments/webhook
 ```
 
-### Payment Flow
+### 🔄 Payment Flow
 
 1. Client calls `POST /api/payments/create-intent` with the order ID
 2. Server creates a Stripe PaymentIntent and returns the `clientSecret`
@@ -38,9 +38,9 @@ stripe listen --forward-to localhost:3000/api/payments/webhook
 4. Stripe sends a webhook to `/api/payments/webhook`
 5. Server updates the payment and order status
 
-## PayPal
+## 🅿️ PayPal
 
-### Setup
+### 🛠️ Setup
 
 1. Create a [PayPal developer account](https://developer.paypal.com)
 2. Create a REST API app in the developer dashboard
@@ -51,7 +51,7 @@ PAYPAL_CLIENT_ID=your-client-id
 PAYPAL_CLIENT_SECRET=your-client-secret
 ```
 
-### Payment Flow
+### 🔄 Payment Flow
 
 1. Client calls `POST /api/payments/paypal/create` with the order ID
 2. Server creates a PayPal order and returns the PayPal order ID
@@ -59,7 +59,7 @@ PAYPAL_CLIENT_SECRET=your-client-secret
 4. Client calls `POST /api/payments/paypal/capture` after approval
 5. Server captures the payment and updates order status
 
-## Cash
+## 💵 Cash
 
 Cash payments are recorded by staff:
 

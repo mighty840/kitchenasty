@@ -1,19 +1,19 @@
-# Backups
+# 💾 Backups
 
 Losing your database means losing all orders, customers, menu items, and settings. This page shows how to set up automatic backups so you never lose data.
 
-## What to Back Up
+## 📋 What to Back Up
 
 | Data | Location | Priority |
 |------|----------|----------|
-| PostgreSQL database | `pgdata` Docker volume | **Critical** |
-| Uploaded images | `uploads` Docker volume | Important |
-| Environment file | `/home/kitchenasty/kitchenasty/.env` | Important |
-| Docker Compose file | `docker-compose.prod.yml` | Nice to have (in git) |
+| 🗄️ PostgreSQL database | `pgdata` Docker volume | **Critical** |
+| 🖼️ Uploaded images | `uploads` Docker volume | Important |
+| 🔑 Environment file | `/home/kitchenasty/kitchenasty/.env` | Important |
+| 🐳 Docker Compose file | `docker-compose.prod.yml` | Nice to have (in git) |
 
-## Automatic Database Backups
+## 🔄 Automatic Database Backups
 
-### Create the Backup Script
+### 📝 Create the Backup Script
 
 ```bash
 sudo mkdir -p /opt/backups/kitchenasty
@@ -61,7 +61,7 @@ Make it executable:
 chmod +x /home/kitchenasty/backup.sh
 ```
 
-### Test the Script
+### 🧪 Test the Script
 
 ```bash
 /home/kitchenasty/backup.sh
@@ -73,7 +73,7 @@ Verify the backup was created:
 ls -lh /opt/backups/kitchenasty/
 ```
 
-### Schedule Automatic Backups
+### ⏰ Schedule Automatic Backups
 
 Run the backup daily at 3:00 AM using cron:
 
@@ -87,7 +87,7 @@ Add this line:
 0 3 * * * /home/kitchenasty/backup.sh >> /opt/backups/kitchenasty/backup.log 2>&1
 ```
 
-## Restoring from a Backup
+## 🔄 Restoring from a Backup
 
 If you ever need to restore:
 
@@ -106,18 +106,18 @@ docker compose -f docker-compose.prod.yml up -d
 
 Replace the filename with your actual backup file.
 
-## Off-Site Backups
+## ☁️ Off-Site Backups
 
 Local backups protect against accidental deletion, but not against server failure. Copy backups to an external location.
 
-### Option 1: Rsync to Another Server
+### 🔁 Option 1: Rsync to Another Server
 
 ```bash
 # Add to the backup script or as a separate cron job
 rsync -az /opt/backups/kitchenasty/ user@backup-server:/backups/kitchenasty/
 ```
 
-### Option 2: Upload to S3 or Backblaze B2
+### ☁️ Option 2: Upload to S3 or Backblaze B2
 
 Install the AWS CLI or B2 CLI:
 
@@ -139,7 +139,7 @@ b2 authorize-account YOUR_KEY_ID YOUR_APP_KEY
 b2 sync /opt/backups/kitchenasty/ b2://your-bucket/kitchenasty-backups/
 ```
 
-### Option 3: Email Notification on Failure
+### 📧 Option 3: Email Notification on Failure
 
 Add this to the end of your backup script to get notified on failures:
 
@@ -150,7 +150,7 @@ trap 'echo "Backup FAILED at $(date)" | mail -s "KitchenAsty Backup Failed" admi
 
 This requires a mail utility (`sudo apt install -y mailutils`) and working SMTP configuration.
 
-## Backup Verification
+## ✅ Backup Verification
 
 Periodically verify that your backups are restorable. You can test on a separate server or locally:
 
@@ -171,6 +171,6 @@ docker exec kitchenasty-db psql -U kitchenasty -d kitchenasty_test \
 docker exec kitchenasty-db dropdb -U kitchenasty kitchenasty_test
 ```
 
-## Next Step
+## ➡️ Next Step
 
 Continue to **[Maintenance](/self-hosting/maintenance)** for update procedures, monitoring, and troubleshooting.

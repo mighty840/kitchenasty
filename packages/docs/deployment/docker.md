@@ -1,6 +1,6 @@
-# Docker Deployment
+# 🐳 Docker Deployment
 
-## Production Docker Compose
+## 🏭 Production Docker Compose
 
 For production, create a `docker-compose.prod.yml` or modify the default:
 
@@ -65,18 +65,18 @@ volumes:
   uploads:
 ```
 
-## Environment Checklist
+## ✅ Environment Checklist
 
 Before deploying to production, ensure:
 
-- [ ] `JWT_SECRET` is a strong, unique random string (32+ chars)
-- [ ] `DB_PASSWORD` is a strong password
-- [ ] `CORS_ORIGINS` lists only your actual domains
-- [ ] `NODE_ENV` is set to `production`
-- [ ] Stripe keys are live keys (not test keys)
-- [ ] Webhook secret matches your Stripe dashboard
+- [ ] 🔑 `JWT_SECRET` is a strong, unique random string (32+ chars)
+- [ ] 🔐 `DB_PASSWORD` is a strong password
+- [ ] 🌐 `CORS_ORIGINS` lists only your actual domains
+- [ ] ⚙️ `NODE_ENV` is set to `production`
+- [ ] 💳 Stripe keys are live keys (not test keys)
+- [ ] 🔔 Webhook secret matches your Stripe dashboard
 
-## Volumes
+## 💾 Volumes
 
 | Volume | Purpose |
 |--------|---------|
@@ -87,13 +87,13 @@ Before deploying to production, ensure:
 Losing the `pgdata` volume means losing all data. Back up regularly.
 :::
 
-## Reverse Proxy & SSL
+## 🔒 Reverse Proxy & SSL
 
 In production, place an nginx reverse proxy or Cloudflare in front to handle:
 
-- TLS termination (HTTPS)
-- Domain routing (admin.yourdomain.com → admin container, etc.)
-- Static asset caching
+- 🔐 TLS termination (HTTPS)
+- 🌐 Domain routing (admin.yourdomain.com → admin container, etc.)
+- ⚡ Static asset caching
 
 Example nginx config:
 
@@ -113,7 +113,7 @@ server {
 }
 ```
 
-## Health Checks
+## 🏥 Health Checks
 
 The API server exposes a health endpoint:
 

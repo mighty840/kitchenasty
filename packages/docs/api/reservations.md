@@ -1,6 +1,6 @@
-# Reservations API
+# 📅 Reservations API
 
-## Check Availability
+## 🔍 Check Availability
 
 ```
 GET /api/reservations/availability?locationId=...&date=2025-06-15&time=19:00&partySize=4
@@ -22,7 +22,7 @@ Public. Checks if tables are available.
 }
 ```
 
-## Create Reservation
+## ➕ Create Reservation
 
 ```
 POST /api/reservations
@@ -57,7 +57,7 @@ Authorization: Bearer <customer-token>
 }
 ```
 
-## List Customer Reservations
+## 🛍️ List Customer Reservations
 
 ```
 GET /api/reservations/my-reservations
@@ -66,7 +66,7 @@ Authorization: Bearer <customer-token>
 
 Returns reservations for the authenticated customer.
 
-## List All Reservations (Staff)
+## 📋 List All Reservations (Staff)
 
 ```
 GET /api/reservations
@@ -75,14 +75,14 @@ Authorization: Bearer <staff-token>
 
 Returns all reservations with pagination. Staff only.
 
-## Get Reservation
+## 🔍 Get Reservation
 
 ```
 GET /api/reservations/:id
 Authorization: Bearer <token>
 ```
 
-## Update Reservation
+## ✏️ Update Reservation
 
 ```
 PATCH /api/reservations/:id
@@ -98,29 +98,29 @@ Authorization: Bearer <staff-token>
 }
 ```
 
-## Delete Reservation
+## 🗑️ Delete Reservation
 
 ```
 DELETE /api/reservations/:id
 Authorization: Bearer <staff-token>
 ```
 
-## Permissions Summary
+## 🔒 Permissions Summary
 
 | Action | Required Role |
 |--------|--------------|
-| Check availability | Public |
-| Create reservation | Authenticated customer |
-| View own reservations | Authenticated customer |
-| List all reservations | Staff |
-| Update reservation | Staff |
-| Delete reservation | Staff |
+| 🌐 Check availability | Public |
+| ➕ Create reservation | Authenticated customer |
+| 👤 View own reservations | Authenticated customer |
+| 📋 List all reservations | Staff |
+| ✏️ Update reservation | Staff |
+| 🗑️ Delete reservation | Staff |
 
-## Error Cases
+## ⚠️ Error Cases
 
 | Scenario | Status | Error |
 |----------|--------|-------|
-| No tables available | `400` | No availability for the requested time |
-| Party size too large | `400` | No table with sufficient capacity |
-| Location not found | `404` | Location not found |
-| Past date | `400` | Cannot reserve in the past |
+| 🪑 No tables available | `400` | No availability for the requested time |
+| 👥 Party size too large | `400` | No table with sufficient capacity |
+| 📍 Location not found | `404` | Location not found |
+| 📅 Past date | `400` | Cannot reserve in the past |

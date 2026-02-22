@@ -1,12 +1,12 @@
-# Development Setup
+# 🛠️ Development Setup
 
-## Prerequisites
+## 📋 Prerequisites
 
-- Node.js 22+
-- PostgreSQL 16+
-- Git
+- 🟢 Node.js 22+
+- 🐘 PostgreSQL 16+
+- 🔀 Git
 
-## Clone & Install
+## 📥 Clone & Install
 
 ```bash
 git clone https://github.com/kitchenasty/kitchenasty.git
@@ -14,7 +14,7 @@ cd kitchenasty
 npm ci
 ```
 
-## Database Setup
+## 🗄️ Database Setup
 
 ```bash
 # Create database
@@ -34,7 +34,7 @@ npx -w packages/server prisma migrate dev --schema ../../prisma/schema.prisma
 npx tsx prisma/seed.ts
 ```
 
-## Start Dev Servers
+## 🚀 Start Dev Servers
 
 ```bash
 # Build shared types first
@@ -46,9 +46,9 @@ npm run dev:admin       # Admin on :5173
 npm run dev:storefront  # Storefront on :5174
 ```
 
-## Useful Dev Tools
+## 🧰 Useful Dev Tools
 
-### Prisma Studio
+### 🔎 Prisma Studio
 
 ```bash
 npx -w packages/server prisma studio --schema ../../prisma/schema.prisma
@@ -56,11 +56,11 @@ npx -w packages/server prisma studio --schema ../../prisma/schema.prisma
 
 Opens a database browser at http://localhost:5555.
 
-### Swagger UI
+### 📚 Swagger UI
 
 API documentation is available at http://localhost:3000/api/docs when the server is running.
 
-### Mailhog (Email Testing)
+### 📬 Mailhog (Email Testing)
 
 ```bash
 docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
@@ -68,8 +68,8 @@ docker run -d -p 1025:1025 -p 8025:8025 mailhog/mailhog
 
 Configure `SMTP_HOST=localhost` and `SMTP_PORT=1025` to capture emails at http://localhost:8025.
 
-## Editor Setup
+## ✏️ Editor Setup
 
-- Use TypeScript strict mode (configured in `tsconfig.json`)
-- Install recommended VS Code extensions: ESLint, Prettier, Prisma
-- The project uses `.ts` and `.tsx` files exclusively
+- 📝 Use TypeScript strict mode (configured in `tsconfig.json`)
+- 🧩 Install recommended VS Code extensions: ESLint, Prettier, Prisma
+- 📄 The project uses `.ts` and `.tsx` files exclusively

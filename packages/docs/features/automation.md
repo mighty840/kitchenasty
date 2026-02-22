@@ -1,24 +1,26 @@
-# Automation
+# ⚡ Automation
 
 KitchenAsty's automation system lets you create event-driven rules that trigger actions like sending emails, calling webhooks, or sending SMS messages.
 
-## How It Works
+![Admin Automation](/screenshots/admin-automation.png)
 
-1. An **event** fires (e.g., a new order is created)
-2. The automation engine loads all active rules matching that event
-3. Each rule's **conditions** are evaluated against the event data
-4. If conditions match, the rule's **actions** are executed
+## ⚙️ How It Works
 
-## Events
+1. 🎯 An **event** fires (e.g., a new order is created)
+2. 🔍 The automation engine loads all active rules matching that event
+3. ✅ Each rule's **conditions** are evaluated against the event data
+4. 🚀 If conditions match, the rule's **actions** are executed
+
+## 📡 Events
 
 | Event | Trigger |
 |-------|---------|
-| `order.created` | New order placed |
-| `order.statusChanged` | Order status updated |
-| `reservation.created` | New reservation submitted |
-| `review.submitted` | New review submitted |
+| `order.created` | 🛒 New order placed |
+| `order.statusChanged` | 🔄 Order status updated |
+| `reservation.created` | 🪑 New reservation submitted |
+| `review.submitted` | ⭐ New review submitted |
 
-## Conditions
+## 🔍 Conditions
 
 Conditions are a JSON object that is matched against the event data. All specified conditions must match (AND logic).
 
@@ -39,7 +41,7 @@ Nested conditions are supported using dot notation:
 
 Set conditions to `null` to match all events of that type.
 
-## Actions
+## 🎬 Actions
 
 Actions are a JSON array of operations to perform:
 
@@ -53,32 +55,32 @@ Actions are a JSON array of operations to perform:
 ]
 ```
 
-### Action Types
+### 🔧 Action Types
 
 | Type | Description |
 |------|------------|
-| `email` | Send an email using SMTP |
-| `webhook` | POST event data to a URL |
-| `sms` | Send an SMS message |
+| `email` | 📧 Send an email using SMTP |
+| `webhook` | 🔗 POST event data to a URL |
+| `sms` | 💬 Send an SMS message |
 
-### Template Variables
+### 📝 Template Variables
 
 Actions support template variables that are replaced at execution time:
 
 | Variable | Description |
 |----------|------------|
-| <code v-pre>{{customer.name}}</code> | Customer name |
-| <code v-pre>{{customer.email}}</code> | Customer email |
-| <code v-pre>{{order.orderNumber}}</code> | Order number |
-| <code v-pre>{{order.total}}</code> | Order total |
-| <code v-pre>{{order.status}}</code> | Order status |
-| <code v-pre>{{location.name}}</code> | Location name |
-| <code v-pre>{{reservation.date}}</code> | Reservation date |
-| <code v-pre>{{reservation.time}}</code> | Reservation time |
+| <code v-pre>{{customer.name}}</code> | 👤 Customer name |
+| <code v-pre>{{customer.email}}</code> | 📧 Customer email |
+| <code v-pre>{{order.orderNumber}}</code> | 🔢 Order number |
+| <code v-pre>{{order.total}}</code> | 💰 Order total |
+| <code v-pre>{{order.status}}</code> | 🔄 Order status |
+| <code v-pre>{{location.name}}</code> | 📍 Location name |
+| <code v-pre>{{reservation.date}}</code> | 📅 Reservation date |
+| <code v-pre>{{reservation.time}}</code> | 🕐 Reservation time |
 
-## Examples
+## 💡 Examples
 
-### Send email on order confirmation
+### 📧 Send email on order confirmation
 
 ```json
 {
@@ -97,7 +99,7 @@ Actions support template variables that are replaced at execution time:
 }
 ```
 
-### Webhook on new order
+### 🔗 Webhook on new order
 
 ```json
 {
@@ -115,7 +117,7 @@ Actions support template variables that are replaced at execution time:
 }
 ```
 
-### SMS when order is ready
+### 💬 SMS when order is ready
 
 ```json
 {
@@ -133,14 +135,14 @@ Actions support template variables that are replaced at execution time:
 }
 ```
 
-## Permissions
+## 🔐 Permissions
 
 | Action | Who Can Do It |
 |--------|--------------|
-| List/view automation rules | Manager, Super Admin |
-| Create/update rules | Manager, Super Admin |
-| Delete rules | Super Admin |
+| 📋 List/view automation rules | Manager, Super Admin |
+| ✏️ Create/update rules | Manager, Super Admin |
+| 🗑️ Delete rules | Super Admin |
 
-## API
+## 📡 API
 
 See [Automation API](/api/automation) for the complete endpoint reference.

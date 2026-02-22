@@ -1,6 +1,6 @@
-# Coupons API
+# 🎟️ Coupons API
 
-## Validate Coupon
+## ✅ Validate Coupon
 
 ```
 POST /api/coupons/validate
@@ -45,7 +45,7 @@ Public. Validates a coupon code and returns the discount.
 }
 ```
 
-## List Coupons
+## 📋 List Coupons
 
 ```
 GET /api/coupons
@@ -54,14 +54,14 @@ Authorization: Bearer <staff-token>
 
 Staff only. Returns all coupons with pagination.
 
-## Get Coupon
+## 🔍 Get Coupon
 
 ```
 GET /api/coupons/:id
 Authorization: Bearer <staff-token>
 ```
 
-## Create Coupon
+## ➕ Create Coupon
 
 ```
 POST /api/coupons
@@ -85,14 +85,14 @@ Authorization: Bearer <staff-token>
 }
 ```
 
-## Update Coupon
+## ✏️ Update Coupon
 
 ```
 PATCH /api/coupons/:id
 Authorization: Bearer <staff-token>
 ```
 
-## Delete Coupon
+## 🗑️ Delete Coupon
 
 ```
 DELETE /api/coupons/:id
@@ -101,11 +101,11 @@ Authorization: Bearer <manager-token>
 
 Manager or Super Admin only.
 
-## Permissions Summary
+## 🔒 Permissions Summary
 
 | Action | Required Role |
 |--------|--------------|
-| Validate coupon | Public |
-| List / get coupons | Staff |
-| Create / update coupons | Staff |
-| Delete coupons | Manager, Super Admin |
+| ✅ Validate coupon | Public |
+| 📋 List / get coupons | Staff |
+| ➕ Create / update coupons | Staff |
+| 🗑️ Delete coupons | Manager, Super Admin |

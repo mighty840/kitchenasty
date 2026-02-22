@@ -1,19 +1,19 @@
-# Server Setup
+# 🖥️ Server Setup
 
 This page walks you through setting up a fresh Linux server for KitchenAsty. We'll use Ubuntu 24.04 LTS, but any modern Debian-based distribution works similarly.
 
-## Step 1: Create a Server
+## 1️⃣ Step 1: Create a Server
 
 Sign up with your chosen hosting provider (see [Overview](/self-hosting/overview) for options) and create a new server with these settings:
 
-- **OS**: Ubuntu 24.04 LTS
-- **Plan**: 2 GB RAM / 1 vCPU minimum (4 GB / 2 vCPU recommended)
-- **Region**: Choose the region closest to your restaurant's customers
-- **Authentication**: SSH key (preferred) or password
+- 🐧 **OS**: Ubuntu 24.04 LTS
+- 💾 **Plan**: 2 GB RAM / 1 vCPU minimum (4 GB / 2 vCPU recommended)
+- 🌍 **Region**: Choose the region closest to your restaurant's customers
+- 🔑 **Authentication**: SSH key (preferred) or password
 
 After creation, note the server's **public IP address** (e.g., `203.0.113.50`). You'll need it throughout this guide.
 
-## Step 2: Connect to Your Server
+## 2️⃣ Step 2: Connect to Your Server
 
 Open a terminal on your local computer and connect via SSH:
 
@@ -23,11 +23,11 @@ ssh root@203.0.113.50
 
 Replace `203.0.113.50` with your server's actual IP address.
 
-::: tip For Windows Users
+::: tip 🪟 For Windows Users
 Use **Windows Terminal** (built into Windows 11) or download [PuTTY](https://www.putty.org/). Windows Terminal supports SSH natively — just open it and type the `ssh` command above.
 :::
 
-## Step 3: Create a Non-Root User
+## 3️⃣ Step 3: Create a Non-Root User
 
 Running everything as `root` is a security risk. Create a dedicated user:
 
@@ -53,13 +53,13 @@ exit
 ssh kitchenasty@203.0.113.50
 ```
 
-## Step 4: Update the System
+## 4️⃣ Step 4: Update the System
 
 ```bash
 sudo apt update && sudo apt upgrade -y
 ```
 
-## Step 5: Install Docker
+## 5️⃣ Step 5: Install Docker
 
 Docker lets you run KitchenAsty without installing Node.js, PostgreSQL, or any other dependencies directly on the server.
 
@@ -100,7 +100,7 @@ docker compose version
 # Docker Compose version v2.x.x
 ```
 
-## Step 6: Configure the Firewall
+## 6️⃣ Step 6: Configure the Firewall
 
 Ubuntu comes with `ufw` (Uncomplicated Firewall). Enable it and allow only the ports you need:
 
@@ -131,11 +131,11 @@ OpenSSH                    ALLOW       Anywhere
 443/tcp                    ALLOW       Anywhere
 ```
 
-::: warning Important
+::: warning ⚠️ Important
 Do **not** expose ports 3000, 5173, 5174, or 5432 to the internet. The reverse proxy (Caddy or Nginx) will handle routing on ports 80/443. Direct access to the application ports is unnecessary and a security risk.
 :::
 
-## Step 7: Set Up Automatic Security Updates
+## 7️⃣ Step 7: Set Up Automatic Security Updates
 
 ```bash
 sudo apt install -y unattended-upgrades
@@ -144,7 +144,7 @@ sudo dpkg-reconfigure -plow unattended-upgrades
 
 Select **Yes** when prompted. This keeps your server patched against known security vulnerabilities automatically.
 
-## Step 8: (Optional) Configure SSH Security
+## 8️⃣ Step 8: (Optional) Configure SSH Security
 
 For additional security, disable password login and root login:
 
@@ -165,10 +165,10 @@ Restart SSH:
 sudo systemctl restart sshd
 ```
 
-::: danger
+::: danger 🚨
 Only do this if you have SSH key authentication working. Otherwise, you will lock yourself out of the server.
 :::
 
-## Next Step
+## ➡️ Next Step
 
 Your server is ready. Continue to **[Docker Compose Production](/self-hosting/docker-compose)** to deploy KitchenAsty.

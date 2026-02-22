@@ -1,6 +1,6 @@
-# Staff API
+# 👥 Staff API
 
-## List Staff
+## 📋 List Staff
 
 ```
 GET /api/staff?page=1&limit=20&role=MANAGER&search=john&isActive=true
@@ -13,11 +13,11 @@ Requires **MANAGER** or **SUPER_ADMIN** role.
 
 | Param | Type | Description |
 |-------|------|-------------|
-| `page` | number | Page number (default: 1) |
-| `limit` | number | Items per page (default: 20, max: 50) |
-| `role` | string | Filter by role: `SUPER_ADMIN`, `MANAGER`, `STAFF` |
-| `search` | string | Search by name or email (case-insensitive) |
-| `isActive` | string | Filter by active status: `true` or `false` |
+| `page` | number | 📄 Page number (default: 1) |
+| `limit` | number | 📊 Items per page (default: 20, max: 50) |
+| `role` | string | 🏷️ Filter by role: `SUPER_ADMIN`, `MANAGER`, `STAFF` |
+| `search` | string | 🔍 Search by name or email (case-insensitive) |
+| `isActive` | string | ✅ Filter by active status: `true` or `false` |
 
 **Response:** `200 OK`
 
@@ -46,7 +46,7 @@ Requires **MANAGER** or **SUPER_ADMIN** role.
 }
 ```
 
-## Get Staff Member
+## 🔍 Get Staff Member
 
 ```
 GET /api/staff/:id
@@ -75,7 +75,7 @@ Requires **MANAGER** or **SUPER_ADMIN** role.
 }
 ```
 
-## Update Staff Member
+## ✏️ Update Staff Member
 
 ```
 PATCH /api/staff/:id
@@ -116,7 +116,7 @@ All fields are optional.
 }
 ```
 
-## Deactivate Staff Member
+## 🚫 Deactivate Staff Member
 
 ```
 DELETE /api/staff/:id
@@ -134,7 +134,7 @@ Requires **SUPER_ADMIN** role. Sets `isActive` to `false`. Cannot deactivate you
 }
 ```
 
-## Invite Staff
+## 📨 Invite Staff
 
 ```
 POST /api/staff/invite
@@ -155,9 +155,9 @@ Requires **SUPER_ADMIN** role. Creates a single-use invite token and sends an em
 
 | Field | Required | Description |
 |-------|----------|-------------|
-| `email` | Yes | Email address for the invitation |
-| `name` | No | Pre-filled name suggestion |
-| `role` | No | Role to assign (default: `STAFF`) |
+| `email` | ✅ Yes | Email address for the invitation |
+| `name` | ❌ No | Pre-filled name suggestion |
+| `role` | ❌ No | Role to assign (default: `STAFF`) |
 
 **Response:** `201 Created`
 
@@ -173,7 +173,7 @@ Requires **SUPER_ADMIN** role. Creates a single-use invite token and sends an em
 }
 ```
 
-## Validate Invite Token
+## 🔗 Validate Invite Token
 
 ```
 GET /api/staff/invite/:token
@@ -195,7 +195,7 @@ Returns the invite details if the token is valid, unused, and not expired.
 }
 ```
 
-## Accept Invite
+## ✅ Accept Invite
 
 ```
 POST /api/staff/accept-invite
@@ -232,15 +232,15 @@ Creates a new user account and returns a JWT.
 }
 ```
 
-## Error Cases
+## ⚠️ Error Cases
 
 | Scenario | Status | Error |
 |----------|--------|-------|
-| Not authenticated | `401` | Authentication required |
-| Insufficient role | `403` | Insufficient permissions |
-| Staff not found | `404` | Staff member not found |
-| Email already exists (invite) | `409` | A user with this email already exists |
-| Token already used | `400` | This invite has already been used |
-| Token expired | `400` | This invite has expired |
-| Self-demotion | `400` | Cannot change your own role |
-| Self-deactivation | `400` | Cannot deactivate your own account |
+| 🔒 Not authenticated | `401` | Authentication required |
+| 🚫 Insufficient role | `403` | Insufficient permissions |
+| 🔍 Staff not found | `404` | Staff member not found |
+| 📧 Email already exists (invite) | `409` | A user with this email already exists |
+| 🔗 Token already used | `400` | This invite has already been used |
+| ⏰ Token expired | `400` | This invite has expired |
+| 🚫 Self-demotion | `400` | Cannot change your own role |
+| 🚫 Self-deactivation | `400` | Cannot deactivate your own account |

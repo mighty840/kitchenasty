@@ -1,6 +1,6 @@
-# Orders API
+# 📦 Orders API
 
-## Create Order
+## ➕ Create Order
 
 ```
 POST /api/orders
@@ -71,7 +71,7 @@ Authorization: Bearer <token> (optional — guest checkout supported)
 }
 ```
 
-## List Orders (Staff)
+## 📋 List Orders (Staff)
 
 ```
 GET /api/orders?page=1&limit=20
@@ -80,7 +80,7 @@ Authorization: Bearer <staff-token>
 
 Returns all orders with pagination. Staff only.
 
-## List Customer Orders
+## 🛍️ List Customer Orders
 
 ```
 GET /api/orders/my-orders
@@ -89,7 +89,7 @@ Authorization: Bearer <customer-token>
 
 Returns orders for the authenticated customer.
 
-## Get Order
+## 🔍 Get Order
 
 ```
 GET /api/orders/:id
@@ -98,7 +98,7 @@ Authorization: Bearer <token>
 
 Returns full order details with items, options, and payment info.
 
-## Update Order Status
+## 🔄 Update Order Status
 
 ```
 PATCH /api/orders/:id/status
@@ -117,19 +117,19 @@ Authorization: Bearer <staff-token>
 
 | From | To |
 |------|-----|
-| `PENDING` | `CONFIRMED`, `CANCELLED` |
-| `CONFIRMED` | `PREPARING`, `CANCELLED` |
-| `PREPARING` | `READY`, `CANCELLED` |
-| `READY` | `OUT_FOR_DELIVERY`, `DELIVERED`, `PICKED_UP`, `CANCELLED` |
-| `OUT_FOR_DELIVERY` | `DELIVERED`, `CANCELLED` |
+| `PENDING` | ✅ `CONFIRMED`, ❌ `CANCELLED` |
+| `CONFIRMED` | 🍳 `PREPARING`, ❌ `CANCELLED` |
+| `PREPARING` | ✅ `READY`, ❌ `CANCELLED` |
+| `READY` | 🚚 `OUT_FOR_DELIVERY`, ✅ `DELIVERED`, 🏃 `PICKED_UP`, ❌ `CANCELLED` |
+| `OUT_FOR_DELIVERY` | ✅ `DELIVERED`, ❌ `CANCELLED` |
 
-## Error Cases
+## ⚠️ Error Cases
 
 | Scenario | Status | Error |
 |----------|--------|-------|
-| Invalid menu item | `400` | Menu item not found |
-| Location inactive | `400` | Location is not active |
-| Below minimum order | `400` | Order below minimum |
-| Invalid coupon | `400` | Coupon validation error |
-| Invalid status transition | `400` | Invalid status transition |
-| Order not found | `404` | Order not found |
+| 🍽️ Invalid menu item | `400` | Menu item not found |
+| 🏪 Location inactive | `400` | Location is not active |
+| 💰 Below minimum order | `400` | Order below minimum |
+| 🎟️ Invalid coupon | `400` | Coupon validation error |
+| 🔄 Invalid status transition | `400` | Invalid status transition |
+| 🔍 Order not found | `404` | Order not found |

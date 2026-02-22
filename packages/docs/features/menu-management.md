@@ -1,8 +1,10 @@
-# Menu Management
+# 🍽️ Menu Management
 
 KitchenAsty provides a comprehensive menu system with hierarchical categories, configurable item options, allergen tracking, and mealtime restrictions.
 
-## Categories
+![Admin Menu Management](/screenshots/admin-menu.png)
+
+## 📂 Categories
 
 Categories organize menu items and support a parent-child hierarchy.
 
@@ -17,7 +19,7 @@ Categories organize menu items and support a parent-child hierarchy.
 | `parentId` | Parent category for nesting |
 | `locationId` | Scope to a specific location (optional) |
 
-### Hierarchical Categories
+### 🏗️ Hierarchical Categories
 
 Categories can be nested one level deep:
 
@@ -33,7 +35,7 @@ Drinks
 
 Set `parentId` when creating a child category.
 
-## Menu Items
+## 🍕 Menu Items
 
 | Field | Description |
 |-------|------------|
@@ -50,7 +52,7 @@ Set `parentId` when creating a child category.
 | `categoryId` | Parent category |
 | `locationId` | Scope to a specific location (optional) |
 
-## Menu Options
+## 🎛️ Menu Options
 
 Options let customers customize items. Each item can have multiple option groups.
 
@@ -62,7 +64,7 @@ Options let customers customize items. Each item can have multiple option groups
 | `minSelect` | Minimum selections |
 | `maxSelect` | Maximum selections |
 
-### Display Types
+### 🖥️ Display Types
 
 | Type | Behavior |
 |------|---------|
@@ -71,7 +73,7 @@ Options let customers customize items. Each item can have multiple option groups
 | `CHECKBOX` | Checkboxes — multiple selections |
 | `QUANTITY` | Quantity stepper — select amount per option |
 
-### Option Values
+### 🏷️ Option Values
 
 Each option group has one or more values:
 
@@ -81,7 +83,7 @@ Each option group has one or more values:
 | `priceModifier` | Added/subtracted from base price |
 | `isDefault` | Pre-selected when loading the item |
 
-## Allergens
+## ⚠️ Allergens
 
 Allergens are global and linked to items via a many-to-many relationship.
 
@@ -91,7 +93,7 @@ GET /api/menu/allergens
 
 Create allergens, then assign them to items when creating/updating menu items.
 
-## Mealtimes
+## 🕐 Mealtimes
 
 Mealtimes restrict when items are available:
 
@@ -105,6 +107,6 @@ Mealtimes restrict when items are available:
 
 Link items to mealtimes to show them only during those time windows.
 
-## API
+## 📡 API
 
 See [Menu API](/api/menu) for the complete endpoint reference.

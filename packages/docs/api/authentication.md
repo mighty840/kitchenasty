@@ -1,6 +1,6 @@
-# Authentication API
+# 🔐 Authentication API
 
-## Customer Registration
+## 📝 Customer Registration
 
 ```
 POST /api/auth/customer/register
@@ -33,7 +33,7 @@ POST /api/auth/customer/register
 }
 ```
 
-## Customer Login
+## 🔑 Customer Login
 
 ```
 POST /api/auth/customer/login
@@ -64,7 +64,7 @@ POST /api/auth/customer/login
 }
 ```
 
-## Staff Login
+## 👨‍💼 Staff Login
 
 ```
 POST /api/auth/staff/login
@@ -96,7 +96,7 @@ POST /api/auth/staff/login
 }
 ```
 
-## Staff Registration
+## 👥 Staff Registration
 
 ```
 POST /api/auth/staff/register
@@ -117,7 +117,7 @@ Only Super Admins can create new staff accounts.
 }
 ```
 
-## Get Current User
+## 👤 Get Current User
 
 ```
 GET /api/auth/me
@@ -141,7 +141,7 @@ Returns the currently authenticated user (staff or customer).
 }
 ```
 
-## Google OAuth
+## 🔵 Google OAuth
 
 ```
 GET /api/auth/google
@@ -151,7 +151,7 @@ Redirects the user to Google's OAuth consent screen. After approval, redirects t
 
 Only available when `GOOGLE_CLIENT_ID` is configured.
 
-## Facebook OAuth
+## 🔷 Facebook OAuth
 
 ```
 GET /api/auth/facebook
@@ -161,11 +161,11 @@ Redirects the user to Facebook's login dialog. After approval, redirects to `/ap
 
 Only available when `FACEBOOK_APP_ID` is configured.
 
-## Error Cases
+## ⚠️ Error Cases
 
 | Scenario | Status | Error |
 |----------|--------|-------|
-| Invalid credentials | `401` | Invalid email or password |
-| Email already exists | `400` | Email already registered |
-| Missing required fields | `400` | Validation error message |
-| Unauthorized staff registration | `403` | Forbidden |
+| ❌ Invalid credentials | `401` | Invalid email or password |
+| 📧 Email already exists | `400` | Email already registered |
+| 📋 Missing required fields | `400` | Validation error message |
+| 🚫 Unauthorized staff registration | `403` | Forbidden |

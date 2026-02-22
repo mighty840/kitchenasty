@@ -1,8 +1,8 @@
-# Docker Compose Production
+# 🐳 Docker Compose Production
 
 This page explains how to configure and run KitchenAsty in production using Docker Compose.
 
-## Step 1: Clone the Repository
+## 1️⃣ Step 1: Clone the Repository
 
 ```bash
 cd /home/kitchenasty
@@ -10,7 +10,7 @@ git clone https://github.com/kitchenasty/kitchenasty.git
 cd kitchenasty
 ```
 
-## Step 2: Create the Environment File
+## 2️⃣ Step 2: Create the Environment File
 
 Create a `.env` file in the project root. Docker Compose will automatically read variables from it.
 
@@ -21,42 +21,42 @@ nano .env
 Paste the following, replacing the placeholder values:
 
 ```dotenv
-# ── Database ──────────────────────────────────────────
+# ── 🗄️ Database ──────────────────────────────────────────
 # Use a strong, random password (at least 20 characters)
 DB_PASSWORD=CHANGE_ME_to_a_random_password_here
 
-# ── Authentication ────────────────────────────────────
+# ── 🔐 Authentication ────────────────────────────────────
 # Generate with: openssl rand -base64 32
 JWT_SECRET=CHANGE_ME_to_a_random_secret_here
 
-# ── Domains ───────────────────────────────────────────
+# ── 🌐 Domains ───────────────────────────────────────────
 # Replace with your actual domain names
 ADMIN_DOMAIN=admin.yourdomain.com
 STOREFRONT_DOMAIN=order.yourdomain.com
 API_DOMAIN=api.yourdomain.com
 
-# ── CORS ──────────────────────────────────────────────
+# ── 🔗 CORS ──────────────────────────────────────────────
 CORS_ORIGINS=https://admin.yourdomain.com,https://order.yourdomain.com
 
-# ── Stripe (optional — skip if using cash only) ──────
+# ── 💳 Stripe (optional — skip if using cash only) ──────
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
 
-# ── Email (optional) ─────────────────────────────────
+# ── 📧 Email (optional) ─────────────────────────────────
 SMTP_HOST=
 SMTP_PORT=587
 SMTP_USER=
 SMTP_PASS=
 EMAIL_FROM=noreply@yourdomain.com
 
-# ── Social Login (optional) ──────────────────────────
+# ── 🔵 Social Login (optional) ──────────────────────────
 GOOGLE_CLIENT_ID=
 GOOGLE_CLIENT_SECRET=
 FACEBOOK_APP_ID=
 FACEBOOK_APP_SECRET=
 ```
 
-::: tip Generating Random Secrets
+::: tip 🔑 Generating Random Secrets
 Run this command on your server to generate a strong random string:
 ```bash
 openssl rand -base64 32
@@ -64,7 +64,7 @@ openssl rand -base64 32
 Use the output for `DB_PASSWORD` and `JWT_SECRET`. Never reuse the same secret for both.
 :::
 
-## Step 3: Create the Production Compose File
+## 3️⃣ Step 3: Create the Production Compose File
 
 Create `docker-compose.prod.yml`:
 
@@ -152,11 +152,11 @@ networks:
     name: kitchenasty
 ```
 
-::: warning Security
+::: warning 🔒 Security
 Notice that no service exposes ports to the host. The reverse proxy (set up in the next step) connects to the Docker network directly. This means the database, API, and frontends are not directly accessible from the internet.
 :::
 
-## Step 4: Build and Start
+## 4️⃣ Step 4: Build and Start
 
 ```bash
 docker compose -f docker-compose.prod.yml up --build -d
@@ -180,7 +180,7 @@ kitchenasty-admin       running
 kitchenasty-storefront  running
 ```
 
-## Step 5: Run Database Migrations and Seed
+## 5️⃣ Step 5: Run Database Migrations and Seed
 
 ```bash
 # Apply database migrations
@@ -194,14 +194,14 @@ docker compose -f docker-compose.prod.yml exec server \
 
 After seeding, you can log in with:
 
-- **Admin**: `admin@kitchenasty.com` / `admin123`
-- **Customer**: `customer@example.com` / `customer123`
+- 👨‍💼 **Admin**: `admin@kitchenasty.com` / `admin123`
+- 👤 **Customer**: `customer@example.com` / `customer123`
 
-::: danger Change Default Passwords
+::: danger 🚨 Change Default Passwords
 After first login, immediately change the default admin password through the admin panel or by updating the database directly.
 :::
 
-## Step 6: Verify
+## 6️⃣ Step 6: Verify
 
 Test that the API is responding:
 
@@ -213,7 +213,7 @@ docker compose -f docker-compose.prod.yml exec server \
 # Expected: {"status":"ok"}
 ```
 
-## Viewing Logs
+## 📋 Viewing Logs
 
 ```bash
 # All services
@@ -226,7 +226,7 @@ docker compose -f docker-compose.prod.yml logs -f server
 docker compose -f docker-compose.prod.yml logs --tail 100 server
 ```
 
-## Stopping and Starting
+## ⏹️ Stopping and Starting
 
 ```bash
 # Stop all services (keeps data)
@@ -239,6 +239,6 @@ docker compose -f docker-compose.prod.yml up -d
 docker compose -f docker-compose.prod.yml restart server
 ```
 
-## Next Step
+## ➡️ Next Step
 
 Continue to **[Domain & DNS](/self-hosting/domain-dns)** to point your domain to the server.

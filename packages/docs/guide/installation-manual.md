@@ -1,8 +1,8 @@
-# Install Manually
+# 🔧 Install Manually
 
 For local development or environments where Docker is not available.
 
-## 1. Clone & Install Dependencies
+## 1. 📥 Clone & Install Dependencies
 
 ```bash
 git clone https://github.com/kitchenasty/kitchenasty.git
@@ -10,7 +10,7 @@ cd kitchenasty
 npm ci
 ```
 
-## 2. Set Up PostgreSQL
+## 2. 🗄️ Set Up PostgreSQL
 
 Create a database and user:
 
@@ -19,7 +19,7 @@ CREATE USER kitchenasty WITH PASSWORD 'kitchenasty';
 CREATE DATABASE kitchenasty OWNER kitchenasty;
 ```
 
-## 3. Configure Environment
+## 3. ⚙️ Configure Environment
 
 ```bash
 cp packages/server/.env.example packages/server/.env
@@ -33,14 +33,14 @@ JWT_SECRET=your-random-secret-here
 CORS_ORIGINS=http://localhost:5173,http://localhost:5174
 ```
 
-## 4. Generate Prisma Client & Migrate
+## 4. 🔄 Generate Prisma Client & Migrate
 
 ```bash
 npx -w packages/server prisma generate --schema ../../prisma/schema.prisma
 npx -w packages/server prisma migrate deploy --schema ../../prisma/schema.prisma
 ```
 
-## 5. Seed the Database
+## 5. 🌱 Seed the Database
 
 ```bash
 npx tsx prisma/seed.ts
@@ -48,7 +48,7 @@ npx tsx prisma/seed.ts
 
 This creates a default admin user, sample location, categories, menu items, and tables.
 
-## 6. Build Shared Package
+## 6. 📦 Build Shared Package
 
 The shared package must be built before the frontends can import its types:
 
@@ -56,7 +56,7 @@ The shared package must be built before the frontends can import its types:
 npm run build -w packages/shared
 ```
 
-## 7. Start Development Servers
+## 7. 🚀 Start Development Servers
 
 Open three terminals:
 
@@ -77,13 +77,13 @@ npm run dev:storefront
 | Admin Dashboard | http://localhost:5173 |
 | Storefront | http://localhost:5174 |
 
-## Default Credentials
+## 🔑 Default Credentials
 
 | Role | Email | Password |
 |------|-------|----------|
 | Super Admin | admin@kitchenasty.com | admin123 |
 
-## Useful Commands
+## 🧰 Useful Commands
 
 ```bash
 # Open Prisma Studio (database GUI)

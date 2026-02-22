@@ -1,6 +1,6 @@
-# Requirements
+# 📋 Requirements
 
-## Docker Installation (Recommended)
+## 🐳 Docker Installation (Recommended)
 
 | Requirement | Minimum Version |
 |------------|----------------|
@@ -9,7 +9,7 @@
 
 That's it — Docker handles everything else.
 
-## Manual Installation
+## 🔧 Manual Installation
 
 | Requirement | Minimum Version | Notes |
 |------------|----------------|-------|
@@ -18,22 +18,22 @@ That's it — Docker handles everything else.
 | PostgreSQL | 16+ | 15 may work but is untested |
 | Git | 2.x | For cloning the repo |
 
-## Optional Services
+## 🔌 Optional Services
 
 | Service | Purpose |
 |---------|---------|
-| Stripe account | Credit card payments |
-| PayPal developer account | PayPal payments |
-| Google Cloud project | Google OAuth social login |
-| Facebook developer app | Facebook social login |
-| SMTP server | Transactional email (Mailhog for development) |
+| Stripe account | 💳 Credit card payments |
+| PayPal developer account | 💰 PayPal payments |
+| Google Cloud project | 🔑 Google OAuth social login |
+| Facebook developer app | 🔑 Facebook social login |
+| SMTP server | 📧 Transactional email (Mailhog for development) |
 
-## Hardware
+## 💻 Hardware
 
 KitchenAsty is lightweight. For a single-location restaurant:
 
-- **CPU**: 1 core
-- **RAM**: 1 GB
-- **Disk**: 1 GB + space for uploaded images
+- 🖥️ **CPU**: 1 core
+- 🧠 **RAM**: 1 GB
+- 💾 **Disk**: 1 GB + space for uploaded images
 
 For multi-location deployments, see the [Scaling](/deployment/scaling) guide.

@@ -1,6 +1,6 @@
-# Dashboard API
+# 📊 Dashboard API
 
-## Get Stats
+## 📈 Get Stats
 
 ```
 GET /api/dashboard/stats
@@ -25,7 +25,7 @@ Returns overview statistics for the admin dashboard.
 }
 ```
 
-## Get Analytics
+## 📉 Get Analytics
 
 ```
 GET /api/dashboard/analytics?startDate=2025-01-01&endDate=2025-01-31
@@ -38,8 +38,8 @@ Returns time-series analytics data for the specified date range.
 
 | Parameter | Type | Description |
 |-----------|------|------------|
-| `startDate` | ISO date string | Start of range |
-| `endDate` | ISO date string | End of range |
+| `startDate` | ISO date string | 📅 Start of range |
+| `endDate` | ISO date string | 📅 End of range |
 
 **Response:**
 
@@ -63,6 +63,6 @@ Returns time-series analytics data for the specified date range.
 }
 ```
 
-## Permissions
+## 🔒 Permissions
 
 Both endpoints require staff authentication. All staff roles (STAFF, MANAGER, SUPER_ADMIN) have access.
