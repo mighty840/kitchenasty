@@ -11,7 +11,8 @@
     "search": "Pesquisar",
     "noResults": "Nenhum resultado encontrado",
     "viewAll": "Ver Tudo",
-    "required": "Obrigatório"
+    "required": "Obrigatório",
+    "close": "Close"
   },
   "nav": {
     "home": "Início",
