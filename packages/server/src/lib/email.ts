@@ -90,7 +90,7 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
 export async function getSiteName(name: String) {
   try {
     const placeName = await prisma.siteSettings.findFirst({
-      where: { siteName: `${name}` },
+      where: { siteName: `${name.split(" ")[0]}` },
     });
 
     return placeName;
