@@ -134,8 +134,8 @@ export default function AdminLayout({ children, onLogout }: { children: React.Re
                 <Link
                   to={item.children ? item.children[0].path : item.path}
                   className={`flex items-center px-6 py-3 text-sm transition-colors ${isActive
-                      ? 'bg-gray-800 text-primary-400 border-r-2 border-primary-400'
-                      : 'text-gray-300 hover:bg-gray-800 hover:text-white'
+                    ? 'bg-gray-800 text-primary-400 border-r-2 border-primary-400'
+                    : 'text-gray-300 hover:bg-gray-800 hover:text-white'
                     }`}
                 >
                   <span className="mr-3">{item.icon}</span>
@@ -148,8 +148,8 @@ export default function AdminLayout({ children, onLogout }: { children: React.Re
                         key={child.path}
                         to={child.path}
                         className={`block pl-14 pr-6 py-2 text-xs transition-colors ${location.pathname.startsWith(child.path)
-                            ? 'text-primary-400'
-                            : 'text-gray-400 hover:text-white'
+                          ? 'text-primary-400'
+                          : 'text-gray-400 hover:text-white'
                           }`}
                       >
                         {child.label}
@@ -188,8 +188,11 @@ export default function AdminLayout({ children, onLogout }: { children: React.Re
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
               </svg>
+              <span className="sr-only" aria-live="polite">
+                {pendingCount > 0 ? `${pendingCount} pending order${pendingCount === 1 ? '' : 's'}` : ''}
+              </span>
               {pendingCount > 0 && (
-                <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full" aria-live="polite">
+                <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full" aria-hidden="true">
                   {pendingCount > 99 ? '99+' : pendingCount}
                 </span>
               )}
