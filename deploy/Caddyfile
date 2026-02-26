@@ -1,0 +1,20 @@
+demo.kitchenasty.com {
+	# Rate limiting: 10 requests/second per IP, burst of 20
+	rate_limit {
+		zone demo_limit {
+			key {remote_host}
+			events 10
+			window 1s
+		}
+	}
+
+	redir /admin /admin/ permanent
+
+	handle_path /admin/* {
+		reverse_proxy admin:80
+	}
+
+	handle {
+		reverse_proxy storefront:80
+	}
+}

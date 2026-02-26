@@ -101,6 +101,12 @@ Walk through these flows to verify everything works:
 
 ### ✅ Basic Testing Checklist
 
+Here's what each screen should look like when working correctly:
+
+| Home Screen | Menu Screen | Item Detail |
+|-------------|-------------|-------------|
+| ![Mobile Home](/screenshots/mobile-home.png) | ![Mobile Menu](/screenshots/mobile-menu.png) | ![Mobile Menu Item](/screenshots/mobile-menu-item.png) |
+
 - [ ] 🏠 App loads and shows the home screen
 - [ ] 🍔 Menu screen displays categories and items
 - [ ] 👆 Tapping a menu item opens the detail modal

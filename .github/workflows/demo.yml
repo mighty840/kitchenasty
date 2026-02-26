@@ -1,0 +1,116 @@
+name: Demo Deploy
+
+on:
+  push:
+    tags:
+      - 'v*'
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_PREFIX: ghcr.io/mighty840/kitchenasty
+
+jobs:
+  build-and-push:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+    strategy:
+      matrix:
+        include:
+          - package: server
+            context: .
+            dockerfile: packages/server/Dockerfile
+            build-args: ""
+          - package: admin
+            context: .
+            dockerfile: packages/admin/Dockerfile
+            build-args: "VITE_BASE_PATH=/admin/"
+          - package: storefront
+            context: .
+            dockerfile: packages/storefront/Dockerfile
+            build-args: ""
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - uses: docker/setup-buildx-action@v3
+
+      - name: Extract tag
+        id: tag
+        run: echo "version=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+
+      - uses: docker/build-push-action@v6
+        with:
+          context: ${{ matrix.context }}
+          file: ${{ matrix.dockerfile }}
+          push: true
+          build-args: ${{ matrix.build-args }}
+          tags: |
+            ${{ env.IMAGE_PREFIX }}-${{ matrix.package }}:${{ steps.tag.outputs.version }}
+            ${{ env.IMAGE_PREFIX }}-${{ matrix.package }}:latest
+          cache-from: type=gha,scope=${{ matrix.package }}
+          cache-to: type=gha,mode=max,scope=${{ matrix.package }}
+
+  deploy:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Extract tag
+        id: tag
+        run: echo "version=${GITHUB_REF#refs/tags/}" >> "$GITHUB_OUTPUT"
+
+      - name: Copy files to server
+        uses: appleboy/scp-action@v0.1.7
+        with:
+          host: 217.154.26.121
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          source: "deploy/docker-compose.demo.yml,deploy/Caddyfile,deploy/Dockerfile.caddy"
+          target: /opt/kitchenasty
+          strip_components: 1
+
+      - name: Deploy
+        uses: appleboy/ssh-action@v1.2.0
+        with:
+          host: 217.154.26.121
+          username: ${{ secrets.SSH_USER }}
+          key: ${{ secrets.SSH_PRIVATE_KEY }}
+          script: |
+            cd /opt/kitchenasty
+
+            # Login to GHCR
+            echo "${{ secrets.GITHUB_TOKEN }}" | docker login ghcr.io -u ${{ github.actor }} --password-stdin
+
+            # Check if this is a first deploy
+            FIRST_DEPLOY=false
+            if ! docker compose -f docker-compose.demo.yml ps --status running -q 2>/dev/null | grep -q .; then
+              FIRST_DEPLOY=true
+            fi
+
+            # Set image tag and pull/build
+            export TAG=${{ steps.tag.outputs.version }}
+            docker compose -f docker-compose.demo.yml pull --ignore-buildable
+            docker compose -f docker-compose.demo.yml build caddy
+            docker compose -f docker-compose.demo.yml up -d
+
+            # Wait for server to be ready
+            echo "Waiting for server to be ready..."
+            sleep 10
+
+            # On first deploy, run migrations and seed
+            if [ "$FIRST_DEPLOY" = true ]; then
+              echo "First deploy detected — running migrations and seed..."
+              docker compose -f docker-compose.demo.yml exec -T server npx prisma migrate deploy --schema prisma/schema.prisma
+              docker compose -f docker-compose.demo.yml exec -T server npx prisma db seed
+            fi
+
+            # Prune old images
+            docker image prune -f

@@ -46,6 +46,15 @@ kitchenasty/
 | Containerization | Docker, Docker Compose |
 | CI/CD | GitHub Actions |
 
+## 🌐 Live Demo
+
+Want to try it before installing? Check out the **[live demo](https://demo.kitchenasty.com)** — no setup required.
+
+- Storefront: [demo.kitchenasty.com](https://demo.kitchenasty.com)
+- Admin: [demo.kitchenasty.com/admin](https://demo.kitchenasty.com/admin/) (login: `admin@kitchenasty.com` / `admin123`)
+
+The demo resets every 2 hours and is rate-limited. See the [Live Demo](/guide/live-demo) page for details.
+
 ## 👉 Next Steps
 
 - 📋 [Requirements](/guide/requirements) — What you need before installing

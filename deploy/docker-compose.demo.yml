@@ -1,0 +1,58 @@
+services:
+  postgres:
+    image: postgres:16-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: kitchenasty
+      POSTGRES_USER: kitchenasty
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+
+  server:
+    image: ghcr.io/mighty840/kitchenasty-server:${TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      - postgres
+    environment:
+      DATABASE_URL: postgresql://kitchenasty:${POSTGRES_PASSWORD}@postgres:5432/kitchenasty
+      JWT_SECRET: ${JWT_SECRET}
+      CORS_ORIGINS: https://demo.kitchenasty.com
+      NODE_ENV: production
+
+  admin:
+    image: ghcr.io/mighty840/kitchenasty-admin:${TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      - server
+
+  storefront:
+    image: ghcr.io/mighty840/kitchenasty-storefront:${TAG:-latest}
+    restart: unless-stopped
+    depends_on:
+      - server
+
+  caddy:
+    build:
+      context: .
+      dockerfile: Dockerfile.caddy
+    restart: unless-stopped
+    dns:
+      - 8.8.8.8
+      - 1.1.1.1
+    ports:
+      - "80:80"
+      - "443:443"
+      - "443:443/udp"
+    volumes:
+      - ./Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - admin
+      - storefront
+
+volumes:
+  pgdata:
+  caddy_data:
+  caddy_config:

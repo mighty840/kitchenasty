@@ -17,6 +17,16 @@ The mobile app gives your customers a native experience on their phones:
 - 🔑 Sign in with email or social login (Google, Facebook)
 - 🌍 Switch between 6 languages
 
+### App Screenshots
+
+| Home | Menu | Item Detail |
+|------|------|-------------|
+| ![Mobile Home](/screenshots/mobile-home.png) | ![Mobile Menu](/screenshots/mobile-menu.png) | ![Mobile Menu Item](/screenshots/mobile-menu-item.png) |
+
+| Login | Locations |
+|-------|-----------|
+| ![Mobile Login](/screenshots/mobile-login.png) | ![Mobile Locations](/screenshots/mobile-locations.png) |
+
 ## 📋 Prerequisites
 
 Before starting, you need:

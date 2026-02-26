@@ -15,6 +15,10 @@ COPY packages/shared/ packages/shared/
 RUN npm run build -w packages/shared
 
 COPY packages/admin/ packages/admin/
+
+ARG VITE_BASE_PATH=/
+ENV VITE_BASE_PATH=${VITE_BASE_PATH}
+
 RUN npm run build -w packages/admin
 
 FROM nginx:alpine

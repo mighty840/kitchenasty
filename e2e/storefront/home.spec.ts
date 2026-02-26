@@ -24,7 +24,14 @@ test.describe('Storefront Home Page', () => {
 
   test('displays hero section with heading', async ({ page }) => {
     await page.goto('/');
-    await expect(page.getByRole('heading', { name: 'Order Delicious Food Online' })).toBeVisible();
+    // The hero title comes from DB settings if seeded, otherwise falls back to the i18n default
+    const heroHeading = page.locator('h1').first();
+    await expect(heroHeading).toBeVisible();
+    const text = await heroHeading.textContent();
+    expect(
+      text === 'Order Delicious Food Online' ||
+      text === 'Delicious food, delivered to your door'
+    ).toBeTruthy();
   });
 
   test('displays hero CTA buttons', async ({ page }) => {

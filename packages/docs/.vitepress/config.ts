@@ -42,6 +42,7 @@ export default defineConfig({
           text: 'Getting Started',
           items: [
             { text: 'Introduction', link: '/guide/introduction' },
+            { text: 'Live Demo', link: '/guide/live-demo' },
             { text: 'Requirements', link: '/guide/requirements' },
             { text: 'Install with Docker', link: '/guide/installation-docker' },
             { text: 'Install Manually', link: '/guide/installation-manual' },
