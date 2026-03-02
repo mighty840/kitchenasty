@@ -41,6 +41,7 @@ const navItems: NavItem[] = [
       { path: '/design/landing', label: 'Landing Page' },
       { path: '/design/branding', label: 'Branding' },
       { path: '/design/theme', label: 'Theme' },
+      { path: '/design/templates', label: 'Templates' },
     ],
   },
   {

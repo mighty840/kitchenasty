@@ -32,6 +32,7 @@ export interface SiteSettings {
   colorPrimary: string;
   colorSecondary: string;
   darkMode: 'light' | 'dark' | 'system';
+  storefrontTemplate: string;
   heroSection: HeroSection | null;
   featuresSection: FeatureItem[] | null;
   ctaSection: CtaSection | null;
@@ -51,6 +52,7 @@ const defaultSettings: SiteSettings = {
   colorPrimary: '#ea580c',
   colorSecondary: '#9333ea',
   darkMode: 'light',
+  storefrontTemplate: 'classic',
   heroSection: null,
   featuresSection: null,
   ctaSection: null,

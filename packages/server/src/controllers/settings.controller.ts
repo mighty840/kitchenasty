@@ -9,6 +9,7 @@ const updateSettingsSchema = z.object({
   colorPrimary: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
   colorSecondary: z.string().regex(/^#[0-9a-fA-F]{6}$/).optional(),
   darkMode: z.enum(['light', 'dark', 'system']).optional(),
+  storefrontTemplate: z.string().optional(),
   heroSection: z.object({
     title: z.string().optional(),
     subtitle: z.string().optional(),

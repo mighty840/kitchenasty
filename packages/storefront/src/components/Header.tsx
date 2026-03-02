@@ -1,12 +1,14 @@
-import { useState } from 'react';
+import { Suspense, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
 import { useAuth } from '../context/AuthContext.js';
 import { useCart } from '../context/CartContext.js';
 import { useTheme } from '../context/ThemeContext.js';
 import LanguageSwitcher from './LanguageSwitcher.js';
+import { headerVariants } from '../templates/headers/index.js';
+import type { TemplateId } from '../templates/index.js';
 
-export default function Header() {
+function ClassicHeader() {
   const { t } = useTranslation();
   const { user, logout } = useAuth();
   const { itemCount, setIsOpen: openCart } = useCart();
@@ -206,4 +208,20 @@ export default function Header() {
       )}
     </header>
   );
+}
+
+export default function Header() {
+  const { settings } = useTheme();
+  const templateId = (settings.storefrontTemplate || 'classic') as TemplateId;
+  const VariantHeader = headerVariants[templateId];
+
+  if (VariantHeader) {
+    return (
+      <Suspense fallback={<div className="h-16 bg-white dark:bg-gray-900" />}>
+        <VariantHeader />
+      </Suspense>
+    );
+  }
+
+  return <ClassicHeader />;
 }

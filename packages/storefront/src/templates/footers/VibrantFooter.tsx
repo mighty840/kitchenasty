@@ -1,38 +1,35 @@
-import { Suspense } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
-import { useTheme } from '../context/ThemeContext.js';
-import { footerVariants } from '../templates/footers/index.js';
-import type { TemplateId } from '../templates/index.js';
+import { useTheme } from '../../context/ThemeContext.js';
 
-function ClassicFooter() {
+export default function VibrantFooter() {
   const { t } = useTranslation();
   const { settings } = useTheme();
 
   return (
-    <footer className="bg-gray-900 text-gray-400">
-      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+    <footer className="bg-gradient-to-br from-purple-700 via-pink-600 to-orange-500 text-white/80">
+      <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-14">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}
           <div>
-            <div className="flex items-center gap-2 mb-4">
+            <div className="flex items-center gap-3 mb-5">
               {settings.logo ? (
-                <img src={settings.logo} alt={settings.siteName} className="w-8 h-8 rounded-lg object-cover" />
+                <img src={settings.logo} alt={settings.siteName} className="w-10 h-10 rounded-xl object-cover ring-2 ring-white/30" />
               ) : (
-                <div className="w-8 h-8 bg-primary-600 rounded-lg flex items-center justify-center">
-                  <span className="text-white font-bold text-sm">{settings.siteName.charAt(0)}</span>
+                <div className="w-10 h-10 bg-white/20 backdrop-blur rounded-xl flex items-center justify-center ring-2 ring-white/30">
+                  <span className="text-white font-bold text-lg">{settings.siteName.charAt(0)}</span>
                 </div>
               )}
-              <span className="text-xl font-bold text-white">{settings.siteName}</span>
+              <span className="text-2xl font-bold text-white">{settings.siteName}</span>
             </div>
-            <p className="text-sm">
+            <p className="text-sm leading-relaxed">
               {t('footer.description')}
             </p>
           </div>
 
-          {/* Links */}
+          {/* Quick Links */}
           <div>
-            <h3 className="text-white font-semibold mb-3">{t('footer.quickLinks')}</h3>
+            <h3 className="text-white font-semibold mb-4">{t('footer.quickLinks')}</h3>
             <ul className="space-y-2 text-sm">
               <li><Link to="/menu" className="hover:text-white transition-colors">{t('nav.menu')}</Link></li>
               <li><Link to="/locations" className="hover:text-white transition-colors">{t('nav.locations')}</Link></li>
@@ -42,14 +39,17 @@ function ClassicFooter() {
 
           {/* Account */}
           <div>
-            <h3 className="text-white font-semibold mb-3">{t('footer.account')}</h3>
+            <h3 className="text-white font-semibold mb-4">{t('footer.account')}</h3>
             <ul className="space-y-2 text-sm">
               <li><Link to="/login" className="hover:text-white transition-colors">{t('nav.login')}</Link></li>
               <li><Link to="/register" className="hover:text-white transition-colors">{t('footer.createAccount')}</Link></li>
               <li><Link to="/account" className="hover:text-white transition-colors">{t('nav.myAccount')}</Link></li>
             </ul>
+          </div>
 
-            <h3 className="text-white font-semibold mb-3 mt-6">Legal</h3>
+          {/* Legal */}
+          <div>
+            <h3 className="text-white font-semibold mb-4">Legal</h3>
             <ul className="space-y-2 text-sm">
               <li><Link to="/privacy-policy" className="hover:text-white transition-colors">Privacy Policy</Link></li>
               <li><Link to="/impressum" className="hover:text-white transition-colors">Impressum</Link></li>
@@ -65,26 +65,12 @@ function ClassicFooter() {
           </div>
         </div>
 
-        <div className="border-t border-gray-800 mt-8 pt-8 text-center text-sm">
-          <p>&copy; {new Date().getFullYear()} {settings.siteName}. {t('footer.allRightsReserved')}</p>
+        <div className="border-t border-white/20 mt-10 pt-8 text-center">
+          <p className="text-sm text-white/60">
+            &copy; {new Date().getFullYear()} {settings.siteName}. {t('footer.allRightsReserved')}
+          </p>
         </div>
       </div>
     </footer>
   );
-}
-
-export default function Footer() {
-  const { settings } = useTheme();
-  const templateId = (settings.storefrontTemplate || 'classic') as TemplateId;
-  const VariantFooter = footerVariants[templateId];
-
-  if (VariantFooter) {
-    return (
-      <Suspense fallback={<div className="h-32 bg-gray-900" />}>
-        <VariantFooter />
-      </Suspense>
-    );
-  }
-
-  return <ClassicFooter />;
 }

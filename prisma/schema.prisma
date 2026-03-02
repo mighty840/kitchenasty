@@ -586,6 +586,7 @@ model SiteSettings {
   colorPrimary    String   @default("#ea580c")
   colorSecondary  String   @default("#9333ea")
   darkMode        String   @default("light") // "light" | "dark" | "system"
+  storefrontTemplate String @default("classic")
   heroSection     Json?    // { title, subtitle, ctaPrimaryText, ctaPrimaryLink, ctaSecondaryText, ctaSecondaryLink, backgroundImage }
   featuresSection Json?    // [{ icon, title, description }]
   ctaSection      Json?    // { title, description, buttonText, buttonLink }

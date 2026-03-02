@@ -32,6 +32,7 @@ import ConsentLog from './pages/ConsentLog.js';
 import DesignLanding from './pages/DesignLanding.js';
 import DesignBranding from './pages/DesignBranding.js';
 import DesignTheme from './pages/DesignTheme.js';
+import DesignTemplates from './pages/DesignTemplates.js';
 import StaffList from './pages/StaffList.js';
 import StaffInvite from './pages/StaffInvite.js';
 import StaffEdit from './pages/StaffEdit.js';
@@ -102,6 +103,7 @@ function AppRoutes() {
         <Route path="/design/landing" element={<RequireRole roles={['SUPER_ADMIN', 'MANAGER']}><DesignLanding /></RequireRole>} />
         <Route path="/design/branding" element={<RequireRole roles={['SUPER_ADMIN', 'MANAGER']}><DesignBranding /></RequireRole>} />
         <Route path="/design/theme" element={<RequireRole roles={['SUPER_ADMIN', 'MANAGER']}><DesignTheme /></RequireRole>} />
+        <Route path="/design/templates" element={<RequireRole roles={['SUPER_ADMIN', 'MANAGER']}><DesignTemplates /></RequireRole>} />
         <Route path="/legal" element={<RequireRole roles={['SUPER_ADMIN', 'MANAGER']}><Navigate to="/legal/pages" replace /></RequireRole>} />
         <Route path="/legal/pages" element={<RequireRole roles={['SUPER_ADMIN', 'MANAGER']}><LegalPageList /></RequireRole>} />
         <Route path="/legal/pages/:slug" element={<RequireRole roles={['SUPER_ADMIN', 'MANAGER']}><LegalPageForm /></RequireRole>} />
