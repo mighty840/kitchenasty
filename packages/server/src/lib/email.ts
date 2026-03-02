@@ -1,6 +1,7 @@
 import nodemailer from 'nodemailer';
 import type { Transporter } from 'nodemailer';
 import prisma from './db.js';
+import { emailLogger } from './logger.js';
 
 let cachedTransporter: Transporter | null = null;
 let cachedFrom: string = '';
@@ -78,7 +79,7 @@ export async function sendEmail(options: EmailOptions): Promise<void> {
       html: options.html,
     });
   } catch (err) {
-    console.error('Failed to send email:', err);
+    emailLogger.error({ err }, 'Failed to send email');
   }
 }
 

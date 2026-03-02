@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import prisma from '../lib/db.js';
+import { auditLog } from '../lib/audit.js';
 
 // ============================================================
 // VALIDATION SCHEMAS
@@ -121,6 +122,8 @@ export async function createLocation(req: Request, res: Response): Promise<void>
     },
   });
 
+  auditLog(req, { action: 'create', entity: 'Location', entityId: location.id, details: { name: location.name } });
+
   res.status(201).json({ success: true, data: location });
 }
 
@@ -154,6 +157,8 @@ export async function updateLocation(req: Request<{ id: string }>, res: Response
     },
   });
 
+  auditLog(req, { action: 'update', entity: 'Location', entityId: id, details: data });
+
   res.json({ success: true, data: location });
 }
 
@@ -178,5 +183,6 @@ export async function deleteLocation(req: Request<{ id: string }>, res: Response
   }
 
   await prisma.location.delete({ where: { id } });
+  auditLog(req, { action: 'delete', entity: 'Location', entityId: id, details: { name: existing.name } });
   res.json({ success: true, message: 'Location deleted' });
 }

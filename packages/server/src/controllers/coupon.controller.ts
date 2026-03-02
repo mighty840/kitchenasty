@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import prisma from '../lib/db.js';
+import { auditLog } from '../lib/audit.js';
 
 const createCouponSchema = z.object({
   code: z.string().min(1).max(50),
@@ -41,6 +42,8 @@ export async function createCoupon(req: Request, res: Response): Promise<void> {
       expiresAt: expiresAt ? new Date(expiresAt) : null,
     },
   });
+
+  auditLog(req, { action: 'create', entity: 'Coupon', entityId: coupon.id, details: { code: coupon.code } });
 
   res.status(201).json({ success: true, data: coupon });
 }
@@ -99,6 +102,8 @@ export async function updateCoupon(req: Request<{ id: string }>, res: Response):
     data,
   });
 
+  auditLog(req, { action: 'update', entity: 'Coupon', entityId: req.params.id, details: data });
+
   res.json({ success: true, data: coupon });
 }
 
@@ -110,6 +115,7 @@ export async function deleteCoupon(req: Request<{ id: string }>, res: Response):
   }
 
   await prisma.coupon.delete({ where: { id: req.params.id } });
+  auditLog(req, { action: 'delete', entity: 'Coupon', entityId: req.params.id, details: { code: existing.code } });
   res.json({ success: true, message: 'Coupon deleted' });
 }
 

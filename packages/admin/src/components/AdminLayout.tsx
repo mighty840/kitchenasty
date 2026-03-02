@@ -56,6 +56,16 @@ const navItems: NavItem[] = [
     ],
   },
   { path: '/settings', label: 'Settings', icon: '\u2699', roles: ['SUPER_ADMIN', 'MANAGER'] },
+  {
+    path: '/developer',
+    label: 'Developer',
+    icon: '\uD83D\uDEE0',
+    roles: ['SUPER_ADMIN', 'MANAGER'],
+    children: [
+      { path: '/developer/metrics', label: 'API Metrics' },
+      { path: '/developer/audit-log', label: 'Audit Log' },
+    ],
+  },
   { path: '/staff', label: 'Staff', icon: '\uD83D\uDC65', roles: ['SUPER_ADMIN'] },
 ];
 

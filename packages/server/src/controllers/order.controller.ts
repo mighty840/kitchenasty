@@ -4,6 +4,7 @@ import prisma from '../lib/db.js';
 import { emitNewOrder, emitOrderStatusUpdate } from '../lib/socket.js';
 import { isPointInPolygon } from '../lib/geo.js';
 import { sendEmail, orderConfirmationEmail, orderStatusEmail } from '../lib/email.js';
+import { auditLog } from '../lib/audit.js';
 
 const orderItemOptionSchema = z.object({
   menuOptionValueId: z.string().min(1),
@@ -485,6 +486,8 @@ export async function updateOrderStatus(req: Request<{ id: string }>, res: Respo
       items: { include: { options: true } },
     },
   });
+
+  auditLog(req, { action: 'update', entity: 'Order', entityId: id, details: { status, previousStatus: order.status } });
 
   emitOrderStatusUpdate({
     id: updated.id,

@@ -676,3 +676,41 @@ model AutomationRule {
 
   @@map("automation_rules")
 }
+
+// ============================================================
+// OBSERVABILITY
+// ============================================================
+
+model ApiMetric {
+  id           String   @id @default(cuid())
+  method       String
+  path         String
+  statusCode   Int
+  responseTime Int      // ms
+  requestId    String?
+  userId       String?
+  userType     String?  // 'staff' | 'customer'
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([path, method])
+  @@map("api_metrics")
+}
+
+model AuditLog {
+  id        String   @id @default(cuid())
+  userId    String
+  userEmail String
+  action    String   // 'create' | 'update' | 'delete'
+  entity    String   // 'MenuItem', 'Order', etc.
+  entityId  String?
+  details   Json?
+  ipAddress String?
+  requestId String?
+  createdAt DateTime @default(now())
+
+  @@index([createdAt])
+  @@index([userId])
+  @@index([entity])
+  @@map("audit_logs")
+}

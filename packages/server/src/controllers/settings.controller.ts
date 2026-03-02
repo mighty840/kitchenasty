@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import nodemailer from 'nodemailer';
 import prisma from '../lib/db.js';
+import { auditLog } from '../lib/audit.js';
 
 const updateSettingsSchema = z.object({
   siteName: z.string().min(1).optional(),
@@ -58,6 +59,8 @@ export async function updateSettings(req: Request, res: Response): Promise<void>
     where: { id: 'default' },
     data: parsed.data,
   });
+
+  auditLog(req, { action: 'update', entity: 'SiteSettings', entityId: 'default', details: { fields: Object.keys(parsed.data) } });
 
   res.json({ success: true, data: settings });
 }

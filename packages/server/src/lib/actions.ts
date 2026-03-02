@@ -1,4 +1,5 @@
 import { sendEmail } from './email.js';
+import { automationLogger } from './logger.js';
 
 interface Action {
   type: string;
@@ -20,7 +21,7 @@ export async function executeAction(
       await handleSmsAction(action, data);
       break;
     default:
-      console.warn(`Unknown action type: ${action.type}`);
+      automationLogger.warn({ actionType: action.type }, 'Unknown action type');
   }
 }
 
@@ -51,7 +52,7 @@ async function handleWebhookAction(
       body: JSON.stringify(data),
     });
   } catch (err) {
-    console.error(`Webhook to ${url} failed:`, err);
+    automationLogger.error({ err, url }, 'Webhook action failed');
   }
 }
 
@@ -67,7 +68,7 @@ async function handleSmsAction(
     const body = interpolateTemplate(action.body as string || '', data);
     await sendSMS(to, body);
   } catch (err) {
-    console.error('SMS action failed:', err);
+    automationLogger.error({ err }, 'SMS action failed');
   }
 }
 

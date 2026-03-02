@@ -1,3 +1,5 @@
+import { smsLogger } from './logger.js';
+
 let twilioClient: any = null;
 
 function getClient() {
@@ -16,7 +18,7 @@ function getClient() {
     twilioClient = twilio(accountSid, authToken);
     return twilioClient;
   } catch {
-    console.warn('Twilio package not installed. SMS sending disabled.');
+    smsLogger.warn('Twilio package not installed. SMS sending disabled.');
     return null;
   }
 }
@@ -26,13 +28,13 @@ export async function sendSMS(to: string, body: string): Promise<void> {
 
   const fromNumber = process.env.TWILIO_FROM_NUMBER;
   if (!fromNumber) {
-    console.warn('TWILIO_FROM_NUMBER not configured. SMS not sent.');
+    smsLogger.warn('TWILIO_FROM_NUMBER not configured. SMS not sent.');
     return;
   }
 
   const client = getClient();
   if (!client) {
-    console.warn('Twilio not configured. SMS not sent.');
+    smsLogger.warn('Twilio not configured. SMS not sent.');
     return;
   }
 
@@ -43,6 +45,6 @@ export async function sendSMS(to: string, body: string): Promise<void> {
       to,
     });
   } catch (err) {
-    console.error('Failed to send SMS:', err);
+    smsLogger.error({ err }, 'Failed to send SMS');
   }
 }

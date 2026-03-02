@@ -1,7 +1,6 @@
 import express from 'express';
 import cors from 'cors';
 import helmet from 'helmet';
-import morgan from 'morgan';
 import rateLimit from 'express-rate-limit';
 import swaggerUi from 'swagger-ui-express';
 import path from 'path';
@@ -21,9 +20,14 @@ import legalRoutes from './routes/legal.routes.js';
 import consentRoutes from './routes/consent.routes.js';
 import settingsRoutes from './routes/settings.routes.js';
 import staffRoutes from './routes/staff.routes.js';
+import developerRoutes from './routes/developer.routes.js';
 import { openApiSpec } from './lib/openapi.js';
 import { initPassport } from './lib/passport.js';
 import passport from 'passport';
+import logger from './lib/logger.js';
+import { requestId } from './middleware/requestId.js';
+import { httpLogger } from './middleware/httpLogger.js';
+import { metricsCollector } from './middleware/metricsCollector.js';
 
 // Initialize automation event listeners
 import './lib/events.js';
@@ -34,13 +38,14 @@ export function createApp() {
   const app = express();
 
   // Middleware
+  app.use(requestId);
   app.use(helmet());
   app.use(cors({
     origin: process.env.CORS_ORIGINS?.split(',') || ['http://localhost:5173', 'http://localhost:5174'],
     credentials: true,
   }));
   if (process.env.NODE_ENV !== 'test') {
-    app.use(morgan('dev'));
+    app.use(httpLogger);
   }
 
   // Health check (before rate limiter so monitoring/readiness probes always work)
@@ -76,6 +81,11 @@ export function createApp() {
   initPassport();
   app.use(passport.initialize());
 
+  // Metrics collection (after passport so req.user is available)
+  if (process.env.NODE_ENV !== 'test') {
+    app.use(metricsCollector);
+  }
+
   // Serve uploaded files
   app.use('/uploads', express.static(path.resolve(process.cwd(), 'uploads')));
 
@@ -106,6 +116,7 @@ export function createApp() {
   app.use('/api/consent', consentRoutes);
   app.use('/api/settings', settingsRoutes);
   app.use('/api/staff', staffRoutes);
+  app.use('/api/developer', developerRoutes);
 
   // 404 handler
   app.use((_req, res) => {
@@ -117,7 +128,7 @@ export function createApp() {
 
   // Error handler
   app.use((err: Error, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
-    console.error('Unhandled error:', err);
+    logger.error({ err }, 'Unhandled error');
     res.status(500).json({
       success: false,
       error: process.env.NODE_ENV === 'production' ? 'Internal Server Error' : err.message,

@@ -2,6 +2,7 @@ import { Request, Response } from 'express';
 import { z } from 'zod';
 import { Prisma } from '@prisma/client';
 import prisma from '../lib/db.js';
+import { auditLog } from '../lib/audit.js';
 
 const VALID_EVENTS = ['order.created', 'order.statusChanged', 'reservation.created', 'review.submitted'];
 
@@ -62,6 +63,7 @@ export async function createAutomationRule(req: Request, res: Response): Promise
       actions: rest.actions as Prisma.InputJsonValue,
     },
   });
+  auditLog(req, { action: 'create', entity: 'AutomationRule', entityId: rule.id, details: { name: rule.name } });
   res.status(201).json({ success: true, data: rule });
 }
 
@@ -91,6 +93,8 @@ export async function updateAutomationRule(req: Request<{ id: string }>, res: Re
     data: updateData,
   });
 
+  auditLog(req, { action: 'update', entity: 'AutomationRule', entityId: req.params.id, details: updateData });
+
   res.json({ success: true, data: rule });
 }
 
@@ -102,5 +106,6 @@ export async function deleteAutomationRule(req: Request<{ id: string }>, res: Re
   }
 
   await prisma.automationRule.delete({ where: { id: req.params.id } });
+  auditLog(req, { action: 'delete', entity: 'AutomationRule', entityId: req.params.id, details: { name: existing.name } });
   res.json({ success: true, message: 'Automation rule deleted' });
 }

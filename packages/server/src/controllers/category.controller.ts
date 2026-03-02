@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import prisma from '../lib/db.js';
+import { auditLog } from '../lib/audit.js';
 
 const createCategorySchema = z.object({
   name: z.string().min(1),
@@ -84,6 +85,8 @@ export async function createCategory(req: Request, res: Response): Promise<void>
     include: { parent: true },
   });
 
+  auditLog(req, { action: 'create', entity: 'Category', entityId: category.id, details: { name: category.name } });
+
   res.status(201).json({ success: true, data: category });
 }
 
@@ -119,6 +122,8 @@ export async function updateCategory(req: Request<{ id: string }>, res: Response
     include: { parent: true },
   });
 
+  auditLog(req, { action: 'update', entity: 'Category', entityId: id, details: parsed.data });
+
   res.json({ success: true, data: category });
 }
 
@@ -150,5 +155,6 @@ export async function deleteCategory(req: Request<{ id: string }>, res: Response
   }
 
   await prisma.category.delete({ where: { id } });
+  auditLog(req, { action: 'delete', entity: 'Category', entityId: id, details: { name: existing.name } });
   res.json({ success: true, message: 'Category deleted' });
 }

@@ -5,6 +5,7 @@ import bcrypt from 'bcryptjs';
 import prisma from '../lib/db.js';
 import { generateToken } from '../middleware/auth.js';
 import { sendEmail, staffInvitationEmail } from '../lib/email.js';
+import { auditLog } from '../lib/audit.js';
 
 // ============================================================
 // LIST STAFF
@@ -141,6 +142,8 @@ export async function updateStaff(req: Request<{ id: string }>, res: Response): 
     },
   });
 
+  auditLog(req, { action: 'update', entity: 'Staff', entityId: targetId, details: parsed.data });
+
   res.json({ success: true, data: user });
 }
 
@@ -167,6 +170,8 @@ export async function deactivateStaff(req: Request<{ id: string }>, res: Respons
     where: { id: targetId },
     data: { isActive: false },
   });
+
+  auditLog(req, { action: 'update', entity: 'Staff', entityId: targetId, details: { isActive: false } });
 
   res.json({ success: true, data: { message: 'Staff member deactivated' } });
 }
@@ -215,6 +220,8 @@ export async function inviteStaff(req: Request, res: Response): Promise<void> {
   const inviteLink = `${adminUrl}/accept-invite?token=${token}`;
   const emailContent = staffInvitationEmail({ email, role: role || 'STAFF', inviteLink });
   await sendEmail({ to: email, ...emailContent });
+
+  auditLog(req, { action: 'create', entity: 'Staff', entityId: invite.id, details: { email, role: role || 'STAFF' } });
 
   res.status(201).json({
     success: true,

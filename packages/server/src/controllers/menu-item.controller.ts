@@ -1,6 +1,7 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
 import prisma from '../lib/db.js';
+import { auditLog } from '../lib/audit.js';
 
 const menuOptionValueSchema = z.object({
   name: z.string().min(1),
@@ -149,6 +150,8 @@ export async function createMenuItem(req: Request, res: Response): Promise<void>
     },
   });
 
+  auditLog(req, { action: 'create', entity: 'MenuItem', entityId: item.id, details: { name: item.name } });
+
   res.status(201).json({ success: true, data: item });
 }
 
@@ -203,6 +206,8 @@ export async function updateMenuItem(req: Request<{ id: string }>, res: Response
     },
   });
 
+  auditLog(req, { action: 'update', entity: 'MenuItem', entityId: id, details: data });
+
   res.json({ success: true, data: item });
 }
 
@@ -225,6 +230,7 @@ export async function deleteMenuItem(req: Request<{ id: string }>, res: Response
   }
 
   await prisma.menuItem.delete({ where: { id } });
+  auditLog(req, { action: 'delete', entity: 'MenuItem', entityId: id, details: { name: existing.name } });
   res.json({ success: true, message: 'Menu item deleted' });
 }
 

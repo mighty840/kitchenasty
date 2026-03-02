@@ -38,6 +38,8 @@ import StaffInvite from './pages/StaffInvite.js';
 import StaffEdit from './pages/StaffEdit.js';
 import AcceptInvite from './pages/AcceptInvite.js';
 import Settings from './pages/Settings.js';
+import DeveloperMetrics from './pages/DeveloperMetrics.js';
+import AuditLog from './pages/AuditLog.js';
 import SettingsGeneral from './pages/SettingsGeneral.js';
 import SettingsOrder from './pages/SettingsOrder.js';
 import SettingsReservation from './pages/SettingsReservation.js';
@@ -119,6 +121,11 @@ function AppRoutes() {
         <Route path="/settings/payment" element={<RequireRole roles={['SUPER_ADMIN']}><SettingsPayments /></RequireRole>} />
         <Route path="/settings/review" element={<RequireRole roles={['SUPER_ADMIN', 'MANAGER']}><SettingsReviews /></RequireRole>} />
         <Route path="/settings/advanced" element={<RequireRole roles={['SUPER_ADMIN']}><SettingsAdvanced /></RequireRole>} />
+
+        {/* Developer — MANAGER+ for metrics, SUPER_ADMIN for audit */}
+        <Route path="/developer" element={<RequireRole roles={['SUPER_ADMIN', 'MANAGER']}><Navigate to="/developer/metrics" replace /></RequireRole>} />
+        <Route path="/developer/metrics" element={<RequireRole roles={['SUPER_ADMIN', 'MANAGER']}><DeveloperMetrics /></RequireRole>} />
+        <Route path="/developer/audit-log" element={<RequireRole roles={['SUPER_ADMIN']}><AuditLog /></RequireRole>} />
 
         {/* SUPER_ADMIN only */}
         <Route path="/staff" element={<RequireRole roles={['SUPER_ADMIN']}><StaffList /></RequireRole>} />

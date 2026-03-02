@@ -1,6 +1,7 @@
 import { EventEmitter } from 'events';
 import prisma from './db.js';
 import { executeAction } from './actions.js';
+import { automationLogger } from './logger.js';
 
 export const appEvents = new EventEmitter();
 
@@ -21,13 +22,13 @@ async function processRules(event: string, data: Record<string, unknown>) {
         const actions = rule.actions as Array<{ type: string; [key: string]: unknown }>;
         for (const action of actions) {
           executeAction(action, data).catch((err) => {
-            console.error(`Automation rule "${rule.name}" action failed:`, err);
+            automationLogger.error({ err, rule: rule.name }, 'Automation rule action failed');
           });
         }
       }
     }
   } catch (err) {
-    console.error(`Error processing automation rules for ${event}:`, err);
+    automationLogger.error({ err, event }, 'Error processing automation rules');
   }
 }
 
