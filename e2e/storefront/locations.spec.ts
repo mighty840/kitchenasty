@@ -12,7 +12,7 @@ test.describe('Storefront Locations Page', () => {
   });
 
   test('navigating to locations from header', async ({ page }) => {
-    await page.goto('/');
+    await page.goto('/', { waitUntil: 'networkidle' });
     await page.getByRole('navigation').getByRole('link', { name: 'Locations' }).click();
     await expect(page).toHaveURL('/locations');
     await expect(page.getByRole('heading', { name: 'Our Locations' })).toBeVisible();
