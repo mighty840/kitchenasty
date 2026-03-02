@@ -24,9 +24,12 @@ test.describe('Storefront Menu Page', () => {
   });
 
   test('navigating to menu from header', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'networkidle' });
-    await page.getByRole('navigation').getByRole('link', { name: 'Menu' }).click();
-    await expect(page).toHaveURL(/\/menu/);
+    await page.goto('/');
+    // Retry the click in case the template swap detaches the nav element
+    await expect(async () => {
+      await page.getByRole('navigation').getByRole('link', { name: 'Menu' }).click();
+      await expect(page).toHaveURL(/\/menu/, { timeout: 2000 });
+    }).toPass({ timeout: 10000 });
     await expect(page.getByRole('heading', { name: 'Our Menu' })).toBeVisible();
   });
 

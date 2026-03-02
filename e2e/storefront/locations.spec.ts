@@ -12,9 +12,12 @@ test.describe('Storefront Locations Page', () => {
   });
 
   test('navigating to locations from header', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'networkidle' });
-    await page.getByRole('navigation').getByRole('link', { name: 'Locations' }).click();
-    await expect(page).toHaveURL('/locations');
+    await page.goto('/');
+    // Retry the click in case the template swap detaches the nav element
+    await expect(async () => {
+      await page.getByRole('navigation').getByRole('link', { name: 'Locations' }).click();
+      await expect(page).toHaveURL('/locations', { timeout: 2000 });
+    }).toPass({ timeout: 10000 });
     await expect(page.getByRole('heading', { name: 'Our Locations' })).toBeVisible();
   });
 });

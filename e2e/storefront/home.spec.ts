@@ -16,7 +16,7 @@ test.describe('Storefront Home Page', () => {
   });
 
   test('displays desktop navigation links', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('/');
     const nav = page.getByRole('navigation');
     await expect(nav.getByRole('link', { name: 'Home' })).toBeVisible();
     await expect(nav.getByRole('link', { name: 'Locations' })).toBeVisible();
@@ -69,7 +69,7 @@ test.describe('Storefront Home Page', () => {
   });
 
   test('Login and Sign Up links visible when not authenticated', async ({ page }) => {
-    await page.goto('/', { waitUntil: 'networkidle' });
+    await page.goto('/');
     const header = page.locator('header');
     await expect(header.getByRole('link', { name: 'Login' })).toBeVisible();
     await expect(header.getByRole('link', { name: 'Sign Up' })).toBeVisible();
