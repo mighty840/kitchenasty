@@ -38,7 +38,9 @@
     "tableReservationsDesc": "Reserva una mesa en tu ubicación preferida y evita la espera.",
     "readyToOrder": "¿Listo para Pedir?",
     "readyToOrderDesc": "Crea una cuenta para guardar tus favoritos, rastrear pedidos y ganar recompensas.",
-    "createAccount": "Crear Cuenta"
+    "createAccount": "Crear Cuenta",
+    "whyChooseUs": "Por Qué Elegirnos",
+    "whyChooseUsDesc": "Descubre lo que nos hace especiales"
   },
   "footer": {
     "description": "Pide comida deliciosa en línea para entrega o recogida de tus restaurantes locales favoritos.",

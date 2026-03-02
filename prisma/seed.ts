@@ -52,11 +52,11 @@ async function main() {
     where: { slug: 'downtown' },
     update: {},
     create: {
-      name: 'Downtown Kitchen',
+      name: 'Saffron & Sage Downtown',
       slug: 'downtown',
-      description: 'Our flagship location in the heart of downtown',
+      description: 'Our flagship location in the heart of downtown San Francisco — seasonal Mediterranean cuisine in a warm, inviting setting',
       phone: '(555) 123-4567',
-      email: 'downtown@kitchenasty.com',
+      email: 'downtown@saffronandsage.com',
       address: '123 Main Street',
       city: 'San Francisco',
       state: 'CA',
@@ -134,31 +134,31 @@ async function main() {
   const appetizers = await prisma.category.upsert({
     where: { slug: 'appetizers' },
     update: {},
-    create: { name: 'Appetizers', slug: 'appetizers', sortOrder: 1, locationId: location.id },
+    create: { name: 'Mezze & Starters', slug: 'appetizers', sortOrder: 1, locationId: location.id },
   });
 
   const mains = await prisma.category.upsert({
     where: { slug: 'main-courses' },
     update: {},
-    create: { name: 'Main Courses', slug: 'main-courses', sortOrder: 2, locationId: location.id },
+    create: { name: 'Mains', slug: 'main-courses', sortOrder: 2, locationId: location.id },
   });
 
   const pizzas = await prisma.category.upsert({
     where: { slug: 'pizzas' },
     update: {},
-    create: { name: 'Pizzas', slug: 'pizzas', sortOrder: 3, locationId: location.id },
+    create: { name: 'Flatbreads & Pizza', slug: 'pizzas', sortOrder: 3, locationId: location.id },
   });
 
   const desserts = await prisma.category.upsert({
     where: { slug: 'desserts' },
     update: {},
-    create: { name: 'Desserts', slug: 'desserts', sortOrder: 4, locationId: location.id },
+    create: { name: 'Sweets', slug: 'desserts', sortOrder: 4, locationId: location.id },
   });
 
   const drinks = await prisma.category.upsert({
     where: { slug: 'drinks' },
     update: {},
-    create: { name: 'Drinks', slug: 'drinks', sortOrder: 5, locationId: location.id },
+    create: { name: 'Beverages', slug: 'drinks', sortOrder: 5, locationId: location.id },
   });
 
   // Menu items with options
@@ -168,8 +168,9 @@ async function main() {
     create: {
       name: 'Bruschetta',
       slug: 'bruschetta',
-      description: 'Toasted bread topped with fresh tomatoes, garlic, basil, and olive oil',
+      description: 'Wood-fired sourdough topped with heirloom tomatoes, roasted garlic, fresh basil, and a drizzle of aged balsamic',
       price: 8.99,
+      image: 'https://images.unsplash.com/photo-1572695157366-5e585ab2b69f?w=600&h=400&fit=crop',
       categoryId: appetizers.id,
       locationId: location.id,
       sortOrder: 1,
@@ -182,8 +183,9 @@ async function main() {
     create: {
       name: 'Caesar Salad',
       slug: 'caesar-salad',
-      description: 'Crisp romaine lettuce with Caesar dressing, croutons, and parmesan',
+      description: 'Crisp romaine hearts tossed in house-made Caesar dressing with garlic croutons, shaved Parmigiano-Reggiano, and anchovy breadcrumbs',
       price: 10.99,
+      image: 'https://images.unsplash.com/photo-1550304943-4f24f54ddde9?w=600&h=400&fit=crop',
       categoryId: appetizers.id,
       locationId: location.id,
       sortOrder: 2,
@@ -224,17 +226,63 @@ async function main() {
     },
   });
 
+  const hummusTrio = await prisma.menuItem.upsert({
+    where: { slug: 'hummus-trio' },
+    update: {},
+    create: {
+      name: 'Hummus Trio',
+      slug: 'hummus-trio',
+      description: 'Classic, roasted red pepper, and herb-infused hummus served with warm pita bread and marinated olives',
+      price: 12.99,
+      image: 'https://images.unsplash.com/photo-1577805947697-89e18249d767?w=600&h=400&fit=crop',
+      categoryId: appetizers.id,
+      locationId: location.id,
+      sortOrder: 3,
+    },
+  });
+
   const grilledSalmon = await prisma.menuItem.upsert({
     where: { slug: 'grilled-salmon' },
     update: {},
     create: {
       name: 'Grilled Salmon',
       slug: 'grilled-salmon',
-      description: 'Atlantic salmon fillet with lemon butter sauce, seasonal vegetables, and rice',
+      description: 'Wild-caught salmon fillet glazed with saffron-lemon butter, served over herbed couscous with charred broccolini',
       price: 22.99,
+      image: 'https://images.unsplash.com/photo-1467003909585-2f8a72700288?w=600&h=400&fit=crop',
       categoryId: mains.id,
       locationId: location.id,
       sortOrder: 1,
+    },
+  });
+
+  const lambKofta = await prisma.menuItem.upsert({
+    where: { slug: 'lamb-kofta' },
+    update: {},
+    create: {
+      name: 'Lamb Kofta',
+      slug: 'lamb-kofta',
+      description: 'Spiced lamb kofta skewers grilled over charcoal, served with tzatziki, pickled onions, and saffron rice',
+      price: 19.99,
+      image: 'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=600&h=400&fit=crop',
+      categoryId: mains.id,
+      locationId: location.id,
+      sortOrder: 2,
+    },
+  });
+
+  const shawarmaBowl = await prisma.menuItem.upsert({
+    where: { slug: 'chicken-shawarma-bowl' },
+    update: {},
+    create: {
+      name: 'Chicken Shawarma Bowl',
+      slug: 'chicken-shawarma-bowl',
+      description: 'Slow-roasted shawarma chicken over turmeric rice with tahini sauce, pickled turnips, and a fresh herb salad',
+      price: 17.99,
+      image: 'https://images.unsplash.com/photo-1529006557810-274b9b2fc783?w=600&h=400&fit=crop',
+      categoryId: mains.id,
+      locationId: location.id,
+      sortOrder: 3,
     },
   });
 
@@ -244,11 +292,27 @@ async function main() {
     create: {
       name: 'Margherita Pizza',
       slug: 'margherita-pizza',
-      description: 'Classic pizza with tomato sauce, fresh mozzarella, and basil',
+      description: 'San Marzano tomato sauce, buffalo mozzarella, fresh basil, and extra-virgin olive oil on our house-made dough',
       price: 14.99,
+      image: 'https://images.unsplash.com/photo-1574071318508-1cdbab80d002?w=600&h=400&fit=crop',
       categoryId: pizzas.id,
       locationId: location.id,
       sortOrder: 1,
+    },
+  });
+
+  const zaatarFlatbread = await prisma.menuItem.upsert({
+    where: { slug: 'zaatar-flatbread' },
+    update: {},
+    create: {
+      name: "Za'atar Flatbread",
+      slug: 'zaatar-flatbread',
+      description: "Crispy flatbread brushed with olive oil and topped with za'atar, cherry tomatoes, labneh, and a squeeze of lemon",
+      price: 13.99,
+      image: 'https://images.unsplash.com/photo-1565299624946-b28f40a0ae38?w=600&h=400&fit=crop',
+      categoryId: pizzas.id,
+      locationId: location.id,
+      sortOrder: 2,
     },
   });
 
@@ -295,11 +359,27 @@ async function main() {
     create: {
       name: 'Tiramisu',
       slug: 'tiramisu',
-      description: 'Classic Italian dessert with espresso-soaked ladyfingers and mascarpone cream',
+      description: 'Layers of espresso-soaked savoiardi and whipped mascarpone dusted with Valrhona cocoa',
       price: 9.99,
+      image: 'https://images.unsplash.com/photo-1571877227200-a0d98ea607e9?w=600&h=400&fit=crop',
       categoryId: desserts.id,
       locationId: location.id,
       sortOrder: 1,
+    },
+  });
+
+  const baklava = await prisma.menuItem.upsert({
+    where: { slug: 'baklava' },
+    update: {},
+    create: {
+      name: 'Baklava',
+      slug: 'baklava',
+      description: 'Flaky phyllo pastry layered with pistachios and walnuts, soaked in rose-water honey syrup',
+      price: 8.99,
+      image: 'https://images.unsplash.com/photo-1598110750624-207050c4f28c?w=600&h=400&fit=crop',
+      categoryId: desserts.id,
+      locationId: location.id,
+      sortOrder: 2,
     },
   });
 
@@ -309,26 +389,54 @@ async function main() {
     create: {
       name: 'Fresh Lemonade',
       slug: 'fresh-lemonade',
-      description: 'Freshly squeezed lemonade with mint',
+      description: 'House-squeezed lemonade with fresh mint and a hint of orange blossom water',
       price: 4.99,
+      image: 'https://images.unsplash.com/photo-1621263764928-df1444c5e859?w=600&h=400&fit=crop',
       categoryId: drinks.id,
       locationId: location.id,
       sortOrder: 1,
     },
   });
 
+  const turkishCoffee = await prisma.menuItem.upsert({
+    where: { slug: 'turkish-coffee' },
+    update: {},
+    create: {
+      name: 'Turkish Coffee',
+      slug: 'turkish-coffee',
+      description: 'Traditional slow-brewed Turkish coffee with cardamom, served with a piece of Turkish delight',
+      price: 5.99,
+      image: 'https://images.unsplash.com/photo-1544787219-7f47ccb76574?w=600&h=400&fit=crop',
+      categoryId: drinks.id,
+      locationId: location.id,
+      sortOrder: 2,
+    },
+  });
+
   // Allergen associations
+  const allergenMap = Object.fromEntries(allergens.map(a => [a.name, a.id]));
   await prisma.menuItemAllergen.createMany({
     data: [
-      { menuItemId: bruschetta.id, allergenId: allergens.find(a => a.name === 'Gluten')!.id },
-      { menuItemId: caesarSalad.id, allergenId: allergens.find(a => a.name === 'Dairy')!.id },
-      { menuItemId: caesarSalad.id, allergenId: allergens.find(a => a.name === 'Eggs')!.id },
-      { menuItemId: grilledSalmon.id, allergenId: allergens.find(a => a.name === 'Fish')!.id },
-      { menuItemId: margherita.id, allergenId: allergens.find(a => a.name === 'Gluten')!.id },
-      { menuItemId: margherita.id, allergenId: allergens.find(a => a.name === 'Dairy')!.id },
-      { menuItemId: tiramisu.id, allergenId: allergens.find(a => a.name === 'Gluten')!.id },
-      { menuItemId: tiramisu.id, allergenId: allergens.find(a => a.name === 'Dairy')!.id },
-      { menuItemId: tiramisu.id, allergenId: allergens.find(a => a.name === 'Eggs')!.id },
+      { menuItemId: bruschetta.id, allergenId: allergenMap['Gluten'] },
+      { menuItemId: caesarSalad.id, allergenId: allergenMap['Dairy'] },
+      { menuItemId: caesarSalad.id, allergenId: allergenMap['Eggs'] },
+      { menuItemId: hummusTrio.id, allergenId: allergenMap['Sesame'] },
+      { menuItemId: hummusTrio.id, allergenId: allergenMap['Gluten'] },
+      { menuItemId: grilledSalmon.id, allergenId: allergenMap['Fish'] },
+      { menuItemId: lambKofta.id, allergenId: allergenMap['Dairy'] },
+      { menuItemId: lambKofta.id, allergenId: allergenMap['Gluten'] },
+      { menuItemId: shawarmaBowl.id, allergenId: allergenMap['Sesame'] },
+      { menuItemId: shawarmaBowl.id, allergenId: allergenMap['Dairy'] },
+      { menuItemId: margherita.id, allergenId: allergenMap['Gluten'] },
+      { menuItemId: margherita.id, allergenId: allergenMap['Dairy'] },
+      { menuItemId: zaatarFlatbread.id, allergenId: allergenMap['Gluten'] },
+      { menuItemId: zaatarFlatbread.id, allergenId: allergenMap['Dairy'] },
+      { menuItemId: zaatarFlatbread.id, allergenId: allergenMap['Sesame'] },
+      { menuItemId: tiramisu.id, allergenId: allergenMap['Gluten'] },
+      { menuItemId: tiramisu.id, allergenId: allergenMap['Dairy'] },
+      { menuItemId: tiramisu.id, allergenId: allergenMap['Eggs'] },
+      { menuItemId: baklava.id, allergenId: allergenMap['Gluten'] },
+      { menuItemId: baklava.id, allergenId: allergenMap['Nuts'] },
     ],
     skipDuplicates: true,
   });
@@ -340,13 +448,24 @@ async function main() {
       { menuItemId: bruschetta.id, mealtimeId: dinner.id },
       { menuItemId: caesarSalad.id, mealtimeId: lunch.id },
       { menuItemId: caesarSalad.id, mealtimeId: dinner.id },
+      { menuItemId: hummusTrio.id, mealtimeId: lunch.id },
+      { menuItemId: hummusTrio.id, mealtimeId: dinner.id },
       { menuItemId: grilledSalmon.id, mealtimeId: dinner.id },
+      { menuItemId: lambKofta.id, mealtimeId: dinner.id },
+      { menuItemId: shawarmaBowl.id, mealtimeId: lunch.id },
+      { menuItemId: shawarmaBowl.id, mealtimeId: dinner.id },
       { menuItemId: margherita.id, mealtimeId: lunch.id },
       { menuItemId: margherita.id, mealtimeId: dinner.id },
+      { menuItemId: zaatarFlatbread.id, mealtimeId: lunch.id },
+      { menuItemId: zaatarFlatbread.id, mealtimeId: dinner.id },
       { menuItemId: tiramisu.id, mealtimeId: lunch.id },
       { menuItemId: tiramisu.id, mealtimeId: dinner.id },
+      { menuItemId: baklava.id, mealtimeId: lunch.id },
+      { menuItemId: baklava.id, mealtimeId: dinner.id },
       { menuItemId: lemonade.id, mealtimeId: lunch.id },
       { menuItemId: lemonade.id, mealtimeId: dinner.id },
+      { menuItemId: turkishCoffee.id, mealtimeId: lunch.id },
+      { menuItemId: turkishCoffee.id, mealtimeId: dinner.id },
     ],
     skipDuplicates: true,
   });
@@ -469,29 +588,31 @@ async function main() {
     update: {},
     create: {
       id: 'default',
-      siteName: 'KitchenAsty',
-      siteTitle: 'KitchenAsty - Order Online',
-      colorPrimary: '#ea580c',
-      colorSecondary: '#9333ea',
+      siteName: 'Saffron & Sage',
+      siteTitle: 'Saffron & Sage — Modern Mediterranean Dining',
+      storefrontTemplate: 'elegant',
+      colorPrimary: '#d97706',
+      colorSecondary: '#65a30d',
       darkMode: 'light',
       heroSection: {
-        title: 'Delicious food, delivered to your door',
-        subtitle: 'Order from our menu for pickup or delivery. Fresh ingredients, amazing flavors.',
-        ctaPrimaryText: 'View Menu',
+        title: 'Modern Mediterranean, Rooted in Tradition',
+        subtitle: 'Seasonal ingredients, bold flavors, and the warmth of the Mediterranean — brought to your table or your door.',
+        backgroundImage: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1600&h=900&fit=crop',
+        ctaPrimaryText: 'Explore Our Menu',
         ctaPrimaryLink: '/menu',
-        ctaSecondaryText: 'Find Location',
-        ctaSecondaryLink: '/locations',
+        ctaSecondaryText: 'Reserve a Table',
+        ctaSecondaryLink: '/reservations',
       },
       featuresSection: [
-        { icon: '⚡', title: 'Fast Delivery', description: 'Get your food delivered in 30 minutes or less' },
-        { icon: '✔', title: 'Easy Ordering', description: 'Order online with just a few clicks' },
-        { icon: '🍽', title: 'Table Reservations', description: 'Book a table at your favorite location' },
+        { icon: '🌿', title: 'Farm-to-Table', description: 'We partner with local farms for the freshest seasonal ingredients' },
+        { icon: '🍂', title: 'Seasonal Specials', description: 'Our menu evolves with the seasons — there\'s always something new to discover' },
+        { icon: '🚗', title: 'Dine In or Deliver', description: 'Enjoy our cuisine at the restaurant or have it delivered straight to your door' },
       ],
       ctaSection: {
-        title: 'Ready to Order?',
-        description: 'Create an account to start ordering and earn loyalty points.',
-        buttonText: 'Create Account',
-        buttonLink: '/register',
+        title: 'Ready to Experience Saffron & Sage?',
+        description: 'Join us for an unforgettable Mediterranean dining experience — reserve a table or order online today.',
+        buttonText: 'Order Now',
+        buttonLink: '/menu',
       },
     },
   });

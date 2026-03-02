@@ -38,7 +38,9 @@
     "tableReservationsDesc": "Réservez une table dans le restaurant de votre choix et évitez l'attente.",
     "readyToOrder": "Prêt à Commander ?",
     "readyToOrderDesc": "Créez un compte pour sauvegarder vos favoris, suivre vos commandes et gagner des récompenses.",
-    "createAccount": "Créer un Compte"
+    "createAccount": "Créer un Compte",
+    "whyChooseUs": "Pourquoi Nous Choisir",
+    "whyChooseUsDesc": "Découvrez ce qui nous rend spéciaux"
   },
   "footer": {
     "description": "Commandez de bons plats en ligne en livraison ou à emporter depuis vos restaurants préférés.",

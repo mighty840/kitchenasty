@@ -38,7 +38,9 @@
     "tableReservationsDesc": "Reservieren Sie einen Tisch an Ihrem bevorzugten Standort und vermeiden Sie Wartezeiten.",
     "readyToOrder": "Bereit zu Bestellen?",
     "readyToOrderDesc": "Erstellen Sie ein Konto, um Favoriten zu speichern, Bestellungen zu verfolgen und Prämien zu sammeln.",
-    "createAccount": "Konto Erstellen"
+    "createAccount": "Konto Erstellen",
+    "whyChooseUs": "Warum Uns Wählen",
+    "whyChooseUsDesc": "Entdecken Sie, was uns besonders macht"
   },
   "footer": {
     "description": "Bestellen Sie leckeres Essen online zur Lieferung oder Abholung von Ihren Lieblingsrestaurants.",

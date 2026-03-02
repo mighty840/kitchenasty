@@ -38,7 +38,9 @@
     "tableReservationsDesc": "Prenota un tavolo nella sede che preferisci e salta la coda.",
     "readyToOrder": "Pronto a Ordinare?",
     "readyToOrderDesc": "Crea un account per salvare i tuoi preferiti, seguire gli ordini e guadagnare premi.",
-    "createAccount": "Crea un Account"
+    "createAccount": "Crea un Account",
+    "whyChooseUs": "Perché Sceglierci",
+    "whyChooseUsDesc": "Scopri cosa ci rende speciali"
   },
   "footer": {
     "description": "Ordina cibo delizioso online per consegna o ritiro dai tuoi ristoranti preferiti.",

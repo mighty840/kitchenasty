@@ -38,7 +38,9 @@
     "tableReservationsDesc": "Reserve uma mesa na unidade de sua preferência e evite a espera.",
     "readyToOrder": "Pronto para Pedir?",
     "readyToOrderDesc": "Crie uma conta para salvar seus favoritos, acompanhar pedidos e ganhar recompensas.",
-    "createAccount": "Criar Conta"
+    "createAccount": "Criar Conta",
+    "whyChooseUs": "Por Que Nos Escolher",
+    "whyChooseUsDesc": "Descubra o que nos torna especiais"
   },
   "footer": {
     "description": "Peça comida deliciosa online para entrega ou retirada dos seus restaurantes favoritos.",

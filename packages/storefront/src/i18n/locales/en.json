@@ -38,7 +38,9 @@
     "tableReservationsDesc": "Book a table at your preferred location and skip the wait.",
     "readyToOrder": "Ready to Order?",
     "readyToOrderDesc": "Create an account to save your favorites, track orders, and earn rewards.",
-    "createAccount": "Create Account"
+    "createAccount": "Create Account",
+    "whyChooseUs": "Why Choose Us",
+    "whyChooseUsDesc": "Discover what makes us special"
   },
   "footer": {
     "description": "Order delicious food online for delivery or pickup from your favorite local restaurants.",
