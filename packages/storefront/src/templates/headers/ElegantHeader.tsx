@@ -45,7 +45,7 @@ export default function ElegantHeader() {
       {/* Centered nav */}
       <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex items-center justify-between h-12">
-          <div className="hidden md:flex items-center gap-6 mx-auto">
+          <nav className="hidden md:flex items-center gap-6 mx-auto">
             {navLinks.map((link) => (
               <Link
                 key={link.to}
@@ -59,7 +59,7 @@ export default function ElegantHeader() {
                 {link.label}
               </Link>
             ))}
-          </div>
+          </nav>
 
           {/* Right side */}
           <div className="hidden md:flex items-center gap-3 absolute right-4 lg:right-8">
