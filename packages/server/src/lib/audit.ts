@@ -12,20 +12,24 @@ interface AuditOptions {
 export function auditLog(req: Request, opts: AuditOptions): void {
   if (!req.user) return;
 
-  const ipAddress = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.ip;
+  try {
+    const ipAddress = (req.headers['x-forwarded-for'] as string)?.split(',')[0]?.trim() || req.ip;
 
-  prisma.auditLog.create({
-    data: {
-      userId: req.user.id,
-      userEmail: req.user.email,
-      action: opts.action,
-      entity: opts.entity,
-      entityId: opts.entityId,
-      details: opts.details as any ?? undefined,
-      ipAddress,
-      requestId: String(req.id),
-    },
-  }).catch((err) => {
+    prisma.auditLog.create({
+      data: {
+        userId: req.user.id,
+        userEmail: req.user.email,
+        action: opts.action,
+        entity: opts.entity,
+        entityId: opts.entityId,
+        details: opts.details as any ?? undefined,
+        ipAddress,
+        requestId: String(req.id),
+      },
+    }).catch((err) => {
+      logger.error({ err }, 'Failed to write audit log');
+    });
+  } catch (err) {
     logger.error({ err }, 'Failed to write audit log');
-  });
+  }
 }
