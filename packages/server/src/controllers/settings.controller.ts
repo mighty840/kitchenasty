@@ -41,9 +41,29 @@ async function getOrCreateSettings() {
   return settings;
 }
 
+// Only the fields required by the public storefront — never include API keys or credentials.
+function toPublicSettings(settings: Awaited<ReturnType<typeof getOrCreateSettings>>) {
+  return {
+    id: settings.id,
+    siteName: settings.siteName,
+    siteTitle: settings.siteTitle,
+    favicon: settings.favicon,
+    logo: settings.logo,
+    colorPrimary: settings.colorPrimary,
+    colorSecondary: settings.colorSecondary,
+    darkMode: settings.darkMode,
+    storefrontTemplate: settings.storefrontTemplate,
+    heroSection: settings.heroSection,
+    featuresSection: settings.featuresSection,
+    ctaSection: settings.ctaSection,
+    createdAt: settings.createdAt,
+    updatedAt: settings.updatedAt,
+  };
+}
+
 export async function getSettings(_req: Request, res: Response): Promise<void> {
   const settings = await getOrCreateSettings();
-  res.json({ success: true, data: settings });
+  res.json({ success: true, data: toPublicSettings(settings) });
 }
 
 export async function updateSettings(req: Request, res: Response): Promise<void> {
@@ -62,7 +82,7 @@ export async function updateSettings(req: Request, res: Response): Promise<void>
 
   auditLog(req, { action: 'update', entity: 'SiteSettings', entityId: 'default', details: { fields: Object.keys(parsed.data) } });
 
-  res.json({ success: true, data: settings });
+  res.json({ success: true, data: toPublicSettings(settings) });
 }
 
 export async function uploadLogo(req: Request, res: Response): Promise<void> {
@@ -79,7 +99,7 @@ export async function uploadLogo(req: Request, res: Response): Promise<void> {
     data: { logo: logoPath },
   });
 
-  res.json({ success: true, data: settings });
+  res.json({ success: true, data: toPublicSettings(settings) });
 }
 
 export async function uploadFavicon(req: Request, res: Response): Promise<void> {
@@ -96,7 +116,7 @@ export async function uploadFavicon(req: Request, res: Response): Promise<void> 
     data: { favicon: faviconPath },
   });
 
-  res.json({ success: true, data: settings });
+  res.json({ success: true, data: toPublicSettings(settings) });
 }
 
 // ============================================================

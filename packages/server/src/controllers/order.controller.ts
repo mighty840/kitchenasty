@@ -248,7 +248,7 @@ export async function createOrder(req: Request, res: Response): Promise<void> {
           if (subtotal < zone.minOrder) {
             res.status(400).json({
               success: false,
-              error: `Minimum order for this delivery zone is $${zone.minOrder.toFixed(2)}`,
+              error: `Mindestbestellwert für diese Lieferzone: ${zone.minOrder.toFixed(2)} €`,
             });
             return;
           }
@@ -420,6 +420,12 @@ export async function getOrder(req: Request<{ id: string }>, res: Response): Pro
 
   if (!order) {
     res.status(404).json({ success: false, error: 'Order not found' });
+    return;
+  }
+
+  const user = req.user!;
+  if (user.type !== 'staff' && order.customerId !== user.id) {
+    res.status(403).json({ success: false, error: 'Access denied' });
     return;
   }
 
