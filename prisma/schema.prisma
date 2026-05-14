@@ -28,6 +28,7 @@ model User {
   location   Location? @relation(fields: [locationId], references: [id])
 
   assignedOrders Order[] @relation("AssignedStaff")
+  mediaAssets    MediaAsset[]
 
   @@map("users")
 }
@@ -625,6 +626,21 @@ model GalleryImage {
 
   @@index([category, sortOrder])
   @@map("gallery_images")
+}
+
+model MediaAsset {
+  id           String   @id @default(cuid())
+  filename     String
+  originalName String
+  url          String
+  mimeType     String
+  size         Int
+  uploadedById String?
+  uploadedBy   User?    @relation(fields: [uploadedById], references: [id], onDelete: SetNull)
+  createdAt    DateTime @default(now())
+
+  @@index([createdAt])
+  @@map("media_assets")
 }
 
 // ============================================================
