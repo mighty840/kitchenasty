@@ -5,6 +5,31 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.0] - 2026-05-14
+
+### Added
+
+#### Reservation Trends Analytics (#44)
+- New admin page at `/reservations/trends` with six charts: daily bookings, peak days of the week, party-size distribution, status breakdown, booking lead time, and hourly distribution
+- Period selector (7/14/30/60/90 days) and per-location filter
+- New staff-only `GET /api/reservations/analytics` endpoint backed by Prisma aggregations + raw SQL for date binning
+
+#### Storefront Photo Gallery (#45)
+- Public gallery page at `/gallery` with category filter chips (Food, Interior, Garden, Events) and lightbox modal
+- Gallery link added to all storefront header templates
+- Translated subtitle, category labels, and empty state across all six locales (en, de, es, fr, it, pt)
+- New `GalleryImage` Prisma model + admin CRUD at **Design → Gallery**: add, edit, hide/show, reorder, delete
+- Seed data: 13 sample images across the four categories
+
+#### Admin Media Library (#46)
+- New page at **Design → Media Library** with drag-and-drop upload, multi-select uploads, copy-URL action, and delete
+- Files stored locally under `/uploads`, indexed in a new `MediaAsset` table (filename, MIME type, size, uploader)
+- Reusable `MediaPickerModal` component that future admin forms can adopt without re-implementing the upload/listing flow
+- New endpoints (staff-only): `GET /api/media`, `POST /api/media/upload`, `DELETE /api/media/:id`
+
+### Tests
+- Added integration tests covering auth gating, validation, and happy paths for the new reservation analytics, gallery, and media endpoints
+
 ## [0.2.0] - 2026-03-09
 
 ### Added
