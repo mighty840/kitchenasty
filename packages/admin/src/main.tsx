@@ -17,6 +17,7 @@ import OrderList from './pages/OrderList.js';
 import OrderDetailPage from './pages/OrderDetail.js';
 import ReservationList from './pages/ReservationList.js';
 import ReservationDetail from './pages/ReservationDetail.js';
+import ReservationTrends from './pages/ReservationTrends.js';
 import CouponList from './pages/CouponList.js';
 import CouponForm from './pages/CouponForm.js';
 import ReviewList from './pages/ReviewList.js';
@@ -77,6 +78,7 @@ function AppRoutes() {
         <Route path="/orders" element={<OrderList />} />
         <Route path="/orders/:id" element={<OrderDetailPage />} />
         <Route path="/reservations" element={<ReservationList />} />
+        <Route path="/reservations/trends" element={<ReservationTrends />} />
         <Route path="/reservations/:id" element={<ReservationDetail />} />
         <Route path="/reviews" element={<ReviewList />} />
         <Route path="/kitchen" element={<KitchenDisplay />} />

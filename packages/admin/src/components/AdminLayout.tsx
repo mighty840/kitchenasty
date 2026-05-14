@@ -15,7 +15,16 @@ interface NavItem {
 const navItems: NavItem[] = [
   { path: '/', label: 'Dashboard', icon: '\u25A1', roles: ['SUPER_ADMIN', 'MANAGER', 'STAFF'] },
   { path: '/orders', label: 'Orders', icon: '\uD83D\uDCCB', roles: ['SUPER_ADMIN', 'MANAGER', 'STAFF'] },
-  { path: '/reservations', label: 'Reservations', icon: '\uD83D\uDDD3', roles: ['SUPER_ADMIN', 'MANAGER', 'STAFF'] },
+  {
+    path: '/reservations',
+    label: 'Reservations',
+    icon: '\uD83D\uDDD3',
+    roles: ['SUPER_ADMIN', 'MANAGER', 'STAFF'],
+    children: [
+      { path: '/reservations', label: 'All Reservations' },
+      { path: '/reservations/trends', label: 'Trends' },
+    ],
+  },
   { path: '/reviews', label: 'Reviews', icon: '\u2B50', roles: ['SUPER_ADMIN', 'MANAGER', 'STAFF'] },
   { path: '/kitchen', label: 'Kitchen', icon: '\uD83C\uDF73', roles: ['SUPER_ADMIN', 'MANAGER', 'STAFF'] },
   { path: '/locations', label: 'Locations', icon: '\u25CE', roles: ['SUPER_ADMIN', 'MANAGER'] },

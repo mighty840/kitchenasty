@@ -8,6 +8,7 @@ import {
   deleteReservation,
   listCustomerReservations,
   checkAvailability,
+  getReservationAnalytics,
 } from '../controllers/reservation.controller.js';
 
 const router = Router();
@@ -17,6 +18,9 @@ router.get('/availability', checkAvailability);
 
 // Customer: own reservations
 router.get('/my-reservations', authenticate, listCustomerReservations);
+
+// Staff: analytics (must be before /:id)
+router.get('/analytics', authenticate, requireStaff, getReservationAnalytics);
 
 // Customer: create reservation
 router.post('/', authenticate, createReservation);

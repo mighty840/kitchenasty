@@ -1,5 +1,6 @@
 import { Request, Response } from 'express';
 import { z } from 'zod';
+import { Prisma } from '@prisma/client';
 import prisma from '../lib/db.js';
 
 const createReservationSchema = z.object({
@@ -200,6 +201,155 @@ export async function listCustomerReservations(req: Request, res: Response): Pro
     success: true,
     data: reservations,
     pagination: { page, limit, total, totalPages: Math.ceil(total / limit) },
+  });
+}
+
+export async function getReservationAnalytics(req: Request, res: Response): Promise<void> {
+  const days = Math.min(365, Math.max(7, parseInt(req.query.days as string) || 30));
+  const locationId = req.query.locationId as string | undefined;
+
+  const now = new Date();
+  const startDate = new Date(now);
+  startDate.setDate(startDate.getDate() - days);
+  startDate.setHours(0, 0, 0, 0);
+  const endDate = new Date(now);
+  endDate.setDate(endDate.getDate() + days);
+  endDate.setHours(23, 59, 59, 999);
+
+  const locationFilter = locationId ? Prisma.sql`AND "locationId" = ${locationId}` : Prisma.empty;
+  const where: Prisma.ReservationWhereInput = {
+    date: { gte: startDate, lte: endDate },
+    ...(locationId ? { locationId } : {}),
+  };
+
+  const [
+    dailyRows,
+    dowRows,
+    partySizeRows,
+    statusRows,
+    hourlyRows,
+    leadTimeRows,
+    summaryAgg,
+    completedCount,
+  ] = await Promise.all([
+    prisma.$queryRaw<{ date: string; reservations: bigint; guests: bigint }[]>(
+      Prisma.sql`
+        SELECT
+          TO_CHAR("date", 'YYYY-MM-DD') AS date,
+          COUNT(*)::bigint AS reservations,
+          COALESCE(SUM("partySize"), 0)::bigint AS guests
+        FROM "reservations"
+        WHERE "date" >= ${startDate} AND "date" <= ${endDate} ${locationFilter}
+        GROUP BY "date"
+        ORDER BY "date"
+      `
+    ),
+    prisma.$queryRaw<{ dow: number; reservations: bigint; guests: bigint }[]>(
+      Prisma.sql`
+        SELECT
+          EXTRACT(DOW FROM "date")::int AS dow,
+          COUNT(*)::bigint AS reservations,
+          COALESCE(SUM("partySize"), 0)::bigint AS guests
+        FROM "reservations"
+        WHERE "date" >= ${startDate} AND "date" <= ${endDate} ${locationFilter}
+        GROUP BY EXTRACT(DOW FROM "date")
+        ORDER BY dow
+      `
+    ),
+    prisma.reservation.groupBy({
+      by: ['partySize'],
+      where,
+      _count: true,
+      orderBy: { partySize: 'asc' },
+    }),
+    prisma.reservation.groupBy({
+      by: ['status'],
+      where,
+      _count: true,
+    }),
+    prisma.$queryRaw<{ hour: number; reservations: bigint }[]>(
+      Prisma.sql`
+        SELECT
+          SPLIT_PART("time", ':', 1)::int AS hour,
+          COUNT(*)::bigint AS reservations
+        FROM "reservations"
+        WHERE "date" >= ${startDate} AND "date" <= ${endDate} ${locationFilter}
+        GROUP BY SPLIT_PART("time", ':', 1)::int
+        ORDER BY hour
+      `
+    ),
+    prisma.$queryRaw<{ bucket: string; count: bigint }[]>(
+      Prisma.sql`
+        SELECT
+          CASE
+            WHEN ("date"::date - "createdAt"::date) <= 0 THEN 'same-day'
+            WHEN ("date"::date - "createdAt"::date) BETWEEN 1 AND 2 THEN '1-2d'
+            WHEN ("date"::date - "createdAt"::date) BETWEEN 3 AND 7 THEN '3-7d'
+            WHEN ("date"::date - "createdAt"::date) BETWEEN 8 AND 14 THEN '8-14d'
+            ELSE '15d+'
+          END AS bucket,
+          COUNT(*)::bigint AS count
+        FROM "reservations"
+        WHERE "date" >= ${startDate} AND "date" <= ${endDate} ${locationFilter}
+        GROUP BY bucket
+      `
+    ),
+    prisma.reservation.aggregate({
+      where,
+      _count: true,
+      _sum: { partySize: true },
+      _avg: { partySize: true },
+    }),
+    prisma.reservation.count({
+      where: { ...where, status: { in: ['COMPLETED', 'SEATED'] } },
+    }),
+  ]);
+
+  const totalReservations = summaryAgg._count;
+  const completionRate = totalReservations > 0 ? completedCount / totalReservations : 0;
+
+  const bucketOrder = ['same-day', '1-2d', '3-7d', '8-14d', '15d+'];
+  const leadTimeMap = new Map(leadTimeRows.map((r) => [r.bucket, Number(r.count)]));
+  const leadTimeBuckets = bucketOrder.map((bucket) => ({
+    bucket,
+    count: leadTimeMap.get(bucket) ?? 0,
+  }));
+
+  res.json({
+    success: true,
+    data: {
+      summary: {
+        totalReservations,
+        totalGuests: Number(summaryAgg._sum.partySize ?? 0),
+        avgPartySize: Number((summaryAgg._avg.partySize ?? 0).toFixed(2)),
+        completionRate: Number(completionRate.toFixed(4)),
+        rangeStart: startDate.toISOString(),
+        rangeEnd: endDate.toISOString(),
+      },
+      dailyBookings: dailyRows.map((d) => ({
+        date: d.date,
+        reservations: Number(d.reservations),
+        guests: Number(d.guests),
+      })),
+      dayOfWeekDistribution: dowRows.map((d) => ({
+        dow: d.dow,
+        reservations: Number(d.reservations),
+        guests: Number(d.guests),
+      })),
+      partySizeDistribution: partySizeRows.map((d) => ({
+        partySize: d.partySize,
+        count: d._count,
+      })),
+      statusDistribution: statusRows.map((d) => ({
+        status: d.status,
+        count: d._count,
+      })),
+      hourlyDistribution: hourlyRows.map((d) => ({
+        hour: d.hour,
+        reservations: Number(d.reservations),
+      })),
+      leadTimeBuckets,
+    },
   });
 }
 
