@@ -18,12 +18,23 @@
     "locations": "Sedi",
     "menu": "Menu",
     "reservations": "Prenotazioni",
+    "gallery": "Galleria",
     "login": "Accedi",
     "signUp": "Registrati",
     "logout": "Esci",
     "myAccount": "Il Mio Account",
     "openCart": "Apri carrello",
     "toggleMenu": "Apri/chiudi menu"
+  },
+  "gallery": {
+    "title": "Galleria",
+    "subtitle": "Uno sguardo dentro il nostro ristorante — cucina, atmosfera, giardino e momenti speciali",
+    "all": "Tutto",
+    "food": "Cucina",
+    "interior": "Interno",
+    "garden": "Giardino",
+    "events": "Eventi",
+    "empty": "Ancora nessuna foto."
   },
   "home": {
     "heroTitle": "Ordina Cibo Delizioso Online",

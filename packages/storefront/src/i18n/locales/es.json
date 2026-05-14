@@ -18,12 +18,23 @@
     "locations": "Ubicaciones",
     "menu": "Menú",
     "reservations": "Reservas",
+    "gallery": "Galería",
     "login": "Iniciar Sesión",
     "signUp": "Registrarse",
     "logout": "Cerrar Sesión",
     "myAccount": "Mi Cuenta",
     "openCart": "Abrir carrito",
     "toggleMenu": "Alternar menú"
+  },
+  "gallery": {
+    "title": "Galería",
+    "subtitle": "Una mirada dentro de nuestro restaurante — comida, ambiente, jardín y momentos especiales",
+    "all": "Todo",
+    "food": "Comida",
+    "interior": "Interior",
+    "garden": "Jardín",
+    "events": "Eventos",
+    "empty": "Aún no hay fotos."
   },
   "home": {
     "heroTitle": "Pide Comida Deliciosa en Línea",

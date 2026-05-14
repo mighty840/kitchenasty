@@ -606,6 +606,27 @@ model SiteSettings {
   @@map("site_settings")
 }
 
+enum GalleryCategory {
+  FOOD
+  INTERIOR
+  GARDEN
+  EVENTS
+}
+
+model GalleryImage {
+  id        String          @id @default(cuid())
+  url       String
+  alt       String
+  category  GalleryCategory
+  sortOrder Int             @default(0)
+  isActive  Boolean         @default(true)
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
+
+  @@index([category, sortOrder])
+  @@map("gallery_images")
+}
+
 // ============================================================
 // AUTOMATION
 // ============================================================

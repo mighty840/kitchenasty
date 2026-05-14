@@ -18,12 +18,23 @@
     "locations": "Localizações",
     "menu": "Cardápio",
     "reservations": "Reservas",
+    "gallery": "Galeria",
     "login": "Entrar",
     "signUp": "Cadastrar",
     "logout": "Sair",
     "myAccount": "Minha Conta",
     "openCart": "Abrir carrinho",
     "toggleMenu": "Alternar menu"
+  },
+  "gallery": {
+    "title": "Galeria",
+    "subtitle": "Um vislumbre do nosso restaurante — comida, ambiente, jardim e momentos especiais",
+    "all": "Tudo",
+    "food": "Comida",
+    "interior": "Interior",
+    "garden": "Jardim",
+    "events": "Eventos",
+    "empty": "Ainda sem fotos."
   },
   "home": {
     "heroTitle": "Peça Comida Deliciosa Online",

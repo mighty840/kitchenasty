@@ -18,12 +18,23 @@
     "locations": "Restaurants",
     "menu": "Menu",
     "reservations": "Réservations",
+    "gallery": "Galerie",
     "login": "Connexion",
     "signUp": "S'inscrire",
     "logout": "Déconnexion",
     "myAccount": "Mon Compte",
     "openCart": "Ouvrir le panier",
     "toggleMenu": "Basculer le menu"
+  },
+  "gallery": {
+    "title": "Galerie",
+    "subtitle": "Un aperçu de notre restaurant — cuisine, ambiance, jardin et moments d'exception",
+    "all": "Tout",
+    "food": "Cuisine",
+    "interior": "Intérieur",
+    "garden": "Jardin",
+    "events": "Événements",
+    "empty": "Aucune photo pour le moment."
   },
   "home": {
     "heroTitle": "Commandez de Bons Plats en Ligne",

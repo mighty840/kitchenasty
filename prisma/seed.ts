@@ -687,6 +687,42 @@ KitchenAsty Management Team`,
     });
   }
 
+  // Gallery images
+  const galleryImages = [
+    // FOOD
+    { url: 'https://images.unsplash.com/photo-1565557623262-b51c2513a641?w=1200&q=80&auto=format&fit=crop', alt: 'Butter chicken with naan', category: 'FOOD', sortOrder: 0 },
+    { url: 'https://images.unsplash.com/photo-1631452180519-c014fe946bc7?w=1200&q=80&auto=format&fit=crop', alt: 'Aromatic biryani platter', category: 'FOOD', sortOrder: 1 },
+    { url: 'https://images.unsplash.com/photo-1567188040759-fb8a883dc6d8?w=1200&q=80&auto=format&fit=crop', alt: 'Traditional Indian curry', category: 'FOOD', sortOrder: 2 },
+    { url: 'https://images.unsplash.com/photo-1601050690597-df0568f70950?w=1200&q=80&auto=format&fit=crop', alt: 'Tandoori starters platter', category: 'FOOD', sortOrder: 3 },
+    // INTERIOR
+    { url: 'https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80&auto=format&fit=crop', alt: 'Warm dining room', category: 'INTERIOR', sortOrder: 0 },
+    { url: 'https://images.unsplash.com/photo-1559339352-11d035aa65de?w=1200&q=80&auto=format&fit=crop', alt: 'Cocktail bar at dusk', category: 'INTERIOR', sortOrder: 1 },
+    { url: 'https://images.unsplash.com/photo-1414235077428-338989a2e8c0?w=1200&q=80&auto=format&fit=crop', alt: 'Candlelit table for two', category: 'INTERIOR', sortOrder: 2 },
+    // GARDEN
+    { url: 'https://images.unsplash.com/photo-1499028344343-cd173ffc68a9?w=1200&q=80&auto=format&fit=crop', alt: 'Lush garden seating', category: 'GARDEN', sortOrder: 0 },
+    { url: 'https://images.unsplash.com/photo-1466978913421-dad2ebd01d17?w=1200&q=80&auto=format&fit=crop', alt: 'Outdoor terrace at golden hour', category: 'GARDEN', sortOrder: 1 },
+    { url: 'https://images.unsplash.com/photo-1533777324565-a040eb52facd?w=1200&q=80&auto=format&fit=crop', alt: 'Garden patio with string lights', category: 'GARDEN', sortOrder: 2 },
+    // EVENTS
+    { url: 'https://images.unsplash.com/photo-1530103862676-de8c9debad1d?w=1200&q=80&auto=format&fit=crop', alt: 'Private dining setup', category: 'EVENTS', sortOrder: 0 },
+    { url: 'https://images.unsplash.com/photo-1519671482749-fd09be7ccebf?w=1200&q=80&auto=format&fit=crop', alt: 'Celebration dinner table', category: 'EVENTS', sortOrder: 1 },
+    { url: 'https://images.unsplash.com/photo-1555244162-803834f70033?w=1200&q=80&auto=format&fit=crop', alt: 'Group toast at the bar', category: 'EVENTS', sortOrder: 2 },
+  ] as const;
+
+  for (const img of galleryImages) {
+    const seedId = `seed-gallery-${img.category}-${img.sortOrder}`;
+    await prisma.galleryImage.upsert({
+      where: { id: seedId },
+      update: { url: img.url, alt: img.alt },
+      create: {
+        id: seedId,
+        url: img.url,
+        alt: img.alt,
+        category: img.category,
+        sortOrder: img.sortOrder,
+      },
+    });
+  }
+
   console.log('Seed completed successfully!');
   console.log('');
   console.log('Admin login: admin@kitchenasty.com / admin123');

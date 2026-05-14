@@ -18,12 +18,23 @@
     "locations": "Locations",
     "menu": "Menu",
     "reservations": "Reservations",
+    "gallery": "Gallery",
     "login": "Login",
     "signUp": "Sign Up",
     "logout": "Logout",
     "myAccount": "My Account",
     "openCart": "Open cart",
     "toggleMenu": "Toggle menu"
+  },
+  "gallery": {
+    "title": "Gallery",
+    "subtitle": "A peek inside our restaurant — food, ambiance, garden and special moments",
+    "all": "All",
+    "food": "Food",
+    "interior": "Interior",
+    "garden": "Garden",
+    "events": "Events",
+    "empty": "No photos yet."
   },
   "home": {
     "heroTitle": "Order Delicious Food Online",

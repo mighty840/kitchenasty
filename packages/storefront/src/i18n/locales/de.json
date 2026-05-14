@@ -18,12 +18,23 @@
     "locations": "Standorte",
     "menu": "Speisekarte",
     "reservations": "Reservierungen",
+    "gallery": "Galerie",
     "login": "Anmelden",
     "signUp": "Registrieren",
     "logout": "Abmelden",
     "myAccount": "Mein Konto",
     "openCart": "Warenkorb öffnen",
     "toggleMenu": "Menü umschalten"
+  },
+  "gallery": {
+    "title": "Galerie",
+    "subtitle": "Ein Blick in unser Restaurant — Küche, Ambiente, Garten und besondere Momente",
+    "all": "Alle",
+    "food": "Speisen",
+    "interior": "Innenbereich",
+    "garden": "Garten",
+    "events": "Events",
+    "empty": "Noch keine Fotos."
   },
   "home": {
     "heroTitle": "Leckeres Essen Online Bestellen",
