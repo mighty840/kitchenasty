@@ -21,6 +21,7 @@ import consentRoutes from './routes/consent.routes.js';
 import settingsRoutes from './routes/settings.routes.js';
 import staffRoutes from './routes/staff.routes.js';
 import developerRoutes from './routes/developer.routes.js';
+import galleryRoutes from './routes/gallery.routes.js';
 import mediaRoutes from './routes/media.routes.js';
 import { openApiSpec } from './lib/openapi.js';
 import { initPassport } from './lib/passport.js';
@@ -118,6 +119,7 @@ export function createApp() {
   app.use('/api/settings', settingsRoutes);
   app.use('/api/staff', staffRoutes);
   app.use('/api/developer', developerRoutes);
+  app.use('/api/gallery', galleryRoutes);
   app.use('/api/media', mediaRoutes);
 
   // 404 handler
