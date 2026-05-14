@@ -11,7 +11,8 @@ vi.mock('../../lib/db.js', () => {
     menuItem: { findMany: vi.fn(), findUnique: vi.fn(), update: vi.fn() },
     deliveryZone: { findMany: vi.fn(), findFirst: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() },
     table: { findMany: vi.fn(), findFirst: vi.fn(), findUnique: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn() },
-    reservation: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn(), count: vi.fn() },
+    reservation: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn(), count: vi.fn(), groupBy: vi.fn(), aggregate: vi.fn() },
+    $queryRaw: vi.fn(),
     user: { findUnique: vi.fn() },
     customer: { findUnique: vi.fn() },
     category: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn(), count: vi.fn() },
@@ -193,6 +194,57 @@ describe('Reservation API', () => {
         .delete('/api/reservations/res-1')
         .set('Authorization', `Bearer ${staffToken}`);
       expect(res.status).toBe(200);
+    });
+  });
+
+  describe('GET /api/reservations/analytics', () => {
+    it('returns 401 without auth', async () => {
+      const res = await request(app).get('/api/reservations/analytics');
+      expect(res.status).toBe(401);
+    });
+
+    it('returns 403 for non-staff', async () => {
+      const res = await request(app)
+        .get('/api/reservations/analytics')
+        .set('Authorization', `Bearer ${customerToken}`);
+      expect(res.status).toBe(403);
+    });
+
+    it('returns analytics shape for staff', async () => {
+      (mockedPrisma as any).$queryRaw
+        .mockResolvedValueOnce([{ date: '2026-03-10', reservations: 2n, guests: 6n }])           // dailyRows
+        .mockResolvedValueOnce([{ dow: 5, reservations: 2n, guests: 6n }])                       // dowRows
+        .mockResolvedValueOnce([{ hour: 19, reservations: 2n }])                                 // hourlyRows
+        .mockResolvedValueOnce([{ bucket: '1-2d', count: 2n }]);                                 // leadTimeRows
+      mockedPrisma.reservation.groupBy
+        .mockResolvedValueOnce([{ partySize: 4, _count: 2 }] as any)                             // partySizeRows
+        .mockResolvedValueOnce([{ status: 'PENDING', _count: 2 }] as any);                       // statusRows
+      mockedPrisma.reservation.aggregate.mockResolvedValueOnce({
+        _count: 2,
+        _sum: { partySize: 8 },
+        _avg: { partySize: 4 },
+      } as any);
+      mockedPrisma.reservation.count.mockResolvedValueOnce(0);                                   // completedCount
+
+      const res = await request(app)
+        .get('/api/reservations/analytics?days=30')
+        .set('Authorization', `Bearer ${staffToken}`);
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.summary).toMatchObject({
+        totalReservations: 2,
+        totalGuests: 8,
+        avgPartySize: 4,
+        completionRate: 0,
+      });
+      expect(res.body.data.dailyBookings).toEqual([{ date: '2026-03-10', reservations: 2, guests: 6 }]);
+      expect(res.body.data.dayOfWeekDistribution).toEqual([{ dow: 5, reservations: 2, guests: 6 }]);
+      expect(res.body.data.partySizeDistribution).toEqual([{ partySize: 4, count: 2 }]);
+      expect(res.body.data.statusDistribution).toEqual([{ status: 'PENDING', count: 2 }]);
+      expect(res.body.data.hourlyDistribution).toEqual([{ hour: 19, reservations: 2 }]);
+      // leadTimeBuckets always returns 5 buckets, with counts filled in
+      expect(res.body.data.leadTimeBuckets).toHaveLength(5);
+      expect(res.body.data.leadTimeBuckets.find((b: any) => b.bucket === '1-2d').count).toBe(2);
     });
   });
 
