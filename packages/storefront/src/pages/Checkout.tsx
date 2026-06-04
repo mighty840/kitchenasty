@@ -142,8 +142,30 @@ export default function Checkout() {
       const data = await res.json();
       if (!res.ok) throw new Error(data.error || 'Failed to place order');
 
+      const orderId = data.data.id as string;
+
+      // Stripe path: hand the user off to the hosted Checkout page. Stripe
+      // brings them back to /order/:id?paid=true on success (the webhook
+      // is what actually flips Order.status). Cancel falls back to /checkout.
+      if (paymentMethod === 'stripe') {
+        const sessRes = await fetch('/api/payments/create-checkout-session', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ orderId }),
+        });
+        const sessData = await sessRes.json();
+        if (!sessRes.ok || !sessData.data?.url) {
+          throw new Error(sessData.error || 'Failed to start Stripe checkout');
+        }
+        // Don't clear the cart yet — only after Stripe confirms. If the
+        // user backs out of the hosted page, they return to a still-loaded
+        // checkout and can retry without re-typing everything.
+        window.location.href = sessData.data.url as string;
+        return;
+      }
+
       clear();
-      navigate(`/order/${data.data.id}`, { state: { order: data.data } });
+      navigate(`/order/${orderId}`, { state: { order: data.data } });
     } catch (err: any) {
       setError(err.message || t('common.error'));
     } finally {

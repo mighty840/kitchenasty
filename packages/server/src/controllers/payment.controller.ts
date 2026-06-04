@@ -70,6 +70,106 @@ export async function createPaymentIntent(req: Request, res: Response): Promise<
   }
 }
 
+/// Creates a Stripe Checkout Session for the order. The customer is
+/// redirected to Stripe's hosted page (cards + Apple Pay + Google Pay +
+/// Klarna + SEPA come for free), and Stripe redirects back to the
+/// order-confirmation page on success.
+///
+/// We attach `orderId` to BOTH the session metadata and the underlying
+/// payment intent so the existing `payment_intent.succeeded` webhook
+/// path still flips Order.status — the new `checkout.session.completed`
+/// case below is just a belt-and-braces.
+export async function createCheckoutSession(req: Request, res: Response): Promise<void> {
+  const { orderId } = req.body;
+  if (!orderId) {
+    res.status(400).json({ success: false, error: 'orderId is required' });
+    return;
+  }
+
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: {
+      customer: { select: { email: true } },
+      items: true,
+    },
+  });
+  if (!order) {
+    res.status(404).json({ success: false, error: 'Order not found' });
+    return;
+  }
+
+  const existingPayment = await prisma.payment.findFirst({
+    where: { orderId, status: 'COMPLETED' },
+  });
+  if (existingPayment) {
+    res.status(409).json({ success: false, error: 'Order already paid' });
+    return;
+  }
+
+  const publicUrl = process.env.PUBLIC_URL || 'https://inka.kitchenasty.com';
+  const customerEmail = order.customer?.email ?? order.guestEmail ?? undefined;
+
+  try {
+    const stripe = await getStripe();
+
+    const lineItems = order.items.map((it) => ({
+      price_data: {
+        currency: 'eur',
+        product_data: { name: it.name },
+        unit_amount: Math.round(it.unitPrice * 100),
+      },
+      quantity: it.quantity,
+    }));
+
+    if (order.deliveryFee > 0) {
+      lineItems.push({
+        price_data: {
+          currency: 'eur',
+          product_data: { name: 'Delivery fee' },
+          unit_amount: Math.round(order.deliveryFee * 100),
+        },
+        quantity: 1,
+      });
+    }
+
+    const session = await stripe.checkout.sessions.create({
+      mode: 'payment',
+      line_items: lineItems,
+      success_url: `${publicUrl}/order/${order.id}?paid=true`,
+      cancel_url: `${publicUrl}/checkout`,
+      customer_email: customerEmail,
+      metadata: {
+        orderId: order.id,
+        orderNumber: order.orderNumber,
+      },
+      payment_intent_data: {
+        receipt_email: customerEmail,
+        metadata: {
+          orderId: order.id,
+          orderNumber: order.orderNumber,
+        },
+      },
+    });
+
+    await prisma.payment.create({
+      data: {
+        orderId: order.id,
+        method: 'STRIPE',
+        status: 'PENDING',
+        amount: order.total,
+        transactionId: session.id,
+      },
+    });
+
+    res.json({
+      success: true,
+      data: { url: session.url, sessionId: session.id },
+    });
+  } catch (err: any) {
+    res.status(500).json({ success: false, error: err.message || 'Checkout session creation failed' });
+  }
+}
+
 export async function handleWebhook(req: Request, res: Response): Promise<void> {
   const sig = req.headers['stripe-signature'] as string;
   const webhookSecret = process.env.STRIPE_WEBHOOK_SECRET;
@@ -115,6 +215,26 @@ export async function handleWebhook(req: Request, res: Response): Promise<void> 
         where: { transactionId: paymentIntent.id },
         data: { status: 'FAILED' },
       });
+      break;
+    }
+
+    case 'checkout.session.completed': {
+      // Stripe Checkout (hosted) finished. payment_intent.succeeded also
+      // fires for the same flow, but the session event lets us mark the
+      // Payment row (whose transactionId is the session.id) as completed
+      // and gives us a second chance to flip Order.status.
+      const session = event.data.object as { id: string; payment_status?: string; metadata?: { orderId?: string } };
+      const orderId = session.metadata?.orderId;
+      if (orderId && session.payment_status === 'paid') {
+        await prisma.payment.updateMany({
+          where: { transactionId: session.id },
+          data: { status: 'COMPLETED' },
+        });
+        await prisma.order.update({
+          where: { id: orderId },
+          data: { status: 'CONFIRMED' },
+        });
+      }
       break;
     }
   }

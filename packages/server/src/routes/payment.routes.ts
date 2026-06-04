@@ -1,15 +1,18 @@
 import { Router } from 'express';
 import express from 'express';
 import { optionalAuth, authenticate, requireStaff } from '../middleware/auth.js';
-import { createPaymentIntent, handleWebhook, markCashPayment, createPayPalPayment, capturePayPalPayment } from '../controllers/payment.controller.js';
+import { createPaymentIntent, createCheckoutSession, handleWebhook, markCashPayment, createPayPalPayment, capturePayPalPayment } from '../controllers/payment.controller.js';
 
 const router = Router();
 
 // Stripe webhook needs raw body
 router.post('/webhook', express.raw({ type: 'application/json' }), handleWebhook);
 
-// Create payment intent (customer or guest)
+// PaymentIntent (mobile app — flutter_stripe PaymentSheet)
 router.post('/create-intent', optionalAuth, createPaymentIntent);
+
+// Checkout Session (website — hosted Stripe page)
+router.post('/create-checkout-session', optionalAuth, createCheckoutSession);
 
 // Mark cash payment (staff only)
 router.post('/cash', authenticate, requireStaff, markCashPayment);
