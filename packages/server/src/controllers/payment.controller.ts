@@ -11,7 +11,10 @@ export async function createPaymentIntent(req: Request, res: Response): Promise<
     return;
   }
 
-  const order = await prisma.order.findUnique({ where: { id: orderId } });
+  const order = await prisma.order.findUnique({
+    where: { id: orderId },
+    include: { customer: { select: { email: true, name: true } } },
+  });
   if (!order) {
     res.status(404).json({ success: false, error: 'Order not found' });
     return;
@@ -26,14 +29,24 @@ export async function createPaymentIntent(req: Request, res: Response): Promise<
     return;
   }
 
+  // Use the registered customer's email when present, fall back to the
+  // guest-checkout email — both produce Stripe receipt emails + show up
+  // attached to the PaymentIntent in the dashboard.
+  const receiptEmail = order.customer?.email ?? order.guestEmail ?? undefined;
+
   try {
     const stripe = await getStripe();
     const paymentIntent = await stripe.paymentIntents.create({
       amount: Math.round(order.total * 100), // cents
-      currency: 'usd',
+      currency: 'eur',
+      receipt_email: receiptEmail,
+      // Let Stripe pick which payment methods to surface — covers cards,
+      // Apple Pay and Google Pay on PaymentSheet without extra config.
+      automatic_payment_methods: { enabled: true },
       metadata: {
         orderId: order.id,
         orderNumber: order.orderNumber,
+        customerName: order.customer?.name ?? order.guestName ?? '',
       },
     });
 
