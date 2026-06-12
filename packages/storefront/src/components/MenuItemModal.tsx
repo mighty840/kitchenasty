@@ -188,7 +188,7 @@ export default function MenuItemModal({ itemId, onClose }: Props) {
               <button
                 onClick={onClose}
                 className="absolute top-3 right-3 bg-white/80 hover:bg-white rounded-full p-1.5 transition-colors"
-                aria-label="Close"
+                aria-label={t("common.close")}
               >
                 <svg className="w-5 h-5 text-gray-700" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                   <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
