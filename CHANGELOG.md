@@ -5,6 +5,24 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.1] - 2026-07-30
+
+### Security
+
+#### Broken access control on `GET /api/reservations/:id`
+- The endpoint was authenticated but performed no ownership or role check, so any signed-in customer could read any reservation in the deployment by its ID, including the booking customer's name, e-mail address, phone number, private comment, date, time, party size, table and location.
+- `getReservation` now returns `403 Access denied` unless the caller is staff or the reservation's own customer, matching the check already applied to orders.
+- Affects all releases up to and including 0.3.0. Introduced in 80730d0b, which predates 0.1.0.
+- Exploitation requires knowing a reservation ID. These are `cuid()` values and are not practically enumerable, so an attacker would need to obtain one from a shared link, referrer header, log or integration.
+- Same defect class as the order IDOR fixed in #43; that change covered `order.controller.ts` and `settings.controller.ts` but not `reservation.controller.ts`.
+- Reported privately by Nirut Tangprasitti (SOSECURE Co., Ltd.).
+
+### Fixed
+- Corrected the supported-versions table in `SECURITY.md`, which still listed 0.1.x and 0.2.x after 0.3.0 shipped
+
+### Tests
+- Added regression coverage for `GET /api/reservations/:id`: unauthenticated access, owning customer, cross-customer access, and staff access
+
 ## [0.3.0] - 2026-05-14
 
 ### Added

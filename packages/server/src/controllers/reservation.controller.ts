@@ -119,6 +119,13 @@ export async function getReservation(req: Request<{ id: string }>, res: Response
     return;
   }
 
+  // Customers may only read their own booking; staff may read any.
+  const user = req.user;
+  if (!user || (user.type !== 'staff' && reservation.customerId !== user.id)) {
+    res.status(403).json({ success: false, error: 'Access denied' });
+    return;
+  }
+
   res.json({ success: true, data: reservation });
 }
 
