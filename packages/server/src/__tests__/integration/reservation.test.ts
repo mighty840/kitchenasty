@@ -146,6 +146,35 @@ describe('Reservation API', () => {
       expect(res.status).toBe(200);
       expect(res.body.data.id).toBe('res-1');
     });
+
+    it('returns 401 without auth', async () => {
+      const res = await request(app).get('/api/reservations/res-1');
+      expect(res.status).toBe(401);
+    });
+
+    it('lets the owning customer read their own reservation', async () => {
+      mockedPrisma.reservation.findUnique.mockResolvedValueOnce(sampleReservation as any);
+      const res = await request(app)
+        .get('/api/reservations/res-1')
+        .set('Authorization', `Bearer ${customerToken}`);
+      expect(res.status).toBe(200);
+      expect(res.body.data.id).toBe('res-1');
+    });
+
+    it('returns 403 when another customer requests it, and leaks no PII', async () => {
+      mockedPrisma.reservation.findUnique.mockResolvedValueOnce(sampleReservation as any);
+      const otherCustomerToken = generateToken({
+        id: 'cust-2',
+        email: 'attacker@test.com',
+        type: 'customer',
+      });
+      const res = await request(app)
+        .get('/api/reservations/res-1')
+        .set('Authorization', `Bearer ${otherCustomerToken}`);
+      expect(res.status).toBe(403);
+      expect(res.body.data).toBeUndefined();
+      expect(JSON.stringify(res.body)).not.toContain('john@test.com');
+    });
   });
 
   describe('PATCH /api/reservations/:id', () => {
