@@ -17,8 +17,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Same defect class as the order IDOR fixed in #43; that change covered `order.controller.ts` and `settings.controller.ts` but not `reservation.controller.ts`.
 - Reported privately by Nirut Tangprasitti (SOSECURE Co., Ltd.).
 
-### Fixed
-- Corrected the supported-versions table in `SECURITY.md`, which still listed 0.1.x and 0.2.x after 0.3.0 shipped
+### Changed
+- Updated the supported-versions table in `SECURITY.md`: added 0.3.x, which was missing after 0.3.0 shipped, and dropped 0.1.x to unsupported. Security fixes are backported to 0.2.x and later only
 
 ### Tests
 - Added regression coverage for `GET /api/reservations/:id`: unauthenticated access, owning customer, cross-customer access, and staff access
