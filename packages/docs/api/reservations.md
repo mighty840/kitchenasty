@@ -79,8 +79,11 @@ Returns all reservations with pagination. Staff only.
 
 ```
 GET /api/reservations/:id
-Authorization: Bearer <token>
+Authorization: Bearer <customer-token|staff-token>
 ```
+
+Returns a single reservation. A customer may only read their own booking; staff may read any.
+Requesting another customer's reservation returns `403 Access denied`.
 
 ## ✏️ Update Reservation
 
@@ -112,6 +115,7 @@ Authorization: Bearer <staff-token>
 | 🌐 Check availability | Public |
 | ➕ Create reservation | Authenticated customer |
 | 👤 View own reservations | Authenticated customer |
+| 🔍 Get reservation | Owner or Staff |
 | 📋 List all reservations | Staff |
 | ✏️ Update reservation | Staff |
 | 🗑️ Delete reservation | Staff |
