@@ -15,13 +15,21 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 - Affects all releases up to and including 0.3.0. Introduced in 80730d0b, which predates 0.1.0.
 - Exploitation requires knowing a reservation ID. These are `cuid()` values and are not practically enumerable, so an attacker would need to obtain one from a shared link, referrer header, log or integration.
 - Same defect class as the order IDOR fixed in #43; that change covered `order.controller.ts` and `settings.controller.ts` but not `reservation.controller.ts`.
+- Tracked as GHSA-2w4m-hjg2-2v92. CVSS 3.1 4.3 (Medium), `AV:N/AC:L/PR:L/UI:N/S:U/C:L/I:N/A:N`. CWE-639.
 - Reported privately by Nirut Tangprasitti (SOSECURE Co., Ltd.).
+
+### Fixed
+- `POST /api/reservations` now returns `400` instead of a `500` when called with a staff token. `createReservation` read `user.id` without checking `type === 'customer'`, so a staff `User.id` was written into the `Reservation.customerId` foreign key to `Customer.id` and failed at the database layer. Matches the check `createOrder` already carried
 
 ### Changed
 - Updated the supported-versions table in `SECURITY.md`: added 0.3.x, which was missing after 0.3.0 shipped, and dropped 0.1.x to unsupported. Security fixes are backported to 0.2.x and later only
 
+### Docs
+- `packages/docs/api/reservations.md`: added the missing "Get reservation" row to the permissions summary, and documented the ownership rule on the endpoint itself. Its snippet previously showed a bare `<token>` where every neighbouring endpoint specified the principal
+
 ### Tests
 - Added regression coverage for `GET /api/reservations/:id`: unauthenticated access, owning customer, cross-customer access, and staff access
+- Added `reservation-idor.regression.test.ts`, contributed by the reporter: 12 cases pinning object-level authorization on reservations, asserting that the denied response contains none of the owner's e-mail, phone or comment across both the raw text and the parsed body, plus two characterization cases for `GET /api/orders/:id`, whose #43 guard previously had no test of its own
 
 ## [0.3.0] - 2026-05-14
 
