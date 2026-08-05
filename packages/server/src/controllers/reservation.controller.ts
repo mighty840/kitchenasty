@@ -28,9 +28,16 @@ export async function createReservation(req: Request, res: Response): Promise<vo
   }
 
   const { locationId, date, time, partySize, comment } = parsed.data;
-  const customerId = (req as any).user?.id;
+  // Only a customer principal can own a reservation: customerId is an FK to Customer.id,
+  // and a staff token carries a User.id from a different table. Matches createOrder.
+  const user = req.user;
+  const customerId = user?.type === 'customer' ? user.id : null;
 
   if (!customerId) {
+    if (user) {
+      res.status(400).json({ success: false, error: 'Reservations can only be created by a customer account' });
+      return;
+    }
     res.status(401).json({ success: false, error: 'Authentication required for reservations' });
     return;
   }
