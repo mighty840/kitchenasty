@@ -27,6 +27,8 @@ router.post('/', authenticate, createReservation);
 
 // Staff: manage reservations
 router.get('/', authenticate, requireStaff, listReservations);
+// Not staff-only: customers may read their own booking. Ownership is enforced
+// inside getReservation, so this route must stay authenticated.
 router.get('/:id', authenticate, getReservation);
 router.patch('/:id', authenticate, requireStaff, updateReservation);
 router.delete('/:id', authenticate, requireStaff, deleteReservation);
