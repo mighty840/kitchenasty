@@ -30,7 +30,7 @@ import prisma from '../../lib/db.js';
 const mockedPrisma = vi.mocked(prisma);
 
 const app = createApp();
-const staffToken = generateToken({ id: 'user-1', email: 'staff@test.com', type: 'staff', role: 'STAFF' });
+const managerToken = generateToken({ id: 'user-1', email: 'manager@test.com', type: 'staff', role: 'MANAGER' });
 const uploadsDir = path.resolve(process.cwd(), 'uploads');
 
 function storedFilename(): string {
@@ -56,7 +56,7 @@ describe('POST /api/media/upload - stored extension', () => {
   ])('stores %s declared as %s with extension %s', async (filename, contentType, ext) => {
     const res = await request(app)
       .post('/api/media/upload')
-      .set('Authorization', `Bearer ${staffToken}`)
+      .set('Authorization', `Bearer ${managerToken}`)
       .attach('file', Buffer.from('<script>alert(1)</script>'), { filename, contentType });
 
     expect(res.status).toBe(201);
@@ -66,7 +66,7 @@ describe('POST /api/media/upload - stored extension', () => {
   it('still rejects a non-image mimetype', async () => {
     const res = await request(app)
       .post('/api/media/upload')
-      .set('Authorization', `Bearer ${staffToken}`)
+      .set('Authorization', `Bearer ${managerToken}`)
       .attach('file', Buffer.from('<script>alert(1)</script>'), { filename: 'x.html', contentType: 'text/html' });
 
     expect(res.status).not.toBe(201);
