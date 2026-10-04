@@ -23,6 +23,12 @@ JWT_SECRET=your-random-secret-here
 CORS_ORIGINS=http://localhost:5173,http://localhost:5174
 ```
 
+Docker Compose also needs `JWT_SECRET` in a `.env` file next to `docker-compose.yml`. The server refuses to start without it, or with any of the placeholder values from the docs:
+
+```bash
+echo "JWT_SECRET=$(openssl rand -hex 32)" > .env
+```
+
 See [Environment Variables](/configuration/environment-variables) for the full reference.
 
 ## 3. 🚀 Start Services
