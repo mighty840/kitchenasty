@@ -11,9 +11,10 @@ import { getStripe } from '../lib/stripe.js';
 
 const orderItemOptionSchema = z.object({
   menuOptionValueId: z.string().min(1),
-  name: z.string().min(1),
-  value: z.string().min(1),
-  priceModifier: z.number(),
+  // Accepted for older clients but ignored: name, value and price come from the menu.
+  name: z.string().optional(),
+  value: z.string().optional(),
+  priceModifier: z.number().optional(),
 });
 
 const orderItemSchema = z.object({
@@ -209,6 +210,12 @@ export async function createOrder(req: Request, res: Response): Promise<void> {
       res.status(400).json({ success: false, error: `Insufficient stock for: ${menuItem.name}` });
       return;
     }
+    const valueIds = new Set(menuItem.options.flatMap((o) => o.values.map((v) => v.id)));
+    const badOption = (item.options || []).find((opt) => !valueIds.has(opt.menuOptionValueId));
+    if (badOption) {
+      res.status(400).json({ success: false, error: `Invalid option for: ${menuItem.name}` });
+      return;
+    }
   }
 
   // Lock-in cutoff — items for a forDate D must be placed before this
@@ -245,13 +252,16 @@ export async function createOrder(req: Request, res: Response): Promise<void> {
     const menuItem = menuItemMap.get(item.menuItemId)!;
     let unitPrice = menuItem.price;
 
+    // Price options from the menu, never from the request body.
     const optionsData = (item.options || []).map((opt) => {
-      unitPrice += opt.priceModifier;
+      const option = menuItem.options.find((o) => o.values.some((v) => v.id === opt.menuOptionValueId))!;
+      const value = option.values.find((v) => v.id === opt.menuOptionValueId)!;
+      unitPrice += value.priceModifier;
       return {
-        menuOptionValueId: opt.menuOptionValueId,
-        name: opt.name,
-        value: opt.value,
-        priceModifier: opt.priceModifier,
+        menuOptionValueId: value.id,
+        name: option.name,
+        value: value.name,
+        priceModifier: value.priceModifier,
       };
     });
 
