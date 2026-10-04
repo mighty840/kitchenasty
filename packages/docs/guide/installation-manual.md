@@ -29,7 +29,8 @@ Edit `packages/server/.env`:
 
 ```dotenv
 DATABASE_URL=postgresql://kitchenasty:kitchenasty@localhost:5432/kitchenasty
-JWT_SECRET=your-random-secret-here
+# Required. Generate with: openssl rand -hex 32
+JWT_SECRET=
 CORS_ORIGINS=http://localhost:5173,http://localhost:5174
 ```
 
