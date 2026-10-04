@@ -24,6 +24,7 @@ vi.mock('../../lib/db.js', () => {
     user: { findUnique: vi.fn() },
     customer: { findUnique: vi.fn(), update: vi.fn() },
     automationRule: { findMany: vi.fn() },
+    siteSettings: { findUnique: vi.fn() },
   };
   return { default: mockPrisma, prisma: mockPrisma };
 });
