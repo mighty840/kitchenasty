@@ -27,7 +27,7 @@ DB_PASSWORD=CHANGE_ME_to_a_random_password_here
 
 # ── 🔐 Authentication ────────────────────────────────────
 # Generate with: openssl rand -base64 32
-JWT_SECRET=CHANGE_ME_to_a_random_secret_here
+JWT_SECRET=
 
 # ── 🌐 Domains ───────────────────────────────────────────
 # Replace with your actual domain names

@@ -27,9 +27,9 @@ const router = Router();
 
 // Existing branding/design routes
 router.get('/', getSettings);
-router.put('/', authenticate, requireStaff, updateSettings);
-router.post('/logo', authenticate, requireStaff, upload.single('logo'), uploadLogo);
-router.post('/favicon', authenticate, requireStaff, upload.single('favicon'), uploadFavicon);
+router.put('/', authenticate, requireStaff, requireRole('SUPER_ADMIN', 'MANAGER'), updateSettings);
+router.post('/logo', authenticate, requireStaff, requireRole('SUPER_ADMIN', 'MANAGER'), upload.single('logo'), uploadLogo);
+router.post('/favicon', authenticate, requireStaff, requireRole('SUPER_ADMIN', 'MANAGER'), upload.single('favicon'), uploadFavicon);
 
 // General — MANAGER+
 router.get('/general', authenticate, requireRole('SUPER_ADMIN', 'MANAGER'), getGeneralSettings);

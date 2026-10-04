@@ -5,11 +5,12 @@ KitchenAsty uses **JWT (JSON Web Tokens)** for stateless authentication.
 ## ⚙️ Configuration
 
 ```dotenv
-JWT_SECRET=your-random-secret-here
+# Required. Generate with: openssl rand -hex 32
+JWT_SECRET=
 JWT_EXPIRES_IN=7d
 ```
 
-- 🔐 `JWT_SECRET` — Used to sign and verify tokens. Must be a strong, random string in production.
+- 🔐 `JWT_SECRET` — Used to sign and verify tokens. Must be a strong, random string. The server refuses to start if it is unset or left at a placeholder value from these docs.
 - ⏱️ `JWT_EXPIRES_IN` — Token lifetime. Accepts values like `7d`, `24h`, `3600` (seconds).
 
 ## 🎫 Token Format

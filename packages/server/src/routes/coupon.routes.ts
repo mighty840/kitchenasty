@@ -17,8 +17,8 @@ router.post('/validate', validateCoupon);
 // Staff: manage coupons
 router.get('/', authenticate, requireStaff, listCoupons);
 router.get('/:id', authenticate, requireStaff, getCoupon);
-router.post('/', authenticate, requireStaff, createCoupon);
-router.patch('/:id', authenticate, requireStaff, updateCoupon);
+router.post('/', authenticate, requireStaff, requireRole('SUPER_ADMIN', 'MANAGER'), createCoupon);
+router.patch('/:id', authenticate, requireStaff, requireRole('SUPER_ADMIN', 'MANAGER'), updateCoupon);
 router.delete('/:id', authenticate, requireRole('SUPER_ADMIN', 'MANAGER'), deleteCoupon);
 
 export default router;
