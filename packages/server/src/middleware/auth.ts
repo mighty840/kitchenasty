@@ -2,7 +2,26 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import { Role } from '@prisma/client';
 
-const JWT_SECRET = process.env.JWT_SECRET || 'dev-secret-change-me';
+// Placeholder values that have shipped in this repo's code, compose file and docs.
+// Anyone can sign tokens with them, so they are treated the same as no secret at all.
+const KNOWN_PLACEHOLDER_SECRETS = new Set([
+  'dev-secret-change-me',
+  'change-this-to-a-random-secret',
+  'your-random-secret-here',
+  'CHANGE_ME_to_a_random_secret_here',
+]);
+
+export function resolveJwtSecret(env: NodeJS.ProcessEnv = process.env): string {
+  const secret = env.JWT_SECRET?.trim();
+  if (secret && !KNOWN_PLACEHOLDER_SECRETS.has(secret)) return secret;
+  throw new Error(
+    secret
+      ? 'JWT_SECRET is set to a publicly known placeholder. Generate one with: openssl rand -hex 32'
+      : 'JWT_SECRET is not set. Generate one with: openssl rand -hex 32',
+  );
+}
+
+const JWT_SECRET = resolveJwtSecret();
 
 export interface JwtPayload {
   id: string;

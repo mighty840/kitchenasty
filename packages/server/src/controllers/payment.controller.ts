@@ -315,8 +315,29 @@ export async function createPayPalPayment(req: Request, res: Response): Promise<
 export async function capturePayPalPayment(req: Request, res: Response): Promise<void> {
   const { paypalOrderId, orderId } = req.body;
 
-  if (!paypalOrderId || !orderId) {
-    res.status(400).json({ success: false, error: 'paypalOrderId and orderId are required' });
+  if (!paypalOrderId) {
+    res.status(400).json({ success: false, error: 'paypalOrderId is required' });
+    return;
+  }
+
+  // The order to confirm comes from the payment row createPayPalPayment stored for this
+  // PayPal order, never from the request body. Look it up before capturing so a mismatched
+  // request never moves money.
+  const payment = await prisma.payment.findFirst({
+    where: { transactionId: paypalOrderId, method: 'PAYPAL' },
+  });
+  if (!payment) {
+    res.status(404).json({ success: false, error: 'Payment not found' });
+    return;
+  }
+
+  if (orderId && orderId !== payment.orderId) {
+    res.status(400).json({ success: false, error: 'PayPal order does not belong to this order' });
+    return;
+  }
+
+  if (payment.status === 'COMPLETED') {
+    res.status(409).json({ success: false, error: 'Order already paid' });
     return;
   }
 
@@ -324,13 +345,13 @@ export async function capturePayPalPayment(req: Request, res: Response): Promise
     const result = await capturePayPalOrder(paypalOrderId);
 
     if (result.status === 'COMPLETED') {
-      await prisma.payment.updateMany({
-        where: { transactionId: paypalOrderId },
+      await prisma.payment.update({
+        where: { id: payment.id },
         data: { status: 'COMPLETED' },
       });
 
       await prisma.order.update({
-        where: { id: orderId },
+        where: { id: payment.orderId },
         data: { status: 'CONFIRMED' },
       });
 

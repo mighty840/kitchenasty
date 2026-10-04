@@ -19,8 +19,15 @@ Edit `packages/server/.env` and set at minimum:
 
 ```dotenv
 DATABASE_URL=postgresql://kitchenasty:kitchenasty@postgres:5432/kitchenasty
-JWT_SECRET=your-random-secret-here
+# Required. Generate with: openssl rand -hex 32
+JWT_SECRET=
 CORS_ORIGINS=http://localhost:5173,http://localhost:5174
+```
+
+Docker Compose also needs `JWT_SECRET` in a `.env` file next to `docker-compose.yml`. The server refuses to start without it, or with any of the placeholder values from the docs:
+
+```bash
+echo "JWT_SECRET=$(openssl rand -hex 32)" > .env
 ```
 
 See [Environment Variables](/configuration/environment-variables) for the full reference.
