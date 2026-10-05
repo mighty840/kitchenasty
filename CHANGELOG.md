@@ -5,6 +5,41 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.3.2] - 2026-10-05
+
+### Security
+
+Tracked as GHSA-6m9g-c563-qj8v. All three findings affect every release up to and including 0.3.1. Reported privately by kta1kri.
+
+#### Order totals set by the client
+- `POST /api/orders` added each option's client-supplied `priceModifier` to the unit price without looking it up, so an unauthenticated guest could send a large negative modifier and pay about a cent for a real order. Stripe and PayPal amounts were derived from that total.
+- Options are now resolved against the menu item's own options in the database, using the stored name, value and price. An option id that does not belong to the item returns `400`. The client's `name`, `value` and `priceModifier` fields are still accepted and ignored.
+- CVSS 3.1 7.5 (High), `AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N`. CWE-602.
+
+#### Forgeable tokens from a default `JWT_SECRET`
+- The server fell back to a hard-coded signing secret when `JWT_SECRET` was unset, and `docker-compose.yml` and `.env.example` shipped another fixed value. A deployment that kept either default accepted admin tokens minted by anyone who had read the repository.
+- The server now refuses to start when `JWT_SECRET` is unset or matches any placeholder that has appeared in the code, compose file or docs. There is no fallback in code.
+- CVSS 3.1 8.1 (High) for deployments that kept a default, `AV:N/AC:L/PR:N/UI:N/S:U/C:H/I:H/A:N`. CWE-798.
+
+#### PayPal capture confirmed an unrelated order
+- `POST /api/payments/paypal/capture` took `paypalOrderId` and `orderId` as independent fields and set the caller's `orderId` to `CONFIRMED`, so a guest could pay for a cheap order and confirm an expensive one.
+- The handler now loads the PayPal payment row before capturing and confirms only that row's order. A mismatched `orderId` returns `400` before anything is captured, an unknown PayPal id returns `404`, and an already completed payment returns `409`. `orderId` is now optional.
+- CVSS 3.1 7.5 (High), `AV:N/AC:L/PR:N/UI:N/S:U/C:N/I:H/A:N`. CWE-639, CWE-345.
+
+#### Staff-only hardening
+- Uploaded files kept the extension from the client's filename while only the declared mimetype was checked, so a staff user could upload HTML that `/uploads` served as a page. The extension now comes from the mimetype.
+- Branding settings, logo and favicon, gallery and media writes, legal pages, cookie categories and coupon create/edit accepted any staff token. They now require `MANAGER` or `SUPER_ADMIN`, which matches what the admin UI already showed each role.
+
+### Breaking changes
+- **`JWT_SECRET` is required.** Set it to a random value (`openssl rand -hex 32`) before upgrading, or the server will not start. Docker Compose reads it from a `.env` file next to `docker-compose.yml`. Tokens signed with the old default stop working, so users of affected deployments must sign in again.
+- `STAFF` accounts can no longer call the write routes listed under staff-only hardening.
+
+### Docs
+- The install, authentication and self-hosting guides no longer show placeholder secrets, and say the server will not start without a real one.
+
+### Tests
+- Regression tests for each fix: `paypal-capture`, `order-price-tampering`, `upload-extension` and `staff-role-gates`, plus unit tests for the secret check. Each fails on 0.3.1.
+
 ## [0.3.1] - 2026-09-08
 
 ### Security
