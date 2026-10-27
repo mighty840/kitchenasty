@@ -5,13 +5,14 @@ import { useTranslation } from 'react-i18next';
 import { useDebounce } from '@/hooks/useDebounce';
 import { menuApi } from '@/api/endpoints';
 import type { Category, MenuItem } from '@/api/types';
-import { formatCurrency } from '@/lib/formatters';
+import { formatCurrency, useCurrency } from '@/lib/formatters';
 import { API_BASE_URL } from '@/lib/constants';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 
 export default function MenuScreen() {
   const router = useRouter();
   const { t } = useTranslation();
+  useCurrency();
   const [categories, setCategories] = useState<Category[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [search, setSearch] = useState('');

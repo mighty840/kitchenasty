@@ -1,0 +1,4 @@
+interface:
+  display_name: "React"
+  short_description: "React development including components, JSX, props, state…"
+  default_prompt: "Use $react to help with my current task: Provides comprehensive guidance for React development including components, JSX, props, state, hooks, context, performance optimization, and best practices."

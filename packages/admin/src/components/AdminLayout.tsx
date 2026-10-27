@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.js';
+import { useTranslation } from 'react-i18next';
+import LanguageSwitcher from './LanguageSwitcher.js';
+
 
 type Role = 'SUPER_ADMIN' | 'MANAGER' | 'STAFF';
 
@@ -86,13 +89,41 @@ const ROLE_COLORS: Record<Role, string> = {
   STAFF: 'bg-gray-500/20 text-gray-300',
 };
 
-const ROLE_LABELS: Record<Role, string> = {
-  SUPER_ADMIN: 'Super Admin',
-  MANAGER: 'Manager',
-  STAFF: 'Staff',
+const NAV_KEYS: Record<string, string> = {
+  Dashboard: 'dashboard',
+  Orders: 'orders',
+  Reservations: 'reservations',
+  'All Reservations': 'allReservations',
+  Trends: 'trends',
+  Reviews: 'reviews',
+  Kitchen: 'kitchen',
+  Locations: 'locations',
+  Menu: 'menu',
+  Items: 'items',
+  Categories: 'categories',
+  Coupons: 'coupons',
+  Automation: 'automation',
+  Loyalty: 'loyalty',
+  Design: 'design',
+  'Landing Page': 'landingPage',
+  Branding: 'branding',
+  Theme: 'theme',
+  Templates: 'templates',
+  Gallery: 'gallery',
+  'Media Library': 'mediaLibrary',
+  Legal: 'legal',
+  Pages: 'pages',
+  'Cookie Categories': 'cookieCategories',
+  'Consent Log': 'consentLog',
+  Settings: 'settings',
+  Developer: 'developer',
+  'API Metrics': 'apiMetrics',
+  'Audit Log': 'auditLog',
+  Staff: 'staff',
 };
 
 export default function AdminLayout({ children, onLogout }: { children: React.ReactNode; onLogout?: () => void }) {
+  const { t } = useTranslation();
   const location = useLocation();
   const { user, token } = useAuth();
   const [pendingCount, setPendingCount] = useState(0);
@@ -140,10 +171,10 @@ export default function AdminLayout({ children, onLogout }: { children: React.Re
   return (
     <div className="min-h-screen bg-gray-50 flex">
       {/* Sidebar */}
-      <aside className="w-64 bg-gray-900 text-white flex flex-col" role="navigation" aria-label="Main navigation">
+      <aside className="w-64 bg-gray-900 text-white flex flex-col" role="navigation" aria-label={t('pages.admin_layout.main_navigation')}>
         <div className="px-6 py-4 border-b border-gray-700">
-          <h1 className="text-xl font-bold text-primary-400">KitchenAsty</h1>
-          <p className="text-xs text-gray-400 mt-1">Admin Panel</p>
+          <h1 className="text-xl font-bold text-primary-400">{t('pages.admin_layout.kitchenasty')}</h1>
+          <p className="text-xs text-gray-400 mt-1">{t('pages.admin_layout.admin_panel')}</p>
         </div>
         <nav className="flex-1 py-4">
           {filteredNav.map((item) => {
@@ -161,7 +192,7 @@ export default function AdminLayout({ children, onLogout }: { children: React.Re
                     }`}
                 >
                   <span className="mr-3">{item.icon}</span>
-                  {item.label}
+                  {t(`nav.${NAV_KEYS[item.label]}`)}
                 </Link>
                 {item.children && isActive && (
                   <div className="bg-gray-950">
@@ -174,7 +205,7 @@ export default function AdminLayout({ children, onLogout }: { children: React.Re
                           : 'text-gray-400 hover:text-white'
                           }`}
                       >
-                        {child.label}
+                        {t(`nav.${NAV_KEYS[child.label]}`)}
                       </Link>
                     ))}
                   </div>
@@ -189,7 +220,7 @@ export default function AdminLayout({ children, onLogout }: { children: React.Re
           <div className="px-6 py-4 border-t border-gray-700">
             <p className="text-sm font-medium text-white truncate">{user.name}</p>
             <span className={`inline-block mt-1 text-xs px-2 py-0.5 rounded-full font-medium ${ROLE_COLORS[user.role]}`}>
-              {ROLE_LABELS[user.role]}
+              {t(`roles.${user.role.toLowerCase()}`)}
             </span>
           </div>
         )}
@@ -204,14 +235,14 @@ export default function AdminLayout({ children, onLogout }: { children: React.Re
             <Link
               to="/orders?status=PENDING"
               className="relative p-2 text-gray-400 hover:text-gray-600 transition-colors"
-              title="Pending orders"
-              aria-label="Pending orders"
+              title={t('pages.admin_layout.pending_orders')}
+              aria-label={t('pages.admin_layout.pending_orders')}
             >
               <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M15 17h5l-1.405-1.405A2.032 2.032 0 0118 14.158V11a6.002 6.002 0 00-4-5.659V5a2 2 0 10-4 0v.341C7.67 6.165 6 8.388 6 11v3.159c0 .538-.214 1.055-.595 1.436L4 17h5m6 0v1a3 3 0 11-6 0v-1m6 0H9" />
               </svg>
               <span className="sr-only" aria-live="polite">
-                {pendingCount > 0 ? `${pendingCount} pending order${pendingCount === 1 ? '' : 's'}` : ''}
+                {pendingCount > 0 ? t('common.pendingOrdersCount', { count: pendingCount }) : ''}
               </span>
               {pendingCount > 0 && (
                 <span className="absolute -top-0.5 -right-0.5 flex items-center justify-center w-4 h-4 text-[10px] font-bold text-white bg-red-500 rounded-full" aria-hidden="true">
@@ -225,8 +256,8 @@ export default function AdminLayout({ children, onLogout }: { children: React.Re
               <Link
                 to="/settings"
                 className="p-2 text-gray-400 hover:text-gray-600 transition-colors"
-                title="Settings"
-                aria-label="Settings"
+                title={t('pages.admin_layout.settings')}
+                aria-label={t('pages.admin_layout.settings')}
               >
                 <svg className="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24" strokeWidth={2}>
                   <path strokeLinecap="round" strokeLinejoin="round" d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.066 2.573c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.573 1.066c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.066-2.573c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065z" />
@@ -237,6 +268,7 @@ export default function AdminLayout({ children, onLogout }: { children: React.Re
 
             {/* Separator */}
             <div className="w-px h-6 bg-gray-200" />
+            <LanguageSwitcher />
 
             {/* User avatar + dropdown */}
             {user && (
@@ -244,7 +276,7 @@ export default function AdminLayout({ children, onLogout }: { children: React.Re
                 <button
                   onClick={() => setDropdownOpen(!dropdownOpen)}
                   className="flex items-center gap-2 p-1 rounded-lg hover:bg-gray-100 transition-colors"
-                  aria-label="User menu"
+                  aria-label={t('pages.admin_layout.user_menu')}
                   aria-expanded={dropdownOpen}
                   aria-haspopup="true"
                 >
@@ -265,7 +297,8 @@ export default function AdminLayout({ children, onLogout }: { children: React.Re
                         onClick={() => setDropdownOpen(false)}
                         className="block px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                       >
-                        Settings
+
+                        {t('pages.admin_layout.settings')}
                       </Link>
                     )}
                     {onLogout && (
@@ -276,7 +309,8 @@ export default function AdminLayout({ children, onLogout }: { children: React.Re
                         }}
                         className="block w-full text-left px-4 py-2 text-sm text-gray-700 hover:bg-gray-50"
                       >
-                        Logout
+
+                        {t('pages.admin_layout.logout')}
                       </button>
                     )}
                   </div>

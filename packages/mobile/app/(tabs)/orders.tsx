@@ -5,7 +5,7 @@ import { useTranslation } from 'react-i18next';
 import { useAuthStore } from '@/store/auth.store';
 import { orderApi } from '@/api/endpoints';
 import type { Order } from '@/api/types';
-import { formatCurrency, formatDateTime } from '@/lib/formatters';
+import { formatCurrency, formatDateTime, useCurrency } from '@/lib/formatters';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import Badge from '@/components/ui/Badge';
 
@@ -22,6 +22,7 @@ const STATUS_VARIANT: Record<string, 'default' | 'success' | 'warning' | 'error'
 
 export default function OrdersScreen() {
   const { t } = useTranslation();
+  useCurrency();
   const router = useRouter();
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);

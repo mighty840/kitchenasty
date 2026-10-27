@@ -38,6 +38,9 @@ const pizza = {
   id: 'item-1',
   name: 'Margherita Pizza',
   price: 15,
+  taxRate: 8,
+  surchargeEnabled: false,
+  surchargeAmount: 0,
   isActive: true,
   trackStock: false,
   stockQty: 0,
@@ -90,6 +93,50 @@ describe('POST /api/orders - option pricing', () => {
     expect(res.status).toBe(201);
     const data = mockedPrisma.order.create.mock.calls[0][0].data as any;
     expect(data.items.create[0].unitPrice).toBe(19);
+  });
+
+  it.each(['PICKUP', 'DELIVERY'])('calculates mixed taxes and per-unit surcharges for %s', async (orderType) => {
+    mockedPrisma.menuItem.findMany.mockResolvedValue([
+      { ...pizza, taxRate: 7, surchargeEnabled: true, surchargeAmount: 0.5 },
+      { ...pizza, id: 'drink', price: 3, taxRate: 19, options: [] },
+      { ...pizza, id: 'water', price: 1, taxRate: 0, surchargeAmount: 20, options: [] },
+    ] as any);
+    mockedPrisma.deliveryZone.findFirst.mockResolvedValue(null);
+    const res = await request(app).post('/api/orders').send({
+      orderType,
+      guestName: 'Guest',
+      guestEmail: 'guest@test.com',
+      address: orderType === 'DELIVERY'
+        ? { line1: '123 Main St', city: 'City', state: 'ST', zip: '12345' }
+        : undefined,
+      items: [
+        { menuItemId: pizza.id, quantity: 2, taxRate: 0, surchargeAmount: 0, options: [
+          { menuOptionValueId: 'val-large', priceModifier: -100 },
+        ] },
+        { menuItemId: 'drink', quantity: 1 },
+        { menuItemId: 'water', quantity: 1 },
+      ],
+    });
+
+    expect(res.status).toBe(201);
+    const data = mockedPrisma.order.create.mock.calls[0][0].data;
+    expect(data.subtotal).toBe(43);
+    expect(data.tax).toBe(2.97);
+    expect(data.total).toBe(orderType === 'DELIVERY' ? 47.99 : 43);
+    expect(data.items?.create).toEqual([
+      expect.objectContaining({ unitPrice: 19.5, subtotal: 39, taxRate: 7, surchargeAmount: 0.5 }),
+      expect.objectContaining({ unitPrice: 3, subtotal: 3, taxRate: 19, surchargeAmount: 0 }),
+      expect.objectContaining({ unitPrice: 1, subtotal: 1, taxRate: 0, surchargeAmount: 0 }),
+    ]);
+  });
+
+  it('extracts 8% included tax without increasing the menu total', async () => {
+    const res = await request(app).post('/api/orders')
+      .send(orderWith({ menuOptionValueId: 'val-large' }));
+    expect(res.status).toBe(201);
+    const data = mockedPrisma.order.create.mock.calls[0][0].data;
+    expect(data.tax).toBe(2.81);
+    expect(data.total).toBe(38);
   });
 
   it('rejects an option value that does not belong to the item', async () => {

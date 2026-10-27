@@ -1,5 +1,7 @@
 import { useEffect, useState } from 'react';
 
+import { useTranslation } from 'react-i18next';
+
 export interface MediaAsset {
   id: string;
   filename: string;
@@ -20,6 +22,7 @@ export function MediaPickerModal({
   onClose: () => void;
   onPick: (asset: MediaAsset) => void;
 }) {
+  const { t } = useTranslation();
   const [items, setItems] = useState<MediaAsset[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
@@ -35,7 +38,7 @@ export function MediaPickerModal({
         headers: { Authorization: `Bearer ${token}` },
       });
       const result = await res.json();
-      if (!res.ok) throw new Error(result.error || 'Failed to load');
+      if (!res.ok) throw new Error(result.error || t('messages.failed_to_load'));
       setItems(result.data ?? []);
     } catch (e: any) {
       setError(e.message);
@@ -63,7 +66,7 @@ export function MediaPickerModal({
         body: formData,
       });
       const result = await res.json();
-      if (!res.ok) throw new Error(result.error || 'Upload failed');
+      if (!res.ok) throw new Error(result.error || t('messages.upload_failed'));
       await load();
     } catch (e: any) {
       setError(e.message);
@@ -81,23 +84,23 @@ export function MediaPickerModal({
       onClick={onClose}
       role="dialog"
       aria-modal="true"
-      aria-label="Pick from media library"
+      aria-label={t('pages.media_picker.pick_from_media_library')}
     >
       <div
         className="bg-white rounded-xl shadow-xl max-w-4xl w-full max-h-[85vh] flex flex-col"
         onClick={(e) => e.stopPropagation()}
       >
         <div className="px-6 py-4 border-b border-gray-200 flex items-center justify-between">
-          <h3 className="text-lg font-semibold text-gray-900">Pick from Media Library</h3>
+          <h3 className="text-lg font-semibold text-gray-900">{t('pages.media_picker.pick_from_media_library_8365a4')}</h3>
           <div className="flex items-center gap-3">
             <label className="px-3 py-1.5 text-sm bg-primary-600 text-white rounded-lg hover:bg-primary-700 cursor-pointer">
-              {uploading ? 'Uploading...' : '+ Upload New'}
+              {uploading ? t('pages.media_picker.uploading') : t('pages.media_picker.upload_new')}
               <input type="file" accept="image/*" onChange={handleUpload} className="hidden" disabled={uploading} />
             </label>
             <button
               onClick={onClose}
               className="text-gray-400 hover:text-gray-600 p-1"
-              aria-label="Close"
+              aria-label={t('pages.media_picker.close')}
             >
               <svg className="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                 <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" />
@@ -114,7 +117,8 @@ export function MediaPickerModal({
             </div>
           ) : items.length === 0 ? (
             <p className="text-center text-gray-500 py-12 text-sm">
-              No uploads yet. Click "Upload New" to add an image.
+
+              {t('pages.media_picker.no_uploads_yet_click_upload_new_to_add_an_image')}
             </p>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-3">
@@ -128,7 +132,8 @@ export function MediaPickerModal({
                   <img src={item.url} alt={item.originalName} className="w-full h-full object-cover" loading="lazy" />
                   <div className="absolute inset-0 bg-primary-600/0 group-hover:bg-primary-600/20 transition-colors flex items-center justify-center">
                     <span className="opacity-0 group-hover:opacity-100 bg-primary-600 text-white text-xs font-semibold px-2 py-1 rounded">
-                      Select
+
+                      {t('pages.media_picker.select')}
                     </span>
                   </div>
                 </button>

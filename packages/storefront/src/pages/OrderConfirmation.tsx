@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useLocation, useParams, useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useCurrency } from '../hooks/useCurrency.js';
 import { useCart } from '../context/CartContext.js';
 
 type Order = {
@@ -12,26 +13,25 @@ type Order = {
   total?: number;
 };
 
-const eur = (v: number | undefined) =>
-  new Intl.NumberFormat('de-DE', { style: 'currency', currency: 'EUR' }).format(v ?? 0);
-
 export default function OrderConfirmation() {
   const { t } = useTranslation();
+  const { format } = useCurrency();
+  const eur = (v: number | undefined) => format(v ?? 0);
   const { id } = useParams();
   const location = useLocation();
   const [search] = useSearchParams();
   const { clear } = useCart();
 
   const paid = search.get('paid') === 'true';
+  const payuReturn = search.get('payu') === 'return';
   const initial = (location.state?.order as Order | undefined) ?? null;
   const [order, setOrder] = useState<Order | null>(initial);
   const [polls, setPolls] = useState(0);
 
-  // First visit with ?paid=true (Stripe redirected back). Clear the cart
-  // — we kept it loaded across the Stripe hop in case the user cancelled.
+  // Clear online-payment carts only after Stripe's success redirect or PayU confirms the order.
   useEffect(() => {
-    if (paid) clear();
-  }, [paid, clear]);
+    if (paid || (payuReturn && order?.status === 'CONFIRMED')) clear();
+  }, [paid, payuReturn, order?.status, clear]);
 
   // Refetch the order from the API if we landed here without state (the
   // Stripe redirect drops it) or if the order is still PENDING — the
@@ -75,7 +75,7 @@ export default function OrderConfirmation() {
       <h1 className="text-3xl font-bold text-gray-900 mb-2">{t('orderConfirmation.title')}</h1>
       <p className="text-gray-600 mb-2">{t('orderConfirmation.thankYou')}</p>
 
-      {paid && !confirmed && (
+      {(paid || payuReturn) && !confirmed && (
         <p className="text-sm text-gray-500 mb-2">Finalising your payment…</p>
       )}
 

@@ -1,6 +1,10 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { slugify } from '../lib/slug.js';
 import { api } from '../lib/api.js';
+
+import { useTranslation } from 'react-i18next';
+import { useCurrency } from '../context/CurrencyContext.js';
 
 interface OperatingHour {
   dayOfWeek: number;
@@ -37,7 +41,7 @@ interface LocationData {
   pickupLeadTime: number;
 }
 
-const DAYS = ['Sunday', 'Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday'];
+const DAYS = ['sunday', 'monday', 'tuesday', 'wednesday', 'thursday', 'friday', 'saturday'];
 
 const defaultHours: OperatingHour[] = DAYS.map((_, i) => ({
   dayOfWeek: i,
@@ -67,6 +71,8 @@ const emptyLocation: LocationData = {
 };
 
 export default function LocationForm() {
+  const { t } = useTranslation();
+  const { currency } = useCurrency();
   const { id } = useParams();
   const navigate = useNavigate();
   const isEdit = !!id;
@@ -124,7 +130,7 @@ export default function LocationForm() {
 
   const autoSlug = (name: string) => {
     if (!isEdit) {
-      updateField('slug', name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''));
+      updateField('slug', slugify(name));
     }
   };
 
@@ -164,19 +170,20 @@ export default function LocationForm() {
     setZones((prev) => prev.filter((_, i) => i !== index));
   };
 
-  if (loading) return <p className="text-gray-500">Loading...</p>;
+  if (loading) return <p className="text-gray-500">{t('pages.location_form.loading')}</p>;
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-semibold text-gray-800">
-          {isEdit ? 'Edit Location' : 'New Location'}
+          {isEdit ? t('pages.location_form.edit_location') : t('pages.location_form.new_location')}
         </h2>
         <button
           onClick={() => navigate('/locations')}
           className="text-gray-500 hover:text-gray-700 text-sm"
         >
-          Back to Locations
+
+          {t('pages.location_form.back_to_locations')}
         </button>
       </div>
 
@@ -189,10 +196,10 @@ export default function LocationForm() {
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Basic Info */}
         <section className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">{t('pages.location_form.basic_information')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.location_form.name')}</label>
               <input
                 type="text"
                 value={form.name}
@@ -202,7 +209,7 @@ export default function LocationForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Slug *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.location_form.slug')}</label>
               <input
                 type="text"
                 value={form.slug}
@@ -213,7 +220,7 @@ export default function LocationForm() {
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.location_form.description')}</label>
               <textarea
                 value={form.description}
                 onChange={(e) => updateField('description', e.target.value)}
@@ -222,7 +229,7 @@ export default function LocationForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.location_form.phone')}</label>
               <input
                 type="text"
                 value={form.phone}
@@ -231,7 +238,7 @@ export default function LocationForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.location_form.email')}</label>
               <input
                 type="email"
                 value={form.email}
@@ -244,10 +251,10 @@ export default function LocationForm() {
 
         {/* Address */}
         <section className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Address</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">{t('pages.location_form.address')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Street Address *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.location_form.street_address')}</label>
               <input
                 type="text"
                 value={form.address}
@@ -257,7 +264,7 @@ export default function LocationForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">City *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.location_form.city')}</label>
               <input
                 type="text"
                 value={form.city}
@@ -267,7 +274,7 @@ export default function LocationForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">State</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.location_form.state')}</label>
               <input
                 type="text"
                 value={form.state}
@@ -276,7 +283,7 @@ export default function LocationForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Postal Code *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.location_form.postal_code')}</label>
               <input
                 type="text"
                 value={form.postalCode}
@@ -286,7 +293,7 @@ export default function LocationForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Country</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.location_form.country')}</label>
               <input
                 type="text"
                 value={form.country}
@@ -299,7 +306,7 @@ export default function LocationForm() {
 
         {/* Service Settings */}
         <section className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Service Settings</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">{t('pages.location_form.service_settings')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
             <label className="flex items-center gap-2">
               <input
@@ -308,7 +315,7 @@ export default function LocationForm() {
                 onChange={(e) => updateField('isActive', e.target.checked)}
                 className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
               />
-              <span className="text-sm text-gray-700">Active</span>
+              <span className="text-sm text-gray-700">{t('pages.location_form.active')}</span>
             </label>
             <label className="flex items-center gap-2">
               <input
@@ -317,7 +324,7 @@ export default function LocationForm() {
                 onChange={(e) => updateField('deliveryEnabled', e.target.checked)}
                 className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
               />
-              <span className="text-sm text-gray-700">Delivery Enabled</span>
+              <span className="text-sm text-gray-700">{t('pages.location_form.delivery_enabled')}</span>
             </label>
             <label className="flex items-center gap-2">
               <input
@@ -326,10 +333,10 @@ export default function LocationForm() {
                 onChange={(e) => updateField('pickupEnabled', e.target.checked)}
                 className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
               />
-              <span className="text-sm text-gray-700">Pickup Enabled</span>
+              <span className="text-sm text-gray-700">{t('pages.location_form.pickup_enabled')}</span>
             </label>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Min Order (Delivery) $</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.location_form.min_order_delivery')}</label>
               <input
                 type="number"
                 value={form.minOrderDelivery}
@@ -340,7 +347,7 @@ export default function LocationForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Lead Time (min)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.location_form.delivery_lead_time_min')}</label>
               <input
                 type="number"
                 value={form.deliveryLeadTime}
@@ -350,7 +357,7 @@ export default function LocationForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Pickup Lead Time (min)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.location_form.pickup_lead_time_min')}</label>
               <input
                 type="number"
                 value={form.pickupLeadTime}
@@ -364,11 +371,11 @@ export default function LocationForm() {
 
         {/* Operating Hours */}
         <section className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Operating Hours</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">{t('pages.location_form.operating_hours')}</h3>
           <div className="space-y-3">
             {hours.map((hour, index) => (
               <div key={hour.dayOfWeek} className="flex items-center gap-4">
-                <span className="w-24 text-sm font-medium text-gray-700">{DAYS[hour.dayOfWeek]}</span>
+                <span className="w-24 text-sm font-medium text-gray-700">{t(`days.${DAYS[hour.dayOfWeek]}`)}</span>
                 <label className="flex items-center gap-1">
                   <input
                     type="checkbox"
@@ -380,7 +387,7 @@ export default function LocationForm() {
                     }}
                     className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                   />
-                  <span className="text-xs text-gray-500">Open</span>
+                  <span className="text-xs text-gray-500">{t('pages.location_form.open')}</span>
                 </label>
                 <input
                   type="time"
@@ -413,24 +420,25 @@ export default function LocationForm() {
         {/* Delivery Zones */}
         <section className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-medium text-gray-900">Delivery Zones</h3>
+            <h3 className="text-lg font-medium text-gray-900">{t('pages.location_form.delivery_zones')}</h3>
             <button
               type="button"
               onClick={addZone}
               className="text-primary-600 hover:text-primary-700 text-sm font-medium"
             >
-              + Add Zone
+
+              {t('pages.location_form.add_zone')}
             </button>
           </div>
           {zones.length === 0 && (
-            <p className="text-sm text-gray-400">No delivery zones configured.</p>
+            <p className="text-sm text-gray-400">{t('pages.location_form.no_delivery_zones_configured')}</p>
           )}
           <div className="space-y-3">
             {zones.map((zone, index) => (
               <div key={index} className="flex items-center gap-3 p-3 border border-gray-200 rounded-lg">
                 <input
                   type="text"
-                  placeholder="Zone name"
+                  placeholder={t('pages.location_form.zone_name')}
                   value={zone.name}
                   onChange={(e) => {
                     const updated = [...zones];
@@ -440,10 +448,10 @@ export default function LocationForm() {
                   className="flex-1 border border-gray-300 rounded px-2 py-1 text-sm"
                 />
                 <div className="flex items-center gap-1">
-                  <span className="text-xs text-gray-500">$</span>
+                  <span className="text-xs text-gray-500">{currency.symbol}</span>
                   <input
                     type="number"
-                    placeholder="Charge"
+                    placeholder={t('pages.location_form.charge')}
                     value={zone.charge}
                     onChange={(e) => {
                       const updated = [...zones];
@@ -456,10 +464,10 @@ export default function LocationForm() {
                   />
                 </div>
                 <div className="flex items-center gap-1">
-                  <span className="text-xs text-gray-500">Min $</span>
+                  <span className="text-xs text-gray-500">{t('pages.location_form.min')}</span>
                   <input
                     type="number"
-                    placeholder="Min order"
+                    placeholder={t('pages.location_form.min_order')}
                     value={zone.minOrder}
                     onChange={(e) => {
                       const updated = [...zones];
@@ -476,7 +484,8 @@ export default function LocationForm() {
                   onClick={() => removeZone(index)}
                   className="text-red-500 hover:text-red-700 text-sm"
                 >
-                  Remove
+
+                  {t('pages.location_form.remove')}
                 </button>
               </div>
             ))}
@@ -490,14 +499,15 @@ export default function LocationForm() {
             onClick={() => navigate('/locations')}
             className="px-6 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50"
           >
-            Cancel
+
+            {t('pages.location_form.cancel')}
           </button>
           <button
             type="submit"
             disabled={saving}
             className="px-6 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50 transition-colors"
           >
-            {saving ? 'Saving...' : isEdit ? 'Update Location' : 'Create Location'}
+            {saving ? t('pages.location_form.saving') : isEdit ? t('pages.location_form.update_location') : t('pages.location_form.create_location')}
           </button>
         </div>
       </form>

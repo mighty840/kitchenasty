@@ -67,12 +67,15 @@ Update general settings. All fields are optional.
   "pickupLeadTime": 15,
   "enableFutureOrdering": true,
   "enableTipping": true,
-  "tipOptions": [10, 15, 20, 25],
-  "taxRate": 8.5
+  "tipOptions": [10, 15, 20, 25]
 }
 ```
 
 ---
+
+Tax rates and surcharges are configured through [Menu Items](/api/menu).
+The legacy `taxRate` order setting is still accepted for compatibility but does
+not affect checkout or order calculations.
 
 ## 📅 Reservation Settings
 
@@ -135,7 +138,7 @@ If `smtpPass` contains `...`, the existing value is preserved.
 ### `GET /api/settings/payment`
 **Auth:** SUPER_ADMIN
 
-Returns payment gateway settings. `stripeSecretKey`, `stripeWebhookSecret`, and `paypalClientSecret` are masked.
+Returns payment gateway settings. Secret fields such as `stripeSecretKey`, `stripeWebhookSecret`, `paypalClientSecret`, `payuClientSecret`, and `payuSecondKey` are masked.
 
 ### `PUT /api/settings/payment`
 **Auth:** SUPER_ADMIN
@@ -153,6 +156,11 @@ Masked secret values (containing `...`) are preserved on save.
   "paypalClientId": "",
   "paypalClientSecret": "",
   "paypalSandbox": true,
+  "payuEnabled": false,
+  "payuPosId": "",
+  "payuClientSecret": "",
+  "payuSecondKey": "",
+  "payuSandbox": true,
   "cashEnabled": true
 }
 ```

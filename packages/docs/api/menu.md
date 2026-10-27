@@ -82,6 +82,9 @@ Authorization: Bearer <manager-token>
   "slug": "classic-burger",
   "description": "Beef patty with lettuce, tomato, and our secret sauce",
   "price": 12.99,
+  "taxRate": 7,
+  "surchargeEnabled": true,
+  "surchargeAmount": 0.50,
   "categoryId": "category-id",
   "isActive": true,
   "sortOrder": 1,
@@ -101,6 +104,19 @@ Authorization: Bearer <manager-token>
 ```
 
 ### ✏️ Update Item
+
+The pricing fields can be updated independently; omitted fields retain their
+existing values. `taxRate` is a percentage from 0 to 100 (default 8).
+`surchargeEnabled` defaults to false; `surchargeAmount` is non-negative and
+defaults to 0. Disabling a surcharge retains its configured amount.
+
+These fields are also returned by the public list and detail endpoints, so
+clients use item settings without an admin settings request.
+The enabled surcharge applies per unit for delivery and pickup and is not taxed.
+
+Item `price` and option `priceModifier` include tax.
+The server extracts their included tax instead of adding it on top;
+`surchargeAmount` is excluded from the tax base.
 
 ```
 PATCH /api/menu/items/:id

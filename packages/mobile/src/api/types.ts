@@ -51,6 +51,9 @@ export interface MenuItem {
   slug: string;
   description: string | null;
   price: number;
+  taxRate: number;
+  surchargeEnabled: boolean;
+  surchargeAmount: number;
   image: string | null;
   isActive: boolean;
   trackStock: boolean;
@@ -116,6 +119,8 @@ export interface OrderItem {
   name: string;
   quantity: number;
   unitPrice: number;
+  taxRate: number;
+  surchargeAmount: number;
   subtotal: number;
   comment: string | null;
   options: { id: string; name: string; value: string; priceModifier: number }[];

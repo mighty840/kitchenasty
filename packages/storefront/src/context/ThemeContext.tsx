@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useEffect, useCallback } from 'react';
+import { DEFAULT_CURRENCY, type CurrencyConfig } from '@kitchenasty/shared';
 
 interface HeroSection {
   title?: string;
@@ -36,6 +37,7 @@ export interface SiteSettings {
   heroSection: HeroSection | null;
   featuresSection: FeatureItem[] | null;
   ctaSection: CtaSection | null;
+  currency: CurrencyConfig;
 }
 
 interface ThemeContextType {
@@ -56,6 +58,7 @@ const defaultSettings: SiteSettings = {
   heroSection: null,
   featuresSection: null,
   ctaSection: null,
+  currency: DEFAULT_CURRENCY,
 };
 
 const ThemeContext = createContext<ThemeContextType>({
@@ -128,7 +131,7 @@ export function ThemeProvider({ children }: { children: React.ReactNode }) {
       .then((res) => res.json())
       .then((json) => {
         if (json.success && json.data) {
-          setSettings(json.data);
+          setSettings({ ...defaultSettings, ...json.data });
         }
       })
       .catch(() => {});

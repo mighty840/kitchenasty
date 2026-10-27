@@ -1,6 +1,6 @@
 # 💳 Payments
 
-KitchenAsty supports three payment methods: **Stripe**, **PayPal**, and **Cash**.
+KitchenAsty supports **Stripe**, **PayPal**, **PayU Europe**, and **Cash**.
 
 ## 💰 Stripe
 
@@ -68,3 +68,25 @@ Cash payments are recorded by staff:
 3. Order status is updated accordingly
 
 No external configuration is required for cash payments.
+
+## 🇪🇺 PayU Europe
+
+KitchenAsty uses the PayU Europe REST API v2.1 and redirects buyers to PayU's hosted payment page.
+
+Configure the integration in **Admin → Settings → Payment Gateways** with the POS ID, client secret, and second key from the PayU POS. Keep sandbox mode enabled while testing. The POS ID is also used as the OAuth `client_id`.
+
+Payment methods are available only when explicitly enabled in **Admin → Settings → Payment Gateways**. Missing enable flags default to disabled; environment credentials alone never enable a provider.
+
+Set `PAYU_POS_ID`, `PAYU_CLIENT_SECRET`, and `PAYU_SECOND_KEY` as server environment variables instead if you manage credentials outside the admin settings. `PAYU_SANDBOX` defaults to `true`; set it to `false` only for production. Database settings take precedence over environment values.
+
+Set `PUBLIC_URL` or `STOREFRONT_URL` to the public storefront URL for the post-payment return. Set `PAYU_NOTIFY_URL` to the full public callback URL, or set `BASE_URL` to the public API base URL. PayU payment creation is rejected if neither callback setting is present; the callback must be reachable by PayU.
+
+Configure PayU to send order and refund notifications to:
+
+```text
+https://api.your-domain.com/api/payments/payu/notify
+```
+
+The server verifies the `OpenPayu-Signature` (or `X-OpenPayU-Signature`) header using the PayU second key before updating payment status. PayU notifications are asynchronous and may be retried, so the callback is idempotent.
+
+The checkout flow creates a KitchenAsty order, calls `POST /api/payments/payu/create`, then redirects the buyer to the returned PayU URL. Payment completion is recorded only after a verified PayU notification.

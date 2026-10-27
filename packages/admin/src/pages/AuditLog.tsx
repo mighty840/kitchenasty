@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+import { useTranslation } from 'react-i18next';
+
 interface AuditEntry {
   id: string;
   userId: string;
@@ -27,6 +29,7 @@ const ACTION_COLORS: Record<string, string> = {
 };
 
 export default function AuditLog() {
+  const { t } = useTranslation();
   const [logs, setLogs] = useState<AuditEntry[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
@@ -59,7 +62,7 @@ export default function AuditLog() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Audit Log</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">{t('pages.audit_log.audit_log')}</h1>
 
       {/* Filters */}
       <div className="flex flex-wrap gap-3 mb-4">
@@ -67,31 +70,31 @@ export default function AuditLog() {
           value={entityFilter}
           onChange={(e) => { setEntityFilter(e.target.value); setPage(1); }}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
-          aria-label="Filter by entity"
+          aria-label={t('pages.audit_log.filter_by_entity')}
         >
-          <option value="">All Entities</option>
+          <option value="">{t('pages.audit_log.all_entities')}</option>
           {ENTITIES.map((e) => (
-            <option key={e} value={e}>{e}</option>
+            <option key={e} value={e}>{t(`auditEntities.${e}`, { defaultValue: e })}</option>
           ))}
         </select>
         <select
           value={actionFilter}
           onChange={(e) => { setActionFilter(e.target.value); setPage(1); }}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
-          aria-label="Filter by action"
+          aria-label={t('pages.audit_log.filter_by_action')}
         >
-          <option value="">All Actions</option>
+          <option value="">{t('pages.audit_log.all_actions')}</option>
           {ACTIONS.map((a) => (
-            <option key={a} value={a}>{a}</option>
+            <option key={a} value={a}>{t(`auditActions.${a}`, { defaultValue: a })}</option>
           ))}
         </select>
         <input
           type="text"
-          placeholder="Search by email or ID..."
+          placeholder={t('pages.audit_log.search_by_email_or_id')}
           value={search}
           onChange={(e) => { setSearch(e.target.value); setPage(1); }}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm w-64"
-          aria-label="Search audit logs"
+          aria-label={t('pages.audit_log.search_audit_logs')}
         />
       </div>
 
@@ -100,23 +103,23 @@ export default function AuditLog() {
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-gray-500 uppercase text-xs">
             <tr>
-              <th className="px-6 py-3 text-left">Date</th>
-              <th className="px-6 py-3 text-left">User</th>
-              <th className="px-6 py-3 text-left">Action</th>
-              <th className="px-6 py-3 text-left">Entity</th>
-              <th className="px-6 py-3 text-left">Entity ID</th>
-              <th className="px-6 py-3 text-left">IP</th>
-              <th className="px-6 py-3 text-left">Details</th>
+              <th className="px-6 py-3 text-left">{t('pages.audit_log.date')}</th>
+              <th className="px-6 py-3 text-left">{t('pages.audit_log.user')}</th>
+              <th className="px-6 py-3 text-left">{t('pages.audit_log.action')}</th>
+              <th className="px-6 py-3 text-left">{t('pages.audit_log.entity')}</th>
+              <th className="px-6 py-3 text-left">{t('pages.audit_log.entity_id')}</th>
+              <th className="px-6 py-3 text-left">{t('pages.audit_log.ip')}</th>
+              <th className="px-6 py-3 text-left">{t('pages.audit_log.details')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {loading ? (
               <tr>
-                <td colSpan={7} className="px-6 py-8 text-center text-gray-500">Loading...</td>
+                <td colSpan={7} className="px-6 py-8 text-center text-gray-500">{t('pages.audit_log.loading')}</td>
               </tr>
             ) : logs.length === 0 ? (
               <tr>
-                <td colSpan={7} className="px-6 py-8 text-center text-gray-500">No audit log entries.</td>
+                <td colSpan={7} className="px-6 py-8 text-center text-gray-500">{t('pages.audit_log.no_audit_log_entries')}</td>
               </tr>
             ) : (
               logs.map((log) => (
@@ -127,10 +130,10 @@ export default function AuditLog() {
                   <td className="px-6 py-3 text-gray-700">{log.userEmail}</td>
                   <td className="px-6 py-3">
                     <span className={`inline-block px-2 py-0.5 rounded text-xs font-medium ${ACTION_COLORS[log.action] || 'bg-gray-100 text-gray-700'}`}>
-                      {log.action}
+                      {t(`auditActions.${log.action}`, { defaultValue: log.action })}
                     </span>
                   </td>
-                  <td className="px-6 py-3 text-gray-700">{log.entity}</td>
+                  <td className="px-6 py-3 text-gray-700">{t(`auditEntities.${log.entity}`, { defaultValue: log.entity })}</td>
                   <td className="px-6 py-3 text-gray-500 font-mono text-xs">
                     {log.entityId ? log.entityId.substring(0, 12) + '...' : '-'}
                   </td>
@@ -153,17 +156,20 @@ export default function AuditLog() {
             disabled={page === 1}
             className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50"
           >
-            Previous
+
+            {t('pages.audit_log.previous')}
           </button>
           <span className="px-3 py-1 text-sm text-gray-600">
-            Page {page} of {totalPages}
+
+            {t('pages.audit_log.page')} {page}  {t('pages.audit_log.of')} {totalPages}
           </span>
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
             className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50"
           >
-            Next
+
+            {t('pages.audit_log.next')}
           </button>
         </div>
       )}

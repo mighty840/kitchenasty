@@ -1,0 +1,4 @@
+interface:
+  display_name: "Ai Elements"
+  short_description: "Build AI chat interfaces using ai-elements components…"
+  default_prompt: "Use $ai-elements to help with my current task: Build AI chat interfaces using ai-elements components — conversations, messages, tool displays, prompt inputs, and more."

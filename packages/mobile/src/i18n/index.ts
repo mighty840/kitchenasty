@@ -7,6 +7,8 @@ import fr from '../../../storefront/src/i18n/locales/fr.json';
 import de from '../../../storefront/src/i18n/locales/de.json';
 import it from '../../../storefront/src/i18n/locales/it.json';
 import pt from '../../../storefront/src/i18n/locales/pt.json';
+import pl from '../../../storefront/src/i18n/locales/pl.json';
+import ru from '../../../storefront/src/i18n/locales/ru.json';
 
 export const SUPPORTED_LANGUAGES = [
   { code: 'en', name: 'English', flag: 'GB' },
@@ -15,6 +17,8 @@ export const SUPPORTED_LANGUAGES = [
   { code: 'de', name: 'Deutsch', flag: 'DE' },
   { code: 'it', name: 'Italiano', flag: 'IT' },
   { code: 'pt', name: 'Português', flag: 'PT' },
+  { code: 'pl', name: 'Polski', flag: 'PL' },
+  { code: 'ru', name: 'Русский', flag: 'RU' },
 ] as const;
 
 export type LanguageCode = (typeof SUPPORTED_LANGUAGES)[number]['code'];
@@ -36,6 +40,8 @@ i18n.use(initReactI18next).init({
     de: { translation: de },
     it: { translation: it },
     pt: { translation: pt },
+    pl: { translation: pl },
+    ru: { translation: ru },
   },
   lng: 'en',
   fallbackLng: 'en',

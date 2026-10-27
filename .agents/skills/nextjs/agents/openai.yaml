@@ -1,0 +1,4 @@
+interface:
+  display_name: "Nextjs"
+  short_description: "Next.js using the official docs at nextjs.org/docs"
+  default_prompt: "Use $nextjs to help with my current task: Guidance for Next.js using the official docs at nextjs.org/docs."

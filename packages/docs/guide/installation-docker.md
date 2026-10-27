@@ -38,6 +38,8 @@ See [Environment Variables](/configuration/environment-variables) for the full r
 docker compose up --build
 ```
 
+The same server image supports `development`, `production`, and `test`. Compose defaults to `development`; select another mode with `NODE_ENV=production docker compose up --build` or set `NODE_ENV` in the root `.env`. Development uses pretty-printed logs, production uses structured JSON, and test silences application logs. The runtime image includes `pino-pretty`, so changing modes does not require a different Dockerfile or installing development dependencies. Test runners such as Vitest still require development dependencies outside the runtime image.
+
 This starts:
 
 | Service | URL |

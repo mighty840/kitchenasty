@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+import { useTranslation } from 'react-i18next';
+
 interface ConsentRecord {
   id: string;
   accepted: boolean;
@@ -25,6 +27,7 @@ interface Stats {
 }
 
 export default function ConsentLog() {
+  const { t } = useTranslation();
   const [consents, setConsents] = useState<ConsentRecord[]>([]);
   const [stats, setStats] = useState<Stats | null>(null);
   const [page, setPage] = useState(1);
@@ -65,13 +68,13 @@ export default function ConsentLog() {
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Consent Log</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">{t('pages.consent_log.consent_log')}</h1>
 
       {/* Stats cards */}
       {stats && (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <p className="text-xs text-gray-500 uppercase">Total Consents</p>
+            <p className="text-xs text-gray-500 uppercase">{t('pages.consent_log.total_consents')}</p>
             <p className="text-2xl font-bold text-gray-900 mt-1">{stats.totalConsents}</p>
           </div>
           {stats.categories.map((cat) => (
@@ -79,7 +82,7 @@ export default function ConsentLog() {
               <p className="text-xs text-gray-500 uppercase">{cat.categoryName}</p>
               <p className="text-2xl font-bold text-gray-900 mt-1">{cat.acceptanceRate}%</p>
               <p className="text-xs text-gray-400 mt-1">
-                {cat.accepted} accepted / {cat.rejected} rejected
+                {cat.accepted}  {t('pages.consent_log.accepted')} {cat.rejected}  {t('pages.consent_log.rejected')}
               </p>
             </div>
           ))}
@@ -93,7 +96,7 @@ export default function ConsentLog() {
           onChange={(e) => { setCategoryFilter(e.target.value); setPage(1); }}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm"
         >
-          <option value="">All Categories</option>
+          <option value="">{t('pages.consent_log.all_categories')}</option>
           {stats?.categories.map((cat) => (
             <option key={cat.categoryId} value={cat.categoryId}>
               {cat.categoryName}
@@ -107,21 +110,21 @@ export default function ConsentLog() {
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-gray-500 uppercase text-xs">
             <tr>
-              <th className="px-6 py-3 text-left">Customer</th>
-              <th className="px-6 py-3 text-left">Category</th>
-              <th className="px-6 py-3 text-center">Accepted</th>
-              <th className="px-6 py-3 text-left">IP Address</th>
-              <th className="px-6 py-3 text-left">Date</th>
+              <th className="px-6 py-3 text-left">{t('pages.consent_log.customer')}</th>
+              <th className="px-6 py-3 text-left">{t('pages.consent_log.category')}</th>
+              <th className="px-6 py-3 text-center">{t('pages.consent_log.accepted_61a057')}</th>
+              <th className="px-6 py-3 text-left">{t('pages.consent_log.ip_address')}</th>
+              <th className="px-6 py-3 text-left">{t('pages.consent_log.date')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {loading ? (
               <tr>
-                <td colSpan={5} className="px-6 py-8 text-center text-gray-500">Loading...</td>
+                <td colSpan={5} className="px-6 py-8 text-center text-gray-500">{t('pages.consent_log.loading')}</td>
               </tr>
             ) : consents.length === 0 ? (
               <tr>
-                <td colSpan={5} className="px-6 py-8 text-center text-gray-500">No consent records.</td>
+                <td colSpan={5} className="px-6 py-8 text-center text-gray-500">{t('pages.consent_log.no_consent_records')}</td>
               </tr>
             ) : (
               consents.map((c) => (
@@ -133,18 +136,20 @@ export default function ConsentLog() {
                         <span className="block text-xs text-gray-400">{c.customer.email}</span>
                       </div>
                     ) : (
-                      <span className="text-gray-400">Anonymous</span>
+                      <span className="text-gray-400">{t('pages.consent_log.anonymous')}</span>
                     )}
                   </td>
                   <td className="px-6 py-4 text-gray-700">{c.cookieCategory.label}</td>
                   <td className="px-6 py-4 text-center">
                     {c.accepted ? (
                       <span className="inline-block px-2 py-0.5 bg-green-100 text-green-700 rounded text-xs font-medium">
-                        Yes
+
+                        {t('pages.consent_log.yes')}
                       </span>
                     ) : (
                       <span className="inline-block px-2 py-0.5 bg-red-100 text-red-700 rounded text-xs font-medium">
-                        No
+
+                        {t('pages.consent_log.no')}
                       </span>
                     )}
                   </td>
@@ -167,17 +172,20 @@ export default function ConsentLog() {
             disabled={page === 1}
             className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50"
           >
-            Previous
+
+            {t('pages.consent_log.previous')}
           </button>
           <span className="px-3 py-1 text-sm text-gray-600">
-            Page {page} of {totalPages}
+
+            {t('pages.consent_log.page')} {page}  {t('pages.consent_log.of')} {totalPages}
           </span>
           <button
             onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
             disabled={page === totalPages}
             className="px-3 py-1 border border-gray-300 rounded text-sm disabled:opacity-50"
           >
-            Next
+
+            {t('pages.consent_log.next')}
           </button>
         </div>
       )}

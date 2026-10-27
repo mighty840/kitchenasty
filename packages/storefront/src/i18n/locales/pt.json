@@ -1,4 +1,10 @@
 {
+  "pricing": {
+    "surcharge": "Suplemento de embalagem/recipiente",
+    "unit": "unidade",
+    "taxIncluded": "Inclui {{rate}}% de impostos",
+    "includedTax": "Imposto incluído"
+  },
   "common": {
     "loading": "Carregando...",
     "error": "Algo deu errado",
@@ -145,8 +151,11 @@
     "apply": "Aplicar",
     "couponApplied": "Cupom aplicado!",
     "paymentMethod": "Forma de Pagamento",
+    "paymentMethodsUnavailable": "Não foi possível carregar as opções de pagamento. Tente novamente.",
+    "noPaymentMethods": "Não há métodos de pagamento disponíveis. Contacte o restaurante.",
     "creditCard": "Cartão de Crédito (Stripe)",
     "cashOnDelivery": "Pagamento na entrega",
+    "payu": "PayU",
     "orderSummary": "Resumo do Pedido",
     "subtotal": "Subtotal",
     "tax": "Impostos",

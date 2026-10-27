@@ -215,6 +215,9 @@ model MenuItem {
   slug        String  @unique
   description String?
   price       Float
+  taxRate     Float   @default(8) // percent, included in price
+  surchargeEnabled Boolean @default(false)
+  surchargeAmount  Float   @default(0) // per unit, not taxed
   image       String?
   isActive    Boolean @default(true)
   sortOrder   Int     @default(0)
@@ -404,6 +407,8 @@ model OrderItem {
   name       String   // snapshot at time of order
   quantity   Int
   unitPrice  Float
+  taxRate    Float    @default(8)
+  surchargeAmount Float @default(0) // applied per unit, included in unitPrice
   subtotal   Float
   comment    String?
 
@@ -433,6 +438,7 @@ enum PaymentMethod {
   CASH
   STRIPE
   PAYPAL
+  PAYU
 }
 
 enum PaymentStatus {
@@ -597,7 +603,7 @@ model SiteSettings {
   orderSettings       Json?  // { enabled, minOrderDelivery, minOrderPickup, deliveryLeadTime, pickupLeadTime, enableFutureOrdering, enableTipping, tipOptions, taxRate }
   reservationSettings Json?  // { enabled, timeInterval, stayTime, maxAdvanceBookingDays, minCancellationNoticeHours, autoConfirm }
   mailSettings        Json?  // { smtpHost, smtpPort, smtpUser, smtpPass, senderName, senderEmail, encryption }
-  paymentSettings     Json?  // { stripeEnabled, stripePublishableKey, stripeSecretKey, stripeWebhookSecret, paypalEnabled, paypalClientId, paypalClientSecret, paypalSandbox, cashEnabled }
+  paymentSettings     Json?  // Payment gateway configuration; secrets are masked in settings responses.
   reviewSettings      Json?  // { enabled, requireOrder, autoApprove, minimumRating }
   advancedSettings    Json?  // { maintenanceMode, maintenanceMessage, enableRateLimiting }
 

@@ -1,22 +1,26 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useCurrency } from '../hooks/useCurrency.js';
 import { useCart } from '../context/CartContext.js';
 import { useAuth } from '../context/AuthContext.js';
+import { calculateLineTotals, roundMoney } from '@kitchenasty/shared';
 
 type OrderType = 'delivery' | 'pickup';
-type PaymentMethod = 'cash' | 'stripe' | 'paypal';
-
-const TAX_RATE = 0.08;
+type PaymentMethod = 'cash' | 'stripe' | 'paypal' | 'payu';
+type PaymentMethodAvailability = Record<PaymentMethod, boolean>;
 
 export default function Checkout() {
   const { t } = useTranslation();
-  const { items, subtotal, clear } = useCart();
+  const { format } = useCurrency();
+  const { items, subtotal, tax, clear } = useCart();
   const { user, token } = useAuth();
   const navigate = useNavigate();
 
   const [orderType, setOrderType] = useState<OrderType>('delivery');
   const [paymentMethod, setPaymentMethod] = useState<PaymentMethod>('cash');
+  const [paymentMethods, setPaymentMethods] = useState<PaymentMethodAvailability | null>(null);
+  const [paymentMethodsError, setPaymentMethodsError] = useState('');
   const [address, setAddress] = useState({ line1: '', line2: '', city: '', state: '', zip: '' });
   const [scheduledAt, setScheduledAt] = useState('');
   const [comment, setComment] = useState('');
@@ -42,9 +46,28 @@ export default function Checkout() {
   const [loyaltyRedeem, setLoyaltyRedeem] = useState(0);
   const loyaltyDiscount = loyaltyRedeem / 100;
 
-  const tax = subtotal * TAX_RATE;
   const currentDeliveryFee = orderType === 'delivery' ? deliveryFee : 0;
-  const total = subtotal + tax + currentDeliveryFee - loyaltyDiscount;
+  const total = roundMoney(subtotal + currentDeliveryFee - loyaltyDiscount);
+
+  useEffect(() => {
+    fetch('/api/payments/methods')
+      .then(async (res) => {
+        const data = await res.json();
+        if (!res.ok || !data.success || !data.data) {
+          throw new Error(data.error || t('checkout.paymentMethodsUnavailable'));
+        }
+        return data.data as PaymentMethodAvailability;
+      })
+      .then((availability) => {
+        setPaymentMethods(availability);
+        setPaymentMethod((current) => (
+          availability[current]
+            ? current
+            : (Object.keys(availability) as PaymentMethod[]).find((method) => availability[method]) || 'cash'
+        ));
+      })
+      .catch(() => setPaymentMethodsError(t('checkout.paymentMethodsUnavailable')));
+  }, [t]);
 
   // Check busy mode on mount
   useEffect(() => {
@@ -91,6 +114,10 @@ export default function Checkout() {
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError('');
+    if (!paymentMethods || !paymentMethods[paymentMethod]) {
+      setError(t('checkout.paymentMethodsUnavailable'));
+      return;
+    }
     setLoading(true);
 
     try {
@@ -161,6 +188,20 @@ export default function Checkout() {
         // user backs out of the hosted page, they return to a still-loaded
         // checkout and can retry without re-typing everything.
         window.location.href = sessData.data.url as string;
+        return;
+      }
+
+      if (paymentMethod === 'payu') {
+        const payuRes = await fetch('/api/payments/payu/create', {
+          method: 'POST',
+          headers,
+          body: JSON.stringify({ orderId }),
+        });
+        const payuData = await payuRes.json();
+        if (!payuRes.ok || !payuData.data?.url) {
+          throw new Error(payuData.error || 'Failed to start PayU checkout');
+        }
+        window.location.href = payuData.data.url as string;
         return;
       }
 
@@ -360,7 +401,7 @@ export default function Checkout() {
                 <span className="text-sm text-gray-600">points to redeem</span>
                 {loyaltyRedeem > 0 && (
                   <span className="text-sm font-medium text-green-600">
-                    -${loyaltyDiscount.toFixed(2)}
+                    -{format(loyaltyDiscount)}
                   </span>
                 )}
               </div>
@@ -371,7 +412,7 @@ export default function Checkout() {
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
             <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('checkout.paymentMethod')}</h2>
             <div className="space-y-2">
-              <label className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
+              {paymentMethods?.cash && <label className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
                 paymentMethod === 'cash'
                   ? 'border-primary-600 bg-primary-50'
                   : 'border-gray-200 hover:border-gray-300'
@@ -384,8 +425,8 @@ export default function Checkout() {
                   className="accent-primary-600"
                 />
                 <span className="text-sm font-medium text-gray-900">{t('checkout.cashOnDelivery')}</span>
-              </label>
-              <label className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
+              </label>}
+              {paymentMethods?.stripe && <label className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
                 paymentMethod === 'stripe'
                   ? 'border-primary-600 bg-primary-50'
                   : 'border-gray-200 hover:border-gray-300'
@@ -398,8 +439,8 @@ export default function Checkout() {
                   className="accent-primary-600"
                 />
                 <span className="text-sm font-medium text-gray-900">{t('checkout.creditCard')}</span>
-              </label>
-              <label className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
+              </label>}
+              {paymentMethods?.paypal && <label className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
                 paymentMethod === 'paypal'
                   ? 'border-primary-600 bg-primary-50'
                   : 'border-gray-200 hover:border-gray-300'
@@ -412,7 +453,27 @@ export default function Checkout() {
                   className="accent-primary-600"
                 />
                 <span className="text-sm font-medium text-gray-900">PayPal</span>
-              </label>
+              </label>}
+              {paymentMethods?.payu && <label className={`flex items-center gap-3 p-3 rounded-lg border-2 cursor-pointer transition-colors ${
+                paymentMethod === 'payu'
+                  ? 'border-primary-600 bg-primary-50'
+                  : 'border-gray-200 hover:border-gray-300'
+              }`}>
+                <input
+                  type="radio"
+                  name="payment"
+                  checked={paymentMethod === 'payu'}
+                  onChange={() => setPaymentMethod('payu')}
+                  className="accent-primary-600"
+                />
+                <span className="text-sm font-medium text-gray-900">{t('checkout.payu')}</span>
+              </label>}
+              {paymentMethodsError && (
+                <p role="alert" className="text-sm text-red-600">{paymentMethodsError}</p>
+              )}
+              {paymentMethods && !Object.values(paymentMethods).some(Boolean) && (
+                <p className="text-sm text-gray-600">{t('checkout.noPaymentMethods')}</p>
+              )}
             </div>
           </div>
 
@@ -462,12 +523,15 @@ export default function Checkout() {
 
             <div className="space-y-3 mb-4">
               {items.map((item) => {
-                const optionsTotal = item.options.reduce((s, o) => s + o.priceModifier, 0);
+                const line = calculateLineTotals(item);
                 return (
                   <div key={item.id} className="flex justify-between text-sm">
                     <div>
                       <span className="text-gray-400 mr-1">{item.quantity}x</span>
                       <span className="text-gray-700">{item.name}</span>
+                      {line.surchargeAmount > 0 && (
+                        <p className="text-xs text-gray-500 ml-5">{t('pricing.surcharge')}: {format(line.surchargeAmount)} / {t('pricing.unit')}</p>
+                      )}
                       {item.options.length > 0 && (
                         <p className="text-xs text-gray-400 ml-5">
                           {item.options.map((o) => o.valueName).join(', ')}
@@ -475,7 +539,7 @@ export default function Checkout() {
                       )}
                     </div>
                     <span className="text-gray-900 font-medium">
-                      ${((item.price + optionsTotal) * item.quantity).toFixed(2)}
+                      {format(line.subtotal)}
                     </span>
                   </div>
                 );
@@ -485,40 +549,40 @@ export default function Checkout() {
             <div className="border-t border-gray-200 pt-3 space-y-2 text-sm">
               <div className="flex justify-between">
                 <span className="text-gray-600">{t('checkout.subtotal')}</span>
-                <span className="text-gray-900">${subtotal.toFixed(2)}</span>
+                <span className="text-gray-900">{format(subtotal)}</span>
               </div>
               <div className="flex justify-between">
-                <span className="text-gray-600">{t('checkout.tax')}</span>
-                <span className="text-gray-900">${tax.toFixed(2)}</span>
+                <span className="text-gray-600">{t('pricing.includedTax')}</span>
+                <span className="text-gray-900">{format(tax)}</span>
               </div>
               {orderType === 'delivery' && (
                 <div className="flex justify-between">
                   <span className="text-gray-600">{t('checkout.deliveryFee')}</span>
-                  <span className="text-gray-900">${currentDeliveryFee.toFixed(2)}</span>
+                  <span className="text-gray-900">{format(currentDeliveryFee)}</span>
                 </div>
               )}
               {loyaltyDiscount > 0 && (
                 <div className="flex justify-between text-green-600">
                   <span>Loyalty Discount</span>
-                  <span>-${loyaltyDiscount.toFixed(2)}</span>
+                  <span>-{format(loyaltyDiscount)}</span>
                 </div>
               )}
               <div className="flex justify-between border-t border-gray-200 pt-2 font-bold text-base">
                 <span>{t('checkout.total')}</span>
-                <span className="text-primary-600">${total.toFixed(2)}</span>
+                <span className="text-primary-600">{format(total)}</span>
               </div>
             </div>
 
             <button
               type="submit"
-              disabled={loading || isBusy}
+              disabled={loading || isBusy || !paymentMethods || !paymentMethods[paymentMethod]}
               className="w-full mt-4 bg-primary-600 text-white py-3 rounded-lg font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50"
             >
               {isBusy
                 ? 'Currently Unavailable'
                 : loading
                   ? t('checkout.processing')
-                  : `${t('checkout.placeOrder')} — $${total.toFixed(2)}`}
+                  : `${t('checkout.placeOrder')} — ${format(total)}`}
             </button>
           </div>
         </div>

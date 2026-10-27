@@ -11,6 +11,8 @@ All server configuration is managed through environment variables in `packages/s
 | `CORS_ORIGINS` | Comma-separated allowed origins | `http://localhost:5173,http://localhost:5174` | Yes |
 | `DATABASE_URL` | PostgreSQL connection string | — | Yes |
 
+The server uses pretty-printed logs in `development`, JSON logs in `production`, and silent application logging in `test`. `LOG_LEVEL` overrides the default level (`debug` in development, `info` in production), except in test mode where logs remain silent. The same Docker image supports all three modes; Compose reads `NODE_ENV` from the shell or root `.env` and defaults to `development`. Running the image directly defaults to `production`.
+
 ## 🔑 Authentication
 
 | Variable | Description | Default | Required |
@@ -26,6 +28,11 @@ All server configuration is managed through environment variables in `packages/s
 | `STRIPE_WEBHOOK_SECRET` | Stripe webhook signing secret (`whsec_...`) | — | No |
 | `PAYPAL_CLIENT_ID` | PayPal REST API client ID | — | No |
 | `PAYPAL_CLIENT_SECRET` | PayPal REST API secret | — | No |
+| `PAYU_POS_ID` | PayU Europe POS ID (also used as OAuth client ID) | — | No |
+| `PAYU_CLIENT_SECRET` | PayU Europe OAuth client secret | — | No |
+| `PAYU_SECOND_KEY` | PayU Europe key used to verify notifications | — | No |
+| `PAYU_SANDBOX` | Use the PayU sandbox (`false` selects production) | `true` | No |
+| `PAYU_NOTIFY_URL` | Public full URL for the PayU notification endpoint | — | No |
 
 ## 🔗 Social Login
 
@@ -62,6 +69,11 @@ JWT_EXPIRES_IN=7d
 
 STRIPE_SECRET_KEY=sk_test_...
 STRIPE_WEBHOOK_SECRET=whsec_...
+PAYU_POS_ID=
+PAYU_CLIENT_SECRET=
+PAYU_SECOND_KEY=
+PAYU_SANDBOX=true
+PAYU_NOTIFY_URL=
 ```
 
 ::: tip

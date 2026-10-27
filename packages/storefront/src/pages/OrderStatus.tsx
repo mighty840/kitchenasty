@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useCurrency } from '../hooks/useCurrency.js';
 import { io } from 'socket.io-client';
 import { useAuth } from '../context/AuthContext.js';
 
@@ -9,6 +10,8 @@ interface OrderItem {
   name: string;
   quantity: number;
   unitPrice: number;
+  taxRate: number;
+  surchargeAmount: number;
   subtotal: number;
   comment: string | null;
   options: { id: string; name: string; value: string; priceModifier: number }[];
@@ -37,6 +40,7 @@ function getStepIndex(steps: { key: string; label: string }[], status: string): 
 
 export default function OrderStatus() {
   const { t } = useTranslation();
+  const { format } = useCurrency();
   const { id } = useParams();
   const { token } = useAuth();
   const [order, setOrder] = useState<OrderDetail | null>(null);
@@ -193,13 +197,16 @@ export default function OrderStatus() {
                   <span className="text-gray-400 mr-1">{item.quantity}x</span>
                   {item.name}
                 </div>
+                {item.surchargeAmount > 0 && (
+                  <p className="text-xs text-gray-500">{t('pricing.surcharge')}: {format(item.surchargeAmount)} / {t('pricing.unit')}</p>
+                )}
                 {item.options.length > 0 && (
                   <div className="text-xs text-gray-500 mt-0.5">
                     {item.options.map((o) => `${o.name}: ${o.value}`).join(', ')}
                   </div>
                 )}
               </div>
-              <span className="font-medium text-gray-900">${item.subtotal.toFixed(2)}</span>
+              <span className="font-medium text-gray-900">{format(item.subtotal)}</span>
             </div>
           ))}
         </div>
@@ -207,27 +214,27 @@ export default function OrderStatus() {
         <div className="border-t border-gray-200 mt-4 pt-4 space-y-1 text-sm">
           <div className="flex justify-between">
             <span className="text-gray-600">{t('checkout.subtotal')}</span>
-            <span>${order.subtotal.toFixed(2)}</span>
+            <span>{format(order.subtotal)}</span>
           </div>
           <div className="flex justify-between">
             <span className="text-gray-600">{t('checkout.tax')}</span>
-            <span>${order.tax.toFixed(2)}</span>
+            <span>{format(order.tax)}</span>
           </div>
           {order.deliveryFee > 0 && (
             <div className="flex justify-between">
               <span className="text-gray-600">{t('checkout.deliveryFee')}</span>
-              <span>${order.deliveryFee.toFixed(2)}</span>
+              <span>{format(order.deliveryFee)}</span>
             </div>
           )}
           {order.discount > 0 && (
             <div className="flex justify-between text-green-600">
               <span>{t('checkout.discount')}</span>
-              <span>-${order.discount.toFixed(2)}</span>
+              <span>-{format(order.discount)}</span>
             </div>
           )}
           <div className="flex justify-between font-bold text-base pt-2 border-t border-gray-200">
             <span>{t('checkout.total')}</span>
-            <span className="text-primary-600">${order.total.toFixed(2)}</span>
+            <span className="text-primary-600">{format(order.total)}</span>
           </div>
         </div>
       </div>

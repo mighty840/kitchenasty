@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
+import { useTranslation } from 'react-i18next';
+
 export default function SettingsOrder() {
+  const { t } = useTranslation();
   const token = localStorage.getItem('token') || '';
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -16,7 +19,6 @@ export default function SettingsOrder() {
   const [enableFutureOrdering, setEnableFutureOrdering] = useState(false);
   const [enableTipping, setEnableTipping] = useState(false);
   const [tipOptionsStr, setTipOptionsStr] = useState('10,15,20,25');
-  const [taxRate, setTaxRate] = useState(0);
 
   useEffect(() => {
     fetch('/api/settings/order', { headers: { Authorization: `Bearer ${token}` } })
@@ -32,7 +34,6 @@ export default function SettingsOrder() {
           if (d.enableFutureOrdering !== undefined) setEnableFutureOrdering(d.enableFutureOrdering);
           if (d.enableTipping !== undefined) setEnableTipping(d.enableTipping);
           if (d.tipOptions) setTipOptionsStr(d.tipOptions.join(','));
-          if (d.taxRate !== undefined) setTaxRate(d.taxRate);
         }
       })
       .catch(() => {})
@@ -48,33 +49,33 @@ export default function SettingsOrder() {
       const res = await fetch('/api/settings/order', {
         method: 'PUT',
         headers: { 'Content-Type': 'application/json', Authorization: `Bearer ${token}` },
-        body: JSON.stringify({ enabled, minOrderDelivery, minOrderPickup, deliveryLeadTime, pickupLeadTime, enableFutureOrdering, enableTipping, tipOptions, taxRate }),
+        body: JSON.stringify({ enabled, minOrderDelivery, minOrderPickup, deliveryLeadTime, pickupLeadTime, enableFutureOrdering, enableTipping, tipOptions }),
       });
       const data = await res.json();
       if (data.success) {
-        setSuccess('Order settings updated');
+        setSuccess(t('messages.order_settings_updated'));
         setTimeout(() => setSuccess(''), 3000);
       } else {
-        setError(typeof data.error === 'string' ? data.error : 'Failed to save');
+        setError(typeof data.error === 'string' ? data.error : t('messages.failed_to_save'));
       }
     } catch {
-      setError('Network error');
+      setError(t('messages.network_error'));
     } finally {
       setSaving(false);
     }
   }
 
-  if (loading) return <div className="p-6 text-gray-500">Loading...</div>;
+  if (loading) return <div className="p-6 text-gray-500">{t('pages.settings_order.loading')}</div>;
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
           <Link to="/settings" className="text-sm text-primary-600 hover:text-primary-700">&larr; Back to Settings</Link>
-          <h1 className="text-2xl font-bold text-gray-900 mt-1">Order Settings</h1>
+          <h1 className="text-2xl font-bold text-gray-900 mt-1">{t('pages.settings_order.order_settings')}</h1>
         </div>
         <button onClick={handleSave} disabled={saving} className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50">
-          {saving ? 'Saving...' : 'Save Changes'}
+          {saving ? t('pages.settings_order.saving') : t('pages.settings_order.save_changes')}
         </button>
       </div>
 
@@ -84,49 +85,48 @@ export default function SettingsOrder() {
       <div className="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
         <label className="flex items-center gap-3">
           <input type="checkbox" checked={enabled} onChange={(e) => setEnabled(e.target.checked)} className="w-4 h-4 text-primary-600 rounded" />
-          <span className="text-sm font-medium text-gray-700">Online ordering enabled</span>
+          <span className="text-sm font-medium text-gray-700">{t('pages.settings_order.online_ordering_enabled')}</span>
         </label>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Min Order (Delivery) $</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.settings_order.min_order_delivery')}</label>
             <input type="number" min={0} step={0.01} value={minOrderDelivery} onChange={(e) => setMinOrderDelivery(parseFloat(e.target.value) || 0)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Min Order (Pickup) $</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.settings_order.min_order_pickup')}</label>
             <input type="number" min={0} step={0.01} value={minOrderPickup} onChange={(e) => setMinOrderPickup(parseFloat(e.target.value) || 0)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
           </div>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Delivery Lead Time (min)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.settings_order.delivery_lead_time_min')}</label>
             <input type="number" min={0} value={deliveryLeadTime} onChange={(e) => setDeliveryLeadTime(parseInt(e.target.value) || 0)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Pickup Lead Time (min)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.settings_order.pickup_lead_time_min')}</label>
             <input type="number" min={0} value={pickupLeadTime} onChange={(e) => setPickupLeadTime(parseInt(e.target.value) || 0)} className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
           </div>
         </div>
 
         <label className="flex items-center gap-3">
           <input type="checkbox" checked={enableFutureOrdering} onChange={(e) => setEnableFutureOrdering(e.target.checked)} className="w-4 h-4 text-primary-600 rounded" />
-          <span className="text-sm font-medium text-gray-700">Enable future ordering (scheduled orders)</span>
+          <span className="text-sm font-medium text-gray-700">{t('pages.settings_order.enable_future_ordering_scheduled_orders')}</span>
         </label>
 
         <label className="flex items-center gap-3">
           <input type="checkbox" checked={enableTipping} onChange={(e) => setEnableTipping(e.target.checked)} className="w-4 h-4 text-primary-600 rounded" />
-          <span className="text-sm font-medium text-gray-700">Enable tipping</span>
+          <span className="text-sm font-medium text-gray-700">{t('pages.settings_order.enable_tipping')}</span>
         </label>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Tip Options (comma-separated %)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.settings_order.tip_options_comma_separated')}</label>
           <input type="text" value={tipOptionsStr} onChange={(e) => setTipOptionsStr(e.target.value)} className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500" placeholder="10,15,20,25" />
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Tax Rate (%)</label>
-          <input type="number" min={0} max={100} step={0.01} value={taxRate} onChange={(e) => setTaxRate(parseFloat(e.target.value) || 0)} className="w-full max-w-xs px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500" />
+          <Link to="/menu/items" className="text-sm text-primary-600 hover:text-primary-700">{t('pricing.itemSettings')}</Link>
         </div>
       </div>
     </div>

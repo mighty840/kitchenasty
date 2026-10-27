@@ -1,8 +1,10 @@
 import { useEffect, useState } from 'react';
+
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts';
+import { useTranslation } from 'react-i18next';
 
 interface AnalyticsData {
   summary: {
@@ -36,17 +38,18 @@ const STATUS_COLORS: Record<string, string> = {
   CANCELLED: '#dc2626',
 };
 
-const DOW_LABELS = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+const DOW_KEYS = ['sun', 'mon', 'tue', 'wed', 'thu', 'fri', 'sat'];
 
 const LEAD_TIME_LABELS: Record<string, string> = {
-  'same-day': 'Same day',
-  '1-2d': '1-2 days',
-  '3-7d': '3-7 days',
-  '8-14d': '1-2 weeks',
-  '15d+': '2+ weeks',
+  'same-day': 'leadTime.sameDay',
+  '1-2d': 'leadTime.oneToTwoDays',
+  '3-7d': 'leadTime.threeToSevenDays',
+  '8-14d': 'leadTime.oneToTwoWeeks',
+  '15d+': 'leadTime.twoPlusWeeks',
 };
 
 export default function ReservationTrends() {
+  const { t } = useTranslation();
   const [data, setData] = useState<AnalyticsData | null>(null);
   const [locations, setLocations] = useState<Location[]>([]);
   const [loading, setLoading] = useState(true);
@@ -76,13 +79,13 @@ export default function ReservationTrends() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
-        if (!res.ok) throw new Error('Failed to load analytics');
+        if (!res.ok) throw new Error(t('messages.failed_to_load_analytics'));
         return res.json();
       })
       .then((result) => setData(result.data))
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [token, days, locationId]);
+  }, [token, days, locationId, t]);
 
   const formatDate = (dateStr: string) => {
     const d = new Date(dateStr + 'T00:00:00');
@@ -99,8 +102,8 @@ export default function ReservationTrends() {
     <div>
       <div className="flex items-center justify-between mb-6 flex-wrap gap-3">
         <div>
-          <h2 className="text-2xl font-semibold text-gray-800">Reservation Trends</h2>
-          <p className="text-sm text-gray-500 mt-1">Booking patterns, peak days, and guest distribution</p>
+          <h2 className="text-2xl font-semibold text-gray-800">{t('pages.reservation_trends.reservation_trends')}</h2>
+          <p className="text-sm text-gray-500 mt-1">{t('pages.reservation_trends.booking_patterns_peak_days_and_guest_distribution')}</p>
         </div>
         <div className="flex items-center gap-3 flex-wrap">
           {locations.length > 1 && (
@@ -108,9 +111,9 @@ export default function ReservationTrends() {
               value={locationId}
               onChange={(e) => setLocationId(e.target.value)}
               className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg bg-white"
-              aria-label="Filter by location"
+              aria-label={t('pages.reservation_trends.filter_by_location')}
             >
-              <option value="">All locations</option>
+              <option value="">{t('pages.reservation_trends.all_locations')}</option>
               {locations.map((l) => (
                 <option key={l.id} value={l.id}>{l.name}</option>
               ))}
@@ -123,9 +126,9 @@ export default function ReservationTrends() {
                 onClick={() => setDays(d)}
                 className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${days === d ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
                   }`}
-                aria-label={`Show ${d}-day window`}
+                aria-label={t('a11y.showDayWindow', { count: d })}
               >
-                {d}d
+                {d}{t('pages.reservation_trends.d')}
               </button>
             ))}
           </div>
@@ -134,7 +137,7 @@ export default function ReservationTrends() {
 
       {loading && (
         <div className="flex justify-center py-12">
-          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" role="status" aria-label="Loading" />
+          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" role="status" aria-label={t('pages.reservation_trends.loading')} />
         </div>
       )}
 
@@ -154,7 +157,7 @@ export default function ReservationTrends() {
 
           {/* Daily bookings */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Daily Bookings</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('pages.reservation_trends.daily_bookings')}</h3>
             {data.dailyBookings.length === 0 ? (
               <EmptyState />
             ) : (
@@ -185,7 +188,7 @@ export default function ReservationTrends() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Day of week */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Peak Days</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('pages.reservation_trends.peak_days')}</h3>
               {data.dayOfWeekDistribution.length === 0 ? (
                 <EmptyState />
               ) : (
@@ -193,7 +196,7 @@ export default function ReservationTrends() {
                   <BarChart
                     data={Array.from({ length: 7 }, (_, i) => {
                       const found = data.dayOfWeekDistribution.find((d) => d.dow === i);
-                      return { day: DOW_LABELS[i], reservations: found?.reservations ?? 0, guests: found?.guests ?? 0 };
+                      return { day: t(`days.short.${DOW_KEYS[i]}`), reservations: found?.reservations ?? 0, guests: found?.guests ?? 0 };
                     })}
                   >
                     <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
@@ -210,7 +213,7 @@ export default function ReservationTrends() {
 
             {/* Party size */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Party Sizes</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('pages.reservation_trends.party_sizes')}</h3>
               {data.partySizeDistribution.length === 0 ? (
                 <EmptyState />
               ) : (
@@ -234,7 +237,7 @@ export default function ReservationTrends() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
             {/* Status breakdown */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Status Breakdown</h3>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('pages.reservation_trends.status_breakdown')}</h3>
               {data.statusDistribution.length === 0 ? (
                 <EmptyState />
               ) : (
@@ -262,11 +265,14 @@ export default function ReservationTrends() {
 
             {/* Lead time */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-              <h3 className="text-lg font-semibold text-gray-900 mb-4">Booking Lead Time</h3>
-              <p className="text-xs text-gray-500 mb-3">How far in advance guests book</p>
+              <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('pages.reservation_trends.booking_lead_time')}</h3>
+              <p className="text-xs text-gray-500 mb-3">{t('pages.reservation_trends.how_far_in_advance_guests_book')}</p>
               <ResponsiveContainer width="100%" height={220}>
                 <BarChart
-                  data={data.leadTimeBuckets.map((b) => ({ label: LEAD_TIME_LABELS[b.bucket] ?? b.bucket, count: b.count }))}
+                  data={data.leadTimeBuckets.map((b) => ({
+                    label: LEAD_TIME_LABELS[b.bucket] ? t(LEAD_TIME_LABELS[b.bucket]) : b.bucket,
+                    count: b.count,
+                  }))}
                   layout="vertical"
                 >
                   <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
@@ -281,7 +287,7 @@ export default function ReservationTrends() {
 
           {/* Hourly distribution */}
           <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-            <h3 className="text-lg font-semibold text-gray-900 mb-4">Reservations by Hour</h3>
+            <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('pages.reservation_trends.reservations_by_hour')}</h3>
             {data.hourlyDistribution.length === 0 ? (
               <EmptyState />
             ) : (
@@ -317,5 +323,6 @@ function SummaryCard({ label, value }: { label: string; value: string }) {
 }
 
 function EmptyState() {
-  return <p className="text-gray-500 text-sm py-8 text-center">No reservations in this window.</p>;
+  const { t } = useTranslation();
+  return <p className="text-gray-500 text-sm py-8 text-center">{t('pages.reservation_trends.no_reservations_in_this_window')}</p>;
 }

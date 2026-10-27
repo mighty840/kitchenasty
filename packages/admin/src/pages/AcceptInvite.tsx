@@ -1,8 +1,12 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { useSearchParams, useNavigate } from 'react-router-dom';
 import { useAuth } from '../context/AuthContext.js';
+import LanguageSwitcher from '../components/LanguageSwitcher.js';
+import { translateRole } from '../i18n/index.js';
+import { useTranslation } from 'react-i18next';
 
 export default function AcceptInvite() {
+  const { t } = useTranslation();
   const [searchParams] = useSearchParams();
   const navigate = useNavigate();
   const { login } = useAuth();
@@ -21,7 +25,7 @@ export default function AcceptInvite() {
 
   useEffect(() => {
     if (!tokenParam) {
-      setTokenError('No invite token provided');
+      setTokenError(t('messages.no_invite_token_provided'));
       setValidating(false);
       return;
     }
@@ -29,20 +33,20 @@ export default function AcceptInvite() {
     fetch(`/api/staff/invite/${tokenParam}`)
       .then((res) => res.json())
       .then((data) => {
-        if (!data.success) throw new Error(data.error || 'Invalid invite');
+        if (!data.success) throw new Error(data.error || t('messages.invalid_invite'));
         setEmail(data.data.email);
         setRole(data.data.role);
       })
       .catch((err) => setTokenError(err.message))
       .finally(() => setValidating(false));
-  }, [tokenParam]);
+  }, [tokenParam, t]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
     setError('');
 
     if (password !== confirmPassword) {
-      setError('Passwords do not match');
+      setError(t('messages.passwords_do_not_match'));
       return;
     }
 
@@ -55,7 +59,7 @@ export default function AcceptInvite() {
         body: JSON.stringify({ token: tokenParam, name, password }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to accept invite');
+      if (!res.ok) throw new Error(data.error || t('messages.failed_to_accept_invite'));
 
       login(data.data.token);
       navigate('/');
@@ -69,6 +73,9 @@ export default function AcceptInvite() {
   if (validating) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center">
+        <div className="fixed right-4 top-4 z-10">
+          <LanguageSwitcher />
+        </div>
         <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
       </div>
     );
@@ -77,13 +84,16 @@ export default function AcceptInvite() {
   if (tokenError) {
     return (
       <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
+        <div className="fixed right-4 top-4 z-10">
+          <LanguageSwitcher />
+        </div>
         <div className="w-full max-w-sm text-center">
-          <h1 className="text-3xl font-bold text-primary-400 mb-8">KitchenAsty</h1>
+          <h1 className="text-3xl font-bold text-primary-400 mb-8">{t('pages.accept_invite.kitchenasty')}</h1>
           <div className="bg-white rounded-xl shadow-lg p-8">
             <div className="w-16 h-16 bg-red-100 rounded-full flex items-center justify-center mx-auto mb-4">
               <span className="text-2xl text-red-600">!</span>
             </div>
-            <h2 className="text-xl font-semibold text-gray-900 mb-2">Invalid Invitation</h2>
+            <h2 className="text-xl font-semibold text-gray-900 mb-2">{t('pages.accept_invite.invalid_invitation')}</h2>
             <p className="text-gray-600">{tokenError}</p>
           </div>
         </div>
@@ -91,24 +101,22 @@ export default function AcceptInvite() {
     );
   }
 
-  const ROLE_LABELS: Record<string, string> = {
-    SUPER_ADMIN: 'Super Admin',
-    MANAGER: 'Manager',
-    STAFF: 'Staff',
-  };
-
   return (
     <div className="min-h-screen bg-gray-900 flex items-center justify-center px-4">
+      <div className="fixed right-4 top-4 z-10">
+        <LanguageSwitcher />
+      </div>
       <div className="w-full max-w-sm">
         <div className="text-center mb-8">
-          <h1 className="text-3xl font-bold text-primary-400">KitchenAsty</h1>
-          <p className="text-gray-400 mt-1 text-sm">Accept Your Invitation</p>
+          <h1 className="text-3xl font-bold text-primary-400">{t('pages.accept_invite.kitchenasty')}</h1>
+          <p className="text-gray-400 mt-1 text-sm">{t('pages.accept_invite.accept_your_invitation')}</p>
         </div>
 
         <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-lg p-8 space-y-5">
           <div className="text-center mb-2">
             <p className="text-sm text-gray-600">
-              You've been invited as <strong>{ROLE_LABELS[role] || role}</strong>
+
+              {t('pages.accept_invite.you_ve_been_invited_as')} <strong>{translateRole(t, role)}</strong>
             </p>
             <p className="text-xs text-gray-400 mt-1">{email}</p>
           </div>
@@ -118,7 +126,7 @@ export default function AcceptInvite() {
           )}
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Your Name</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.accept_invite.your_name')}</label>
             <input
               type="text"
               value={name}
@@ -130,7 +138,7 @@ export default function AcceptInvite() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.accept_invite.password')}</label>
             <input
               type="password"
               value={password}
@@ -142,7 +150,7 @@ export default function AcceptInvite() {
           </div>
 
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Confirm Password</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.accept_invite.confirm_password')}</label>
             <input
               type="password"
               value={confirmPassword}
@@ -158,7 +166,7 @@ export default function AcceptInvite() {
             disabled={submitting}
             className="w-full bg-primary-600 text-white py-2.5 rounded-lg font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50"
           >
-            {submitting ? 'Creating account...' : 'Create Account'}
+            {submitting ? t('pages.accept_invite.creating_account') : t('pages.accept_invite.create_account')}
           </button>
         </form>
       </div>

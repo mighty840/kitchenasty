@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { DEFAULT_CURRENCY, type CurrencyConfig } from '@kitchenasty/shared';
 import { apiClient } from '../api/client';
 
 interface HeroSection {
@@ -36,6 +37,7 @@ export interface SiteSettings {
   heroSection: HeroSection | null;
   featuresSection: FeatureItem[] | null;
   ctaSection: CtaSection | null;
+  currency: CurrencyConfig;
 }
 
 interface SettingsState {
@@ -56,6 +58,7 @@ const defaultSettings: SiteSettings = {
   heroSection: null,
   featuresSection: null,
   ctaSection: null,
+  currency: DEFAULT_CURRENCY,
 };
 
 export const useSettingsStore = create<SettingsState>((set) => ({
@@ -66,7 +69,7 @@ export const useSettingsStore = create<SettingsState>((set) => ({
     try {
       const res = await apiClient<{ success: boolean; data: SiteSettings }>('/api/settings', { auth: false });
       if (res.success && res.data) {
-        set({ settings: res.data, isLoaded: true });
+        set({ settings: { ...defaultSettings, ...res.data }, isLoaded: true });
       }
     } catch {
       set({ isLoaded: true });

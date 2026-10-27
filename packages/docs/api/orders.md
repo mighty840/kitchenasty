@@ -62,14 +62,25 @@ Authorization: Bearer <token> (optional — guest checkout supported)
     "orderType": "DELIVERY",
     "subtotal": 25.98,
     "deliveryFee": 3.99,
-    "tax": 2.08,
+    "tax": 1.92,
     "discount": 2.60,
     "tip": 5.00,
-    "total": 34.45,
+    "total": 32.37,
     "items": [...]
   }
 }
 ```
+
+Each returned order item includes `taxRate` (percentage) and `surchargeAmount`
+(the applied surcharge per unit, zero when disabled). These are snapshots,
+not live references to menu pricing. `unitPrice` includes selected options and
+the surcharge and tax; `subtotal` is the tax-inclusive line total. The order's `tax`
+is the sum of rounded included line taxes. Packaging is not taxed: tax is extracted
+from the item and options only, as
+`taxable line subtotal × taxRate / (100 + taxRate)`. It is informational and must not be
+added to the total again. Existing orders retain their saved totals and tax.
+Pricing fields supplied in order requests
+are ignored: the server resolves rates, surcharges and option prices from the menu.
 
 ## 📋 List Orders (Staff)
 

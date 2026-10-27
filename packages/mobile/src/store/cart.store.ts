@@ -1,6 +1,7 @@
 import { create } from 'zustand';
 import { persist, createJSONStorage } from 'zustand/middleware';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { calculateCartTotals } from '@kitchenasty/shared';
 
 export interface CartItemOption {
   optionId: string;
@@ -15,6 +16,9 @@ export interface CartItem {
   menuItemId: string;
   name: string;
   price: number;
+  taxRate: number;
+  surchargeEnabled: boolean;
+  surchargeAmount: number;
   quantity: number;
   options: CartItemOption[];
   comment?: string;
@@ -66,14 +70,19 @@ export const useCartStore = create<CartState>()(
       },
 
       subtotal() {
-        return get().items.reduce((sum, item) => {
-          const optionsTotal = item.options.reduce((s, o) => s + o.priceModifier, 0);
-          return sum + (item.price + optionsTotal) * item.quantity;
-        }, 0);
+        return calculateCartTotals(get().items).subtotal;
       },
     }),
     {
       name: 'kitchenasty-cart',
+      version: 1,
+      migrate: (persistedState) => {
+        const state = persistedState as Pick<CartState, 'items'>;
+        // Version 0 carts used 8% tax and had no automatic surcharge.
+        return { items: state.items.map((item) => ({
+          ...item, taxRate: 8, surchargeEnabled: false, surchargeAmount: 0,
+        })) };
+      },
       storage: createJSONStorage(() => AsyncStorage),
       partialize: (state) => ({ items: state.items }),
     },

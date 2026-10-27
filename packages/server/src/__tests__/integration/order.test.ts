@@ -16,6 +16,7 @@ vi.mock('../../lib/db.js', () => {
     customer: { findUnique: vi.fn(), update: vi.fn() },
     loyaltyTransaction: { create: vi.fn() },
     automationRule: { findMany: vi.fn() },
+    siteSettings: { findUnique: vi.fn() },
     category: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn(), count: vi.fn() },
   };
   return { default: mockPrisma, prisma: mockPrisma };
@@ -35,6 +36,9 @@ const sampleMenuItem = {
   id: 'item-1',
   name: 'Margherita Pizza',
   price: 14.99,
+  taxRate: 8,
+  surchargeEnabled: false,
+  surchargeAmount: 0,
   isActive: true,
   trackStock: false,
   stockQty: 0,
@@ -73,6 +77,14 @@ const sampleOrder = {
 describe('Order API - Integration Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockedPrisma.siteSettings.findUnique.mockResolvedValue({
+      paymentSettings: {
+        cashEnabled: true,
+        stripeEnabled: true,
+        paypalEnabled: true,
+        payuEnabled: true,
+      },
+    } as any);
   });
 
   // ============================================================
@@ -89,6 +101,20 @@ describe('Order API - Integration Tests', () => {
 
       expect(res.status).toBe(201);
       expect(res.body.data.orderNumber).toBe('KA-ABC-123');
+    });
+
+    it('rejects an order using a disabled payment method before creating it', async () => {
+      mockedPrisma.siteSettings.findUnique.mockResolvedValue({
+        paymentSettings: { cashEnabled: false },
+      } as any);
+
+      const res = await request(app)
+        .post('/api/orders')
+        .send({ ...validOrderBody, paymentMethod: 'cash' });
+
+      expect(res.status).toBe(403);
+      expect(res.body.error).toBe('cash payments are disabled');
+      expect(mockedPrisma.order.create).not.toHaveBeenCalled();
     });
 
     it('creates an order as authenticated customer', async () => {

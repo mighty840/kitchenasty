@@ -1,4 +1,10 @@
 {
+  "pricing": {
+    "surcharge": "Packaging/container surcharge",
+    "unit": "unit",
+    "taxIncluded": "Includes {{rate}}% tax",
+    "includedTax": "Included tax"
+  },
   "common": {
     "loading": "Loading...",
     "error": "Something went wrong",
@@ -145,8 +151,11 @@
     "apply": "Apply",
     "couponApplied": "Coupon applied!",
     "paymentMethod": "Payment Method",
+    "paymentMethodsUnavailable": "Payment options could not be loaded. Please try again.",
+    "noPaymentMethods": "No payment methods are currently available. Please contact the restaurant.",
     "creditCard": "Credit Card (Stripe)",
     "cashOnDelivery": "Cash on Delivery",
+    "payu": "PayU",
     "orderSummary": "Order Summary",
     "subtotal": "Subtotal",
     "tax": "Tax",

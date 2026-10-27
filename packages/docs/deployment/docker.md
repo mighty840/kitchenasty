@@ -33,6 +33,11 @@ services:
       CORS_ORIGINS: https://admin.yourdomain.com,https://order.yourdomain.com
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      PAYU_POS_ID: ${PAYU_POS_ID}
+      PAYU_CLIENT_SECRET: ${PAYU_CLIENT_SECRET}
+      PAYU_SECOND_KEY: ${PAYU_SECOND_KEY}
+      PAYU_SANDBOX: ${PAYU_SANDBOX:-true}
+      PAYU_NOTIFY_URL: ${PAYU_NOTIFY_URL}
     depends_on:
       postgres:
         condition: service_healthy

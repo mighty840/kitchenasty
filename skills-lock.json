@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "skills": {
+    "ai-elements": {
+      "source": "full-stack-skills/react-skills",
+      "sourceType": "github",
+      "skillPath": "skills/ai-elements/SKILL.md",
+      "computedHash": "0d2222c838b49e4674c5459b7b52f1213f275266014edd561e936f1fb499ed88"
+    },
+    "nextjs": {
+      "source": "full-stack-skills/react-skills",
+      "sourceType": "github",
+      "skillPath": "skills/nextjs/SKILL.md",
+      "computedHash": "50d768e98f26b6fa447a6bf323543ad2828d8e53a39783ffa001f133724d66d0"
+    },
+    "openspec-apply-change": {
+      "source": "full-stack-skills/react-skills",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/openspec-apply-change/SKILL.md",
+      "computedHash": "314506a8db2aaf04e595eaf8c4f5c81613d6dfbf060f54d8eabbe94f3f567a22"
+    },
+    "openspec-archive-change": {
+      "source": "full-stack-skills/react-skills",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/openspec-archive-change/SKILL.md",
+      "computedHash": "ffbd7f9c110d8c1e1f744db2e904854ce1cde02ca46c03849f6fac98bf14018f"
+    },
+    "openspec-explore": {
+      "source": "full-stack-skills/react-skills",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/openspec-explore/SKILL.md",
+      "computedHash": "eea19567aeeec092628b3972b2b8c0fc433e0b9332fa4c3e935008784b6fb900"
+    },
+    "openspec-propose": {
+      "source": "full-stack-skills/react-skills",
+      "sourceType": "github",
+      "skillPath": ".agents/skills/openspec-propose/SKILL.md",
+      "computedHash": "406a71796ac111be0fddc8bc2a4137c91c967eaf43439bbcc3f2509aec7440db"
+    },
+    "react": {
+      "source": "full-stack-skills/react-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react/SKILL.md",
+      "computedHash": "51b203d3e48686ee12def88f2f52b3f7983ddf21d462e79e3649d74e7d265c15"
+    },
+    "react-hooks": {
+      "source": "full-stack-skills/react-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-hooks/SKILL.md",
+      "computedHash": "f761d44bd4f95e7144ce15b95b2a269e59fb62bd7d447c1b87c52bbb516094c0"
+    },
+    "react-native": {
+      "source": "full-stack-skills/react-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-native/SKILL.md",
+      "computedHash": "bd1739a3265f8fb8b009f67180525fe6f4905b04842e66a4b7d180fc1428897f"
+    },
+    "react-native-project-creater": {
+      "source": "full-stack-skills/react-skills",
+      "sourceType": "github",
+      "skillPath": "skills/react-native-project-creater/SKILL.md",
+      "computedHash": "f85531f7b70ce97e4f0f71492a6920a39d68c064f126bbd6177953558001be33"
+    },
+    "redux": {
+      "source": "full-stack-skills/react-skills",
+      "sourceType": "github",
+      "skillPath": "skills/redux/SKILL.md",
+      "computedHash": "923cbab01e98cd32599f20c422b3004eca2a2c9b7d7b744cf9cea0c596edeb9b"
+    }
+  }
+}

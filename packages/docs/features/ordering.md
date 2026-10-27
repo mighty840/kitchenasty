@@ -53,12 +53,32 @@ Set `scheduledAt` to a future datetime when creating an order. The kitchen can s
 
 | Field | Description |
 |-------|------------|
-| `subtotal` | Sum of item prices × quantities |
+| `subtotal` | Tax-inclusive sum of (base price + selected options + enabled per-unit surcharge) × quantity |
 | `deliveryFee` | Based on delivery zone |
-| `tax` | Calculated tax amount |
+| `tax` | Tax already included in subtotal; informational, not an additional charge |
 | `discount` | Coupon discount (if applied) |
 | `tip` | Optional customer tip |
 | `total` | Final total |
+
+Prices and option modifiers already include tax at **each menu item's** `taxRate`
+percentage. Packaging/container surcharges are not taxed.
+The included tax is extracted from the rounded unit price of the item and its options
+(excluding packaging), multiplied by quantity:
+`taxable line subtotal × taxRate / (100 + taxRate)`, rounded per line, then summed.
+Unit prices and line subtotals are rounded to cents. Delivery fees are not taxed.
+The total is `subtotal + deliveryFee - loyaltyDiscount`; included tax is not added again.
+Loyalty discounts are subtracted from the gross total without changing the reported tax,
+preserving the existing discount calculation.
+For example, two items at 10.00 plus 0.50 packaging each at 7% have a
+subtotal of 21.00, included tax of 1.31 (on the 20.00 item price only),
+and pickup total of 21.00.
+
+The server looks up all pricing from the menu and does not trust client-supplied
+rates, surcharges, or option prices. Each order line stores its applied tax rate
+and per-unit surcharge as a snapshot. `unitPrice` and `subtotal` already include
+the surcharge; do not add it again when displaying or charging an order.
+Existing saved orders keep their original totals and tax amounts, including
+orders created before tax-inclusive pricing.
 
 ## 🏷️ Coupons
 

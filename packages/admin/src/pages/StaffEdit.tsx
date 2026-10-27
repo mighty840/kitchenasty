@@ -1,6 +1,8 @@
 import { useState, useEffect, FormEvent } from 'react';
 import { useParams, Link, useNavigate } from 'react-router-dom';
 
+import { useTranslation } from 'react-i18next';
+
 interface Staff {
   id: string;
   email: string;
@@ -18,6 +20,7 @@ interface Location {
 }
 
 export default function StaffEdit() {
+  const { t } = useTranslation();
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
 
@@ -40,7 +43,7 @@ export default function StaffEdit() {
       fetch('/api/locations?limit=100', { headers: { Authorization: `Bearer ${token}` } }).then((r) => r.json()),
     ])
       .then(([staffData, locData]) => {
-        if (!staffData.success) throw new Error(staffData.error || 'Failed to load staff');
+        if (!staffData.success) throw new Error(staffData.error || t('messages.failed_to_load_staff'));
         const s = staffData.data;
         setStaff(s);
         setName(s.name);
@@ -52,7 +55,7 @@ export default function StaffEdit() {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [id, token]);
+  }, [id, token, t]);
 
   async function handleSubmit(e: FormEvent) {
     e.preventDefault();
@@ -72,7 +75,7 @@ export default function StaffEdit() {
         }),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(data.error || 'Failed to update');
+      if (!res.ok) throw new Error(data.error || t('messages.failed_to_update'));
       navigate('/staff');
     } catch (err: any) {
       setError(err.message);
@@ -97,9 +100,10 @@ export default function StaffEdit() {
     <div className="max-w-lg mx-auto">
       <div className="flex items-center gap-3 mb-6">
         <Link to="/staff" className="text-gray-400 hover:text-gray-600">
-          ← Back
+
+          {t('pages.staff_edit.back')}
         </Link>
-        <h1 className="text-2xl font-bold text-gray-900">Edit Staff</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t('pages.staff_edit.edit_staff')}</h1>
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-5">
@@ -108,7 +112,7 @@ export default function StaffEdit() {
         )}
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Email</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.staff_edit.email')}</label>
           <input
             type="email"
             value={staff.email}
@@ -118,7 +122,7 @@ export default function StaffEdit() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Name</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.staff_edit.name')}</label>
           <input
             type="text"
             value={name}
@@ -129,20 +133,20 @@ export default function StaffEdit() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Role</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.staff_edit.role')}</label>
           <select
             value={role}
             onChange={(e) => setRole(e.target.value)}
             className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
           >
-            <option value="STAFF">Staff</option>
-            <option value="MANAGER">Manager</option>
-            <option value="SUPER_ADMIN">Super Admin</option>
+            <option value="STAFF">{t('pages.staff_edit.staff')}</option>
+            <option value="MANAGER">{t('pages.staff_edit.manager')}</option>
+            <option value="SUPER_ADMIN">{t('pages.staff_edit.super_admin')}</option>
           </select>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Phone</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.staff_edit.phone')}</label>
           <input
             type="text"
             value={phone}
@@ -152,13 +156,13 @@ export default function StaffEdit() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Location</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.staff_edit.location')}</label>
           <select
             value={locationId}
             onChange={(e) => setLocationId(e.target.value)}
             className="w-full px-3 py-2.5 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500 outline-none"
           >
-            <option value="">None</option>
+            <option value="">{t('pages.staff_edit.none')}</option>
             {locations.map((loc) => (
               <option key={loc.id} value={loc.id}>{loc.name}</option>
             ))}
@@ -173,7 +177,7 @@ export default function StaffEdit() {
             onChange={(e) => setIsActive(e.target.checked)}
             className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
           />
-          <label htmlFor="isActive" className="text-sm text-gray-700">Active</label>
+          <label htmlFor="isActive" className="text-sm text-gray-700">{t('pages.staff_edit.active')}</label>
         </div>
 
         <button
@@ -181,7 +185,7 @@ export default function StaffEdit() {
           disabled={saving}
           className="w-full bg-primary-600 text-white py-2.5 rounded-lg font-semibold hover:bg-primary-700 transition-colors disabled:opacity-50"
         >
-          {saving ? 'Saving...' : 'Save Changes'}
+          {saving ? t('pages.staff_edit.saving') : t('pages.staff_edit.save_changes')}
         </button>
       </form>
     </div>

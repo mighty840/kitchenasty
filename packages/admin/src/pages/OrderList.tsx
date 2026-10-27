@@ -1,11 +1,16 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { translateStatus } from '../i18n/index.js';
+import { useTranslation } from 'react-i18next';
+import { useCurrency } from '../context/CurrencyContext.js';
+import { PaymentBadge, type OrderPayment } from '../components/PaymentBadge.js';
 
 interface Order {
   id: string;
   orderNumber: string;
   orderType: string;
   status: string;
+  payments?: OrderPayment[];
   subtotal: number;
   total: number;
   createdAt: string;
@@ -34,6 +39,8 @@ const STATUS_COLORS: Record<string, string> = {
 };
 
 export default function OrderList() {
+  const { t } = useTranslation();
+  const { format } = useCurrency();
   const [orders, setOrders] = useState<Order[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
   const [loading, setLoading] = useState(true);
@@ -54,7 +61,7 @@ export default function OrderList() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
-        if (!res.ok) throw new Error('Failed to load orders');
+        if (!res.ok) throw new Error(t('messages.failed_to_load_orders'));
         return res.json();
       })
       .then((data) => {
@@ -63,12 +70,12 @@ export default function OrderList() {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [page, statusFilter, typeFilter, token]);
+  }, [page, statusFilter, typeFilter, token, t]);
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Orders</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t('pages.order_list.orders')}</h1>
       </div>
 
       {/* Filters */}
@@ -77,33 +84,33 @@ export default function OrderList() {
           value={statusFilter}
           onChange={(e) => { setStatusFilter(e.target.value); setPage(1); }}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
-          aria-label="Filter by status"
+          aria-label={t('pages.order_list.filter_by_status')}
         >
-          <option value="">All Statuses</option>
-          <option value="PENDING">Pending</option>
-          <option value="CONFIRMED">Confirmed</option>
-          <option value="PREPARING">Preparing</option>
-          <option value="READY">Ready</option>
-          <option value="OUT_FOR_DELIVERY">Out for Delivery</option>
-          <option value="DELIVERED">Delivered</option>
-          <option value="PICKED_UP">Picked Up</option>
-          <option value="CANCELLED">Cancelled</option>
+          <option value="">{t('pages.order_list.all_statuses')}</option>
+          <option value="PENDING">{t('pages.order_list.pending')}</option>
+          <option value="CONFIRMED">{t('pages.order_list.confirmed')}</option>
+          <option value="PREPARING">{t('pages.order_list.preparing')}</option>
+          <option value="READY">{t('pages.order_list.ready')}</option>
+          <option value="OUT_FOR_DELIVERY">{t('pages.order_list.out_for_delivery')}</option>
+          <option value="DELIVERED">{t('pages.order_list.delivered')}</option>
+          <option value="PICKED_UP">{t('pages.order_list.picked_up')}</option>
+          <option value="CANCELLED">{t('pages.order_list.cancelled')}</option>
         </select>
         <select
           value={typeFilter}
           onChange={(e) => { setTypeFilter(e.target.value); setPage(1); }}
           className="px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
-          aria-label="Filter by order type"
+          aria-label={t('pages.order_list.filter_by_order_type')}
         >
-          <option value="">All Types</option>
-          <option value="DELIVERY">Delivery</option>
-          <option value="PICKUP">Pickup</option>
+          <option value="">{t('pages.order_list.all_types')}</option>
+          <option value="DELIVERY">{t('pages.order_list.delivery')}</option>
+          <option value="PICKUP">{t('pages.order_list.pickup')}</option>
         </select>
       </div>
 
       {loading && (
         <div className="flex justify-center py-12">
-          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" role="status" aria-label="Loading" />
+          <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" role="status" aria-label={t('pages.order_list.loading')} />
         </div>
       )}
 
@@ -112,7 +119,7 @@ export default function OrderList() {
       )}
 
       {!loading && !error && orders.length === 0 && (
-        <p className="text-gray-500 text-center py-12">No orders found.</p>
+        <p className="text-gray-500 text-center py-12">{t('pages.order_list.no_orders_found')}</p>
       )}
 
       {!loading && orders.length > 0 && (
@@ -121,14 +128,15 @@ export default function OrderList() {
             <table className="w-full text-sm">
               <thead>
                 <tr className="border-b border-gray-200 bg-gray-50">
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">Order #</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">Customer</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">Type</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">Status</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">Items</th>
-                  <th className="text-right px-4 py-3 font-medium text-gray-600">Total</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">Date</th>
-                  <th className="text-left px-4 py-3 font-medium text-gray-600">Actions</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-600">{t('pages.order_list.order')}</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-600">{t('pages.order_list.customer')}</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-600">{t('pages.order_list.type')}</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-600">{t('pages.order_list.status')}</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-600">{t('pages.order_detail.payment')}</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-600">{t('pages.order_list.items')}</th>
+                  <th className="text-right px-4 py-3 font-medium text-gray-600">{t('pages.order_list.total')}</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-600">{t('pages.order_list.date')}</th>
+                  <th className="text-left px-4 py-3 font-medium text-gray-600">{t('pages.order_list.actions')}</th>
                 </tr>
               </thead>
               <tbody>
@@ -137,13 +145,13 @@ export default function OrderList() {
                     <td className="px-4 py-3 font-mono text-xs">
                       {order.orderNumber}
                       {order.scheduledAt && (
-                        <span className="ml-1.5 inline-flex items-center text-indigo-600" title={`Scheduled: ${new Date(order.scheduledAt).toLocaleString()}`} aria-label={`Scheduled: ${new Date(order.scheduledAt).toLocaleString()}`}>
+                        <span className="ml-1.5 inline-flex items-center text-indigo-600" title={t('a11y.scheduled', { date: new Date(order.scheduledAt).toLocaleString() })} aria-label={t('a11y.scheduled', { date: new Date(order.scheduledAt).toLocaleString() })}>
                           &#128339;
                         </span>
                       )}
                     </td>
                     <td className="px-4 py-3">
-                      {order.customer ? order.customer.name : <span className="text-gray-400">Guest</span>}
+                      {order.customer ? order.customer.name : <span className="text-gray-400">{t('pages.order_list.guest')}</span>}
                     </td>
                     <td className="px-4 py-3">
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${order.orderType === 'DELIVERY' ? 'bg-blue-100 text-blue-700' : 'bg-green-100 text-green-700'
@@ -153,11 +161,14 @@ export default function OrderList() {
                     </td>
                     <td className="px-4 py-3">
                       <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_COLORS[order.status] || 'bg-gray-100 text-gray-700'}`}>
-                        {order.status.replace(/_/g, ' ')}
+                        {translateStatus(t, order.status)}
                       </span>
                     </td>
+                    <td className="px-4 py-3">
+                      <PaymentBadge payments={order.payments} />
+                    </td>
                     <td className="px-4 py-3 text-gray-600">{order._count.items}</td>
-                    <td className="px-4 py-3 text-right font-medium">${order.total.toFixed(2)}</td>
+                    <td className="px-4 py-3 text-right font-medium">{format(order.total)}</td>
                     <td className="px-4 py-3 text-gray-500 text-xs">
                       {new Date(order.createdAt).toLocaleDateString()}
                     </td>
@@ -166,7 +177,8 @@ export default function OrderList() {
                         to={`/orders/${order.id}`}
                         className="text-primary-600 hover:text-primary-700 text-xs font-medium"
                       >
-                        View
+
+                        {t('pages.order_list.view')}
                       </Link>
                     </td>
                   </tr>
@@ -183,17 +195,20 @@ export default function OrderList() {
                 onClick={() => setPage((p) => p - 1)}
                 className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50"
               >
-                Previous
+
+                {t('pages.order_list.previous')}
               </button>
               <span className="text-sm text-gray-600">
-                Page {pagination.page} of {pagination.totalPages}
+
+                {t('pages.order_list.page')} {pagination.page}  {t('pages.order_list.of')} {pagination.totalPages}
               </span>
               <button
                 disabled={page >= pagination.totalPages}
                 onClick={() => setPage((p) => p + 1)}
                 className="px-3 py-1.5 text-sm border border-gray-300 rounded-lg disabled:opacity-40 hover:bg-gray-50"
               >
-                Next
+
+                {t('pages.order_list.next')}
               </button>
             </div>
           )}

@@ -1,6 +1,9 @@
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { slugify } from '../lib/slug.js';
 import { api } from '../lib/api.js';
+
+import { useTranslation } from 'react-i18next';
 
 interface OptionValue {
   name: string;
@@ -24,6 +27,9 @@ interface MenuItemData {
   slug: string;
   description: string;
   price: number;
+  taxRate: number;
+  surchargeEnabled: boolean;
+  surchargeAmount: number;
   isActive: boolean;
   sortOrder: number;
   trackStock: boolean;
@@ -53,6 +59,9 @@ const emptyItem: MenuItemData = {
   slug: '',
   description: '',
   price: 0,
+  taxRate: 8,
+  surchargeEnabled: false,
+  surchargeAmount: 0,
   isActive: true,
   sortOrder: 0,
   trackStock: false,
@@ -72,6 +81,7 @@ const emptyOption: MenuOption = {
 };
 
 export default function MenuItemForm() {
+  const { t } = useTranslation();
   const { id } = useParams();
   const navigate = useNavigate();
   const isEdit = !!id;
@@ -111,6 +121,9 @@ export default function MenuItemForm() {
           slug: item.slug,
           description: item.description || '',
           price: item.price,
+          taxRate: item.taxRate,
+          surchargeEnabled: item.surchargeEnabled,
+          surchargeAmount: item.surchargeAmount,
           isActive: item.isActive,
           sortOrder: item.sortOrder,
           trackStock: item.trackStock,
@@ -151,7 +164,7 @@ export default function MenuItemForm() {
 
   const autoSlug = (name: string) => {
     if (!isEdit) {
-      updateField('slug', name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)/g, ''));
+      updateField('slug', slugify(name));
     }
   };
 
@@ -238,6 +251,8 @@ export default function MenuItemForm() {
       const body = {
         ...form,
         price: Number(form.price),
+        taxRate: Number(form.taxRate),
+        surchargeAmount: Number(form.surchargeAmount),
         sortOrder: Number(form.sortOrder),
         stockQty: Number(form.stockQty),
         options: options.length > 0 ? options : undefined,
@@ -258,16 +273,17 @@ export default function MenuItemForm() {
     }
   };
 
-  if (loading) return <p className="text-gray-500">Loading...</p>;
+  if (loading) return <p className="text-gray-500">{t('pages.menu_item_form.loading')}</p>;
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <h2 className="text-2xl font-semibold text-gray-800">
-          {isEdit ? 'Edit Menu Item' : 'New Menu Item'}
+          {isEdit ? t('pages.menu_item_form.edit_menu_item') : t('pages.menu_item_form.new_menu_item')}
         </h2>
         <button onClick={() => navigate('/menu/items')} className="text-gray-500 hover:text-gray-700 text-sm">
-          Back to Menu Items
+
+          {t('pages.menu_item_form.back_to_menu_items')}
         </button>
       </div>
 
@@ -278,10 +294,10 @@ export default function MenuItemForm() {
       <form onSubmit={handleSubmit} className="space-y-8">
         {/* Basic Info */}
         <section className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">Basic Information</h3>
+          <h3 className="text-lg font-medium text-gray-900 mb-4">{t('pages.menu_item_form.basic_information')}</h3>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.menu_item_form.name')}</label>
               <input
                 type="text"
                 value={form.name}
@@ -291,7 +307,7 @@ export default function MenuItemForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Slug *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.menu_item_form.slug')}</label>
               <input
                 type="text"
                 value={form.slug}
@@ -302,7 +318,7 @@ export default function MenuItemForm() {
               />
             </div>
             <div className="md:col-span-2">
-              <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.menu_item_form.description')}</label>
               <textarea
                 value={form.description}
                 onChange={(e) => updateField('description', e.target.value)}
@@ -311,21 +327,21 @@ export default function MenuItemForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Category *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.menu_item_form.category')}</label>
               <select
                 value={form.categoryId}
                 onChange={(e) => updateField('categoryId', e.target.value)}
                 required
                 className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
               >
-                <option value="">Select category</option>
+                <option value="">{t('pages.menu_item_form.select_category')}</option>
                 {categories.map((c) => (
                   <option key={c.id} value={c.id}>{c.name}</option>
                 ))}
               </select>
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Price *</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.menu_item_form.price')}</label>
               <input
                 type="number"
                 value={form.price}
@@ -337,7 +353,29 @@ export default function MenuItemForm() {
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Sort Order</label>
+              <label htmlFor="item-tax-rate" className="block text-sm font-medium text-gray-700 mb-1">{t('pricing.taxRate')}</label>
+              <p className="text-xs text-gray-500 mb-2">{t('pricing.priceIncludesTax')}</p>
+              <input id="item-tax-rate" type="number" min={0} max={100} step={0.01} required
+                value={form.taxRate} onChange={(e) => updateField('taxRate', e.target.value)}
+                className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+            </div>
+            <div>
+              <label className="flex items-center gap-2 text-sm text-gray-700">
+                <input type="checkbox" checked={form.surchargeEnabled}
+                  onChange={(e) => updateField('surchargeEnabled', e.target.checked)} />
+                {t('pricing.enableSurcharge')}
+              </label>
+              {form.surchargeEnabled && (
+                <div className="mt-2">
+                  <label htmlFor="item-surcharge" className="block text-sm font-medium text-gray-700 mb-1">{t('pricing.surchargeAmount')}</label>
+                  <input id="item-surcharge" type="number" min={0} step={0.01} required
+                    value={form.surchargeAmount} onChange={(e) => updateField('surchargeAmount', e.target.value)}
+                    className="w-full border border-gray-300 rounded-lg px-3 py-2 text-sm" />
+                </div>
+              )}
+            </div>
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.menu_item_form.sort_order')}</label>
               <input
                 type="number"
                 value={form.sortOrder}
@@ -354,7 +392,7 @@ export default function MenuItemForm() {
                   onChange={(e) => updateField('isActive', e.target.checked)}
                   className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                 />
-                <span className="text-sm text-gray-700">Active</span>
+                <span className="text-sm text-gray-700">{t('pages.menu_item_form.active')}</span>
               </label>
               <label className="flex items-center gap-2">
                 <input
@@ -363,11 +401,11 @@ export default function MenuItemForm() {
                   onChange={(e) => updateField('trackStock', e.target.checked)}
                   className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
                 />
-                <span className="text-sm text-gray-700">Track Stock</span>
+                <span className="text-sm text-gray-700">{t('pages.menu_item_form.track_stock')}</span>
               </label>
               {form.trackStock && (
                 <div className="flex items-center gap-2">
-                  <label className="text-sm text-gray-700">Qty:</label>
+                  <label className="text-sm text-gray-700">{t('pages.menu_item_form.qty')}</label>
                   <input
                     type="number"
                     value={form.stockQty}
@@ -384,7 +422,7 @@ export default function MenuItemForm() {
         {/* Image Upload */}
         {isEdit && (
           <section className="bg-white rounded-lg shadow p-6">
-            <h3 className="text-lg font-medium text-gray-900 mb-4">Image</h3>
+            <h3 className="text-lg font-medium text-gray-900 mb-4">{t('pages.menu_item_form.image')}</h3>
             <div className="flex items-start gap-6">
               {imageUrl ? (
                 <div className="relative">
@@ -398,19 +436,20 @@ export default function MenuItemForm() {
                     onClick={handleImageRemove}
                     disabled={uploading}
                     className="absolute -top-2 -right-2 bg-red-500 text-white rounded-full w-6 h-6 flex items-center justify-center text-xs hover:bg-red-600 disabled:opacity-50"
-                    aria-label="Remove image"
+                    aria-label={t('pages.menu_item_form.remove_image')}
                   >
-                    X
+
+                    {t('pages.menu_item_form.x')}
                   </button>
                 </div>
               ) : (
                 <div className="w-40 h-40 bg-gray-100 rounded-lg border-2 border-dashed border-gray-300 flex items-center justify-center">
-                  <span className="text-sm text-gray-400">No image</span>
+                  <span className="text-sm text-gray-400">{t('pages.menu_item_form.no_image')}</span>
                 </div>
               )}
               <div>
                 <label className="inline-flex items-center px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 cursor-pointer disabled:opacity-50 transition-colors">
-                  {uploading ? 'Uploading...' : 'Upload Image'}
+                  {uploading ? t('pages.menu_item_form.uploading') : t('pages.menu_item_form.upload_image')}
                   <input
                     type="file"
                     accept="image/jpeg,image/png,image/webp,image/gif"
@@ -419,7 +458,7 @@ export default function MenuItemForm() {
                     className="hidden"
                   />
                 </label>
-                <p className="text-xs text-gray-400 mt-2">JPEG, PNG, WebP, or GIF. Max 5MB.</p>
+                <p className="text-xs text-gray-400 mt-2">{t('pages.menu_item_form.jpeg_png_webp_or_gif_max_5mb')}</p>
               </div>
             </div>
           </section>
@@ -428,45 +467,47 @@ export default function MenuItemForm() {
         {/* Menu Options */}
         <section className="bg-white rounded-lg shadow p-6">
           <div className="flex items-center justify-between mb-4">
-            <h3 className="text-lg font-medium text-gray-900">Menu Options</h3>
+            <h3 className="text-lg font-medium text-gray-900">{t('pages.menu_item_form.menu_options')}</h3>
             <button type="button" onClick={addOption} className="text-primary-600 hover:text-primary-700 text-sm font-medium">
-              + Add Option Group
+
+              {t('pages.menu_item_form.add_option_group')}
             </button>
           </div>
           {options.length === 0 && (
-            <p className="text-sm text-gray-400">No options configured. Add option groups like "Size", "Toppings", etc.</p>
+            <p className="text-sm text-gray-400">{t('pages.menu_item_form.no_options_configured_add_option_groups_like_size_topp')}</p>
           )}
           <div className="space-y-6">
             {options.map((opt, optIdx) => (
               <div key={optIdx} className="border border-gray-200 rounded-lg p-4">
                 <div className="flex items-center justify-between mb-3">
-                  <span className="text-sm font-medium text-gray-700">Option Group #{optIdx + 1}</span>
+                  <span className="text-sm font-medium text-gray-700">{t('pages.menu_item_form.option_group')}{optIdx + 1}</span>
                   <button type="button" onClick={() => removeOption(optIdx)} className="text-red-500 hover:text-red-700 text-sm">
-                    Remove Group
+
+                    {t('pages.menu_item_form.remove_group')}
                   </button>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-3 mb-3">
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">Name *</label>
+                    <label className="block text-xs text-gray-500 mb-1">{t('pages.menu_item_form.name')}</label>
                     <input
                       type="text"
                       value={opt.name}
                       onChange={(e) => updateOption(optIdx, 'name', e.target.value)}
-                      placeholder="e.g. Size"
+                      placeholder={t('pages.menu_item_form.e_g_size')}
                       className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
                     />
                   </div>
                   <div>
-                    <label className="block text-xs text-gray-500 mb-1">Display Type</label>
+                    <label className="block text-xs text-gray-500 mb-1">{t('pages.menu_item_form.display_type')}</label>
                     <select
                       value={opt.displayType}
                       onChange={(e) => updateOption(optIdx, 'displayType', e.target.value)}
                       className="w-full border border-gray-300 rounded px-2 py-1 text-sm"
                     >
-                      <option value="SELECT">Select</option>
-                      <option value="RADIO">Radio</option>
-                      <option value="CHECKBOX">Checkbox</option>
-                      <option value="QUANTITY">Quantity</option>
+                      <option value="SELECT">{t('pages.menu_item_form.select')}</option>
+                      <option value="RADIO">{t('pages.menu_item_form.radio')}</option>
+                      <option value="CHECKBOX">{t('pages.menu_item_form.checkbox')}</option>
+                      <option value="QUANTITY">{t('pages.menu_item_form.quantity')}</option>
                     </select>
                   </div>
                   <div className="flex items-center gap-4 mt-4">
@@ -477,7 +518,7 @@ export default function MenuItemForm() {
                         onChange={(e) => updateOption(optIdx, 'isRequired', e.target.checked)}
                         className="rounded border-gray-300 text-primary-600"
                       />
-                      <span className="text-xs text-gray-700">Required</span>
+                      <span className="text-xs text-gray-700">{t('pages.menu_item_form.required')}</span>
                     </label>
                   </div>
                 </div>
@@ -485,9 +526,10 @@ export default function MenuItemForm() {
                 {/* Option Values */}
                 <div className="ml-4 space-y-2">
                   <div className="flex items-center justify-between">
-                    <span className="text-xs font-medium text-gray-500">Values</span>
+                    <span className="text-xs font-medium text-gray-500">{t('pages.menu_item_form.values')}</span>
                     <button type="button" onClick={() => addOptionValue(optIdx)} className="text-primary-600 text-xs font-medium">
-                      + Add Value
+
+                      {t('pages.menu_item_form.add_value')}
                     </button>
                   </div>
                   {opt.values.map((val, valIdx) => (
@@ -496,7 +538,7 @@ export default function MenuItemForm() {
                         type="text"
                         value={val.name}
                         onChange={(e) => updateOptionValue(optIdx, valIdx, 'name', e.target.value)}
-                        placeholder="Value name"
+                        placeholder={t('pages.menu_item_form.value_name')}
                         className="flex-1 border border-gray-300 rounded px-2 py-1 text-sm"
                       />
                       <div className="flex items-center gap-1">
@@ -516,11 +558,12 @@ export default function MenuItemForm() {
                           onChange={(e) => updateOptionValue(optIdx, valIdx, 'isDefault', e.target.checked)}
                           className="rounded border-gray-300 text-primary-600"
                         />
-                        <span className="text-xs text-gray-500">Default</span>
+                        <span className="text-xs text-gray-500">{t('pages.menu_item_form.default')}</span>
                       </label>
                       {opt.values.length > 1 && (
-                        <button type="button" onClick={() => removeOptionValue(optIdx, valIdx)} className="text-red-400 hover:text-red-600 text-xs" aria-label={`Remove value ${val.name || valIdx + 1}`}>
-                          X
+                        <button type="button" onClick={() => removeOptionValue(optIdx, valIdx)} className="text-red-400 hover:text-red-600 text-xs" aria-label={t('a11y.removeValue', { name: val.name || valIdx + 1 })}>
+
+                          {t('pages.menu_item_form.x')}
                         </button>
                       )}
                     </div>
@@ -536,9 +579,9 @@ export default function MenuItemForm() {
           <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
             {/* Allergens */}
             <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-3">Allergens</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-3">{t('pages.menu_item_form.allergens')}</h3>
               {allergens.length === 0 ? (
-                <p className="text-sm text-gray-400">No allergens defined.</p>
+                <p className="text-sm text-gray-400">{t('pages.menu_item_form.no_allergens_defined')}</p>
               ) : (
                 <div className="space-y-2">
                   {allergens.map((a) => (
@@ -564,9 +607,9 @@ export default function MenuItemForm() {
 
             {/* Mealtimes */}
             <div>
-              <h3 className="text-lg font-medium text-gray-900 mb-3">Mealtimes</h3>
+              <h3 className="text-lg font-medium text-gray-900 mb-3">{t('pages.menu_item_form.mealtimes')}</h3>
               {mealtimes.length === 0 ? (
-                <p className="text-sm text-gray-400">No mealtimes defined.</p>
+                <p className="text-sm text-gray-400">{t('pages.menu_item_form.no_mealtimes_defined')}</p>
               ) : (
                 <div className="space-y-2">
                   {mealtimes.map((m) => (
@@ -595,10 +638,11 @@ export default function MenuItemForm() {
         {/* Submit */}
         <div className="flex justify-end gap-3">
           <button type="button" onClick={() => navigate('/menu/items')} className="px-6 py-2 border border-gray-300 rounded-lg text-sm text-gray-700 hover:bg-gray-50">
-            Cancel
+
+            {t('pages.menu_item_form.cancel')}
           </button>
           <button type="submit" disabled={saving} className="px-6 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50 transition-colors">
-            {saving ? 'Saving...' : isEdit ? 'Update Item' : 'Create Item'}
+            {saving ? t('pages.menu_item_form.saving') : isEdit ? t('pages.menu_item_form.update_item') : t('pages.menu_item_form.create_item')}
           </button>
         </div>
       </form>

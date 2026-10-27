@@ -16,12 +16,18 @@ vi.mock('../../lib/db.js', () => {
     user: { findUnique: vi.fn() },
     customer: { findUnique: vi.fn() },
     category: { findMany: vi.fn(), findUnique: vi.fn(), create: vi.fn(), update: vi.fn(), delete: vi.fn(), count: vi.fn() },
+    siteSettings: { findUnique: vi.fn() },
   };
   return { default: mockPrisma, prisma: mockPrisma };
 });
 
 vi.mock('../../lib/stripe.js', () => {
   const mockStripe = {
+    checkout: {
+      sessions: {
+        create: vi.fn().mockResolvedValue({ id: 'cs_test', url: 'https://checkout.stripe.com/test' }),
+      },
+    },
     paymentIntents: {
       create: vi.fn().mockResolvedValue({
         id: 'pi_test_123',
@@ -58,6 +64,46 @@ const sampleOrder = {
 describe('Payment API - Integration Tests', () => {
   beforeEach(() => {
     vi.clearAllMocks();
+    mockedPrisma.siteSettings.findUnique.mockResolvedValue({
+      paymentSettings: {
+        cashEnabled: true,
+        stripeEnabled: true,
+        paypalEnabled: true,
+        payuEnabled: true,
+      },
+    } as any);
+  });
+
+  describe('GET /api/payments/methods', () => {
+    it('returns only explicitly enabled payment methods', async () => {
+      mockedPrisma.siteSettings.findUnique.mockResolvedValue({
+        paymentSettings: { stripeEnabled: true, payuEnabled: false },
+      } as any);
+
+      const res = await request(app).get('/api/payments/methods');
+
+      expect(res.status).toBe(200);
+      expect(res.body.data).toEqual({
+        cash: false,
+        stripe: true,
+        paypal: false,
+        payu: false,
+      });
+    });
+
+    it('defaults every method to disabled when settings are absent', async () => {
+      mockedPrisma.siteSettings.findUnique.mockResolvedValue(null);
+
+      const res = await request(app).get('/api/payments/methods');
+
+      expect(res.status).toBe(200);
+      expect(res.body.data).toEqual({
+        cash: false,
+        stripe: false,
+        paypal: false,
+        payu: false,
+      });
+    });
   });
 
   // ============================================================
@@ -75,6 +121,33 @@ describe('Payment API - Integration Tests', () => {
 
       expect(res.status).toBe(200);
       expect(res.body.data.clientSecret).toBe('pi_test_123_secret_abc');
+    });
+
+    it('uses defaultCurrency from site settings', async () => {
+      mockedPrisma.order.findUnique.mockResolvedValue(sampleOrder as any);
+      mockedPrisma.payment.findFirst.mockResolvedValue(null);
+      mockedPrisma.payment.create.mockResolvedValue({} as any);
+      mockedPrisma.siteSettings.findUnique.mockResolvedValue({
+        generalSettings: { defaultCurrency: 'GBP' },
+        paymentSettings: { stripeEnabled: true },
+      } as any);
+
+      await request(app).post('/api/payments/create-intent').send({ orderId: 'order-1' });
+
+      expect(mockedStripe.paymentIntents.create.mock.calls[0][0].currency).toBe('gbp');
+    });
+
+    it('falls back to usd when no currency is configured', async () => {
+      mockedPrisma.order.findUnique.mockResolvedValue(sampleOrder as any);
+      mockedPrisma.payment.findFirst.mockResolvedValue(null);
+      mockedPrisma.payment.create.mockResolvedValue({} as any);
+      mockedPrisma.siteSettings.findUnique.mockResolvedValue({
+        paymentSettings: { stripeEnabled: true },
+      } as any);
+
+      await request(app).post('/api/payments/create-intent').send({ orderId: 'order-1' });
+
+      expect(mockedStripe.paymentIntents.create.mock.calls[0][0].currency).toBe('usd');
     });
 
     it('requires orderId', async () => {
@@ -101,6 +174,72 @@ describe('Payment API - Integration Tests', () => {
         .send({ orderId: 'order-1' });
 
       expect(res.status).toBe(409);
+    });
+
+    it('rejects Stripe payment creation when disabled', async () => {
+      mockedPrisma.siteSettings.findUnique.mockResolvedValue({
+        paymentSettings: { stripeEnabled: false },
+      } as any);
+
+      const res = await request(app)
+        .post('/api/payments/create-intent')
+        .send({ orderId: 'order-1' });
+
+      expect(res.status).toBe(403);
+      expect(mockedStripe.paymentIntents.create).not.toHaveBeenCalled();
+    });
+  });
+
+  describe('POST /api/payments/create-checkout-session', () => {
+    it.each([0, 2])('charges the saved total including tax, surcharge and discount %s', async (discount) => {
+      const total = 43 + 4.99 - discount;
+      mockedPrisma.order.findUnique.mockResolvedValue({
+        ...sampleOrder, subtotal: 43, tax: 2.97, deliveryFee: 4.99, discount, total,
+        items: [
+          { name: 'Pizza', unitPrice: 19.5, quantity: 2, surchargeAmount: 0.5 },
+          { name: 'Drink', unitPrice: 3, quantity: 1 },
+          { name: 'Water', unitPrice: 1, quantity: 1 },
+        ],
+      } as any);
+      mockedPrisma.payment.findFirst.mockResolvedValue(null);
+      mockedPrisma.payment.create.mockResolvedValue({} as any);
+
+      const res = await request(app).post('/api/payments/create-checkout-session')
+        .send({ orderId: sampleOrder.id });
+      expect(res.status).toBe(200);
+      const session = mockedStripe.checkout.sessions.create.mock.calls[0][0];
+      const chargedCents = session?.line_items?.reduce((sum, line) =>
+        sum + (line.price_data?.unit_amount ?? 0) * (line.quantity ?? 1), 0);
+      expect(chargedCents).toBe(Math.round(total * 100));
+      expect(mockedPrisma.payment.create.mock.calls[0][0].data.amount).toBe(total);
+      if (discount === 0) {
+        expect(session?.line_items).not.toContainEqual(expect.objectContaining({
+          price_data: expect.objectContaining({
+            product_data: { name: 'Tax' },
+          }),
+        }));
+        expect(session?.line_items).toHaveLength(4);
+      }
+    });
+
+    it('preserves a legacy order total that had tax added on top', async () => {
+      mockedPrisma.order.findUnique.mockResolvedValue({
+        ...sampleOrder, subtotal: 30, tax: 2.4, deliveryFee: 0, discount: 0, total: 32.4,
+        items: [{ name: 'Legacy item', unitPrice: 15, quantity: 2 }],
+      } as any);
+      mockedPrisma.payment.findFirst.mockResolvedValue(null);
+      mockedPrisma.payment.create.mockResolvedValue({} as any);
+      const res = await request(app).post('/api/payments/create-checkout-session')
+        .send({ orderId: sampleOrder.id });
+      expect(res.status).toBe(200);
+      const session = mockedStripe.checkout.sessions.create.mock.calls[0][0];
+      expect(session?.line_items).toEqual([{
+        price_data: {
+          currency: 'usd', product_data: { name: `Order ${sampleOrder.orderNumber}` }, unit_amount: 3240,
+        },
+        quantity: 1,
+      }]);
+      expect(mockedPrisma.payment.create.mock.calls[0][0].data.amount).toBe(32.4);
     });
   });
 

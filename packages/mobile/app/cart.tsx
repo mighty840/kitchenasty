@@ -2,12 +2,14 @@ import { View, Text, FlatList, Pressable } from 'react-native';
 import { useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { useCartStore } from '@/store/cart.store';
-import { formatCurrency } from '@/lib/formatters';
+import { formatCurrency, useCurrency } from '@/lib/formatters';
 import Button from '@/components/ui/Button';
 import EmptyState from '@/components/ui/EmptyState';
+import { calculateLineTotals } from '@kitchenasty/shared';
 
 export default function CartScreen() {
   const { t } = useTranslation();
+  useCurrency();
   const router = useRouter();
   const items = useCartStore((s) => s.items);
   const updateQuantity = useCartStore((s) => s.updateQuantity);
@@ -35,16 +37,18 @@ export default function CartScreen() {
         contentContainerStyle={{ padding: 16 }}
         ItemSeparatorComponent={() => <View className="h-3" />}
         renderItem={({ item }) => {
-          const optionsTotal = item.options.reduce((s, o) => s + o.priceModifier, 0);
-          const lineTotal = (item.price + optionsTotal) * item.quantity;
+          const line = calculateLineTotals(item);
 
           return (
             <View className="bg-white rounded-xl p-4 border border-gray-100">
               <View className="flex-row justify-between mb-1">
                 <Text className="text-gray-900 font-semibold text-base flex-1">{item.name}</Text>
-                <Text className="text-primary-600 font-bold">{formatCurrency(lineTotal)}</Text>
+                <Text className="text-primary-600 font-bold">{formatCurrency(line.subtotal)}</Text>
               </View>
 
+              {line.surchargeAmount > 0 && (
+                <Text className="text-gray-500 text-xs">{t('pricing.surcharge')}: {formatCurrency(line.surchargeAmount)} / {t('pricing.unit')}</Text>
+              )}
               {item.options.length > 0 && (
                 <Text className="text-gray-400 text-xs mb-2">
                   {item.options.map((o) => o.valueName).join(', ')}

@@ -76,6 +76,8 @@ export function createApp() {
 
   // Stripe webhook needs raw body — register before JSON parser
   app.use('/api/payments/webhook', express.raw({ type: 'application/json' }));
+  // PayU signs the exact notification bytes, so retain the raw JSON body.
+  app.use('/api/payments/payu/notify', express.raw({ type: 'application/json' }));
   app.use(express.json());
   app.use(express.urlencoded({ extended: true }));
 

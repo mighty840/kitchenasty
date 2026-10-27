@@ -1,6 +1,8 @@
 import { useState, useEffect, useCallback } from 'react';
 import { useTranslation } from 'react-i18next';
+import { useCurrency } from '../hooks/useCurrency.js';
 import { useCart } from '../context/CartContext.js';
+import { calculateLineTotals } from '@kitchenasty/shared';
 
 interface OptionValue {
   id: string;
@@ -31,6 +33,9 @@ interface MenuItemDetail {
   slug: string;
   description: string | null;
   price: number;
+  taxRate: number;
+  surchargeEnabled: boolean;
+  surchargeAmount: number;
   image: string | null;
   isActive: boolean;
   category: { id: string; name: string };
@@ -45,6 +50,7 @@ interface Props {
 
 export default function MenuItemModal({ itemId, onClose }: Props) {
   const { t } = useTranslation();
+  const { format } = useCurrency();
   const { addItem } = useCart();
   const [item, setItem] = useState<MenuItemDetail | null>(null);
   const [loading, setLoading] = useState(true);
@@ -128,6 +134,9 @@ export default function MenuItemModal({ itemId, onClose }: Props) {
       menuItemId: item.id,
       name: item.name,
       price: item.price,
+      taxRate: item.taxRate,
+      surchargeEnabled: item.surchargeEnabled,
+      surchargeAmount: item.surchargeAmount,
       quantity,
       options: cartOptions,
     });
@@ -136,16 +145,12 @@ export default function MenuItemModal({ itemId, onClose }: Props) {
 
   function calculateTotal(): number {
     if (!item) return 0;
-    let total = item.price;
-    for (const opt of item.options) {
-      const selected = selections[opt.id] || [];
-      for (const val of opt.values) {
-        if (selected.includes(val.id)) {
-          total += val.priceModifier;
-        }
-      }
-    }
-    return total * quantity;
+    return calculateLineTotals({
+      ...item,
+      quantity,
+      options: item.options.flatMap((opt) =>
+        opt.values.filter((val) => selections[opt.id]?.includes(val.id))),
+    }).subtotal;
   }
 
   return (
@@ -200,9 +205,13 @@ export default function MenuItemModal({ itemId, onClose }: Props) {
             <div className="p-6">
               <div className="flex items-start justify-between gap-3 mb-2">
                 <h2 className="text-xl font-bold text-gray-900">{item.name}</h2>
-                <span className="text-xl font-bold text-primary-600">${item.price.toFixed(2)}</span>
+                <span className="text-xl font-bold text-primary-600">{format(item.price)}</span>
               </div>
 
+              {item.surchargeEnabled && item.surchargeAmount > 0 && (
+                <p className="text-sm text-gray-500 mb-2">{t('pricing.surcharge')}: +{format(item.surchargeAmount)} / {t('pricing.unit')}</p>
+              )}
+              <p className="text-xs text-gray-500 mb-2">{t('pricing.taxIncluded', { rate: item.taxRate })}</p>
               <span className="text-xs text-gray-400 bg-gray-100 px-2 py-0.5 rounded-full">
                 {item.category.name}
               </span>
@@ -249,7 +258,7 @@ export default function MenuItemModal({ itemId, onClose }: Props) {
                           {opt.values.map((val) => (
                             <option key={val.id} value={val.id}>
                               {val.name}
-                              {val.priceModifier !== 0 && ` (+$${val.priceModifier.toFixed(2)})`}
+                              {val.priceModifier !== 0 && ` (+${format(val.priceModifier)})`}
                             </option>
                           ))}
                         </select>
@@ -277,7 +286,7 @@ export default function MenuItemModal({ itemId, onClose }: Props) {
                                 <span className="text-sm text-gray-900 flex-1">{val.name}</span>
                                 {val.priceModifier !== 0 && (
                                   <span className="text-xs text-gray-500">
-                                    +${val.priceModifier.toFixed(2)}
+                                    +{format(val.priceModifier)}
                                   </span>
                                 )}
                               </label>
@@ -312,7 +321,7 @@ export default function MenuItemModal({ itemId, onClose }: Props) {
                     onClick={handleAddToCart}
                     className="bg-primary-600 text-white px-6 py-2.5 rounded-lg font-semibold hover:bg-primary-700 transition-colors"
                   >
-                    {t('menu.addToCart')} &mdash; ${calculateTotal().toFixed(2)}
+                    {t('menu.addToCart')} &mdash; {format(calculateTotal())}
                   </button>
                 </div>
               </div>

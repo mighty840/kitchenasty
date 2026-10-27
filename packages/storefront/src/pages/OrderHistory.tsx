@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useCurrency } from '../hooks/useCurrency.js';
 import { useAuth } from '../context/AuthContext.js';
 
 interface OrderSummary {
@@ -34,6 +35,7 @@ const STATUS_COLORS: Record<string, string> = {
 
 export default function OrderHistory() {
   const { t } = useTranslation();
+  const { format } = useCurrency();
   const { user, token, isLoading: authLoading } = useAuth();
   const [orders, setOrders] = useState<OrderSummary[]>([]);
   const [pagination, setPagination] = useState<Pagination | null>(null);
@@ -118,7 +120,7 @@ export default function OrderHistory() {
                       {order.status.replace(/_/g, ' ')}
                     </span>
                   </div>
-                  <span className="font-bold text-primary-600">${order.total.toFixed(2)}</span>
+                  <span className="font-bold text-primary-600">{format(order.total)}</span>
                 </div>
                 <div className="flex items-center gap-4 text-sm text-gray-500">
                   <span>{order.location.name}</span>

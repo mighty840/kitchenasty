@@ -1,9 +1,12 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { translateStatus } from '../i18n/index.js';
 import {
   AreaChart, Area, BarChart, Bar, PieChart, Pie, Cell,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, Legend,
 } from 'recharts';
+import { useTranslation } from 'react-i18next';
+import { useCurrency } from '../context/CurrencyContext.js';
 
 interface DashboardData {
   metrics: {
@@ -58,6 +61,8 @@ const STATUS_COLORS: Record<string, string> = {
 const CHART_COLORS = ['#ea580c', '#f97316', '#fb923c', '#fdba74', '#fed7aa', '#7c3aed', '#2563eb', '#059669'];
 
 export default function Dashboard() {
+  const { t } = useTranslation();
+  const { format } = useCurrency();
   const [data, setData] = useState<DashboardData | null>(null);
   const [analytics, setAnalytics] = useState<AnalyticsData | null>(null);
   const [loading, setLoading] = useState(true);
@@ -73,13 +78,13 @@ export default function Dashboard() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
-        if (!res.ok) throw new Error('Failed to load dashboard');
+        if (!res.ok) throw new Error(t('messages.failed_to_load_dashboard'));
         return res.json();
       })
       .then((result) => setData(result.data))
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [token]);
+  }, [token, t]);
 
   useEffect(() => {
     setAnalyticsLoading(true);
@@ -87,23 +92,23 @@ export default function Dashboard() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
-        if (!res.ok) throw new Error('Failed to load analytics');
+        if (!res.ok) throw new Error(t('messages.failed_to_load_analytics'));
         return res.json();
       })
       .then((result) => setAnalytics(result.data))
       .catch(() => { })
       .finally(() => setAnalyticsLoading(false));
-  }, [token, analyticsDays]);
+  }, [token, analyticsDays, t]);
 
   if (loading) {
     return (
       <div>
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Dashboard</h2>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">{t('pages.dashboard.dashboard')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {['Orders Today', 'Revenue', 'Reservations', 'Active Items'].map((label) => (
             <div key={label} className="bg-white rounded-lg shadow p-6 animate-pulse">
               <p className="text-sm text-gray-500">{label}</p>
-              <div className="h-9 bg-gray-200 rounded mt-2 w-20" role="status" aria-label="Loading" />
+              <div className="h-9 bg-gray-200 rounded mt-2 w-20" role="status" aria-label={t('pages.dashboard.loading')} />
             </div>
           ))}
         </div>
@@ -114,7 +119,7 @@ export default function Dashboard() {
   if (error || !data) {
     return (
       <div>
-        <h2 className="text-2xl font-semibold text-gray-800 mb-6">Dashboard</h2>
+        <h2 className="text-2xl font-semibold text-gray-800 mb-6">{t('pages.dashboard.dashboard')}</h2>
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
           {['Orders Today', 'Revenue Today', 'Pending Reservations', 'Active Menu Items'].map((label) => (
             <div key={label} className="bg-white rounded-lg shadow p-6">
@@ -133,7 +138,7 @@ export default function Dashboard() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-semibold text-gray-800">Dashboard</h2>
+        <h2 className="text-2xl font-semibold text-gray-800">{t('pages.dashboard.dashboard')}</h2>
         <div className="flex bg-gray-100 rounded-lg p-1" role="tablist">
           <button
             onClick={() => setTab('overview')}
@@ -142,7 +147,8 @@ export default function Dashboard() {
             role="tab"
             aria-selected={tab === 'overview'}
           >
-            Overview
+
+            {t('pages.dashboard.overview')}
           </button>
           <button
             onClick={() => setTab('analytics')}
@@ -151,7 +157,8 @@ export default function Dashboard() {
             role="tab"
             aria-selected={tab === 'analytics'}
           >
-            Analytics
+
+            {t('pages.dashboard.analytics')}
           </button>
         </div>
       </div>
@@ -159,24 +166,24 @@ export default function Dashboard() {
       {/* Key Metrics — always visible */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <p className="text-sm text-gray-500">Orders Today</p>
+          <p className="text-sm text-gray-500">{t('pages.dashboard.orders_today')}</p>
           <p className="text-3xl font-bold text-gray-900 mt-1">{m.ordersToday}</p>
-          <p className="text-xs text-gray-400 mt-1">{m.ordersThisWeek} this week</p>
+          <p className="text-xs text-gray-400 mt-1">{m.ordersThisWeek}  {t('pages.dashboard.this_week')}</p>
         </div>
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <p className="text-sm text-gray-500">Revenue Today</p>
-          <p className="text-3xl font-bold text-primary-600 mt-1">${m.revenueToday.toFixed(2)}</p>
-          <p className="text-xs text-gray-400 mt-1">${m.revenueThisMonth.toFixed(2)} this month</p>
+          <p className="text-sm text-gray-500">{t('pages.dashboard.revenue_today')}</p>
+          <p className="text-3xl font-bold text-primary-600 mt-1">{format(m.revenueToday)}</p>
+          <p className="text-xs text-gray-400 mt-1">{format(m.revenueThisMonth)}  {t('pages.dashboard.this_month')}</p>
         </div>
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <p className="text-sm text-gray-500">Pending Reservations</p>
+          <p className="text-sm text-gray-500">{t('pages.dashboard.pending_reservations')}</p>
           <p className="text-3xl font-bold text-gray-900 mt-1">{m.pendingReservations}</p>
-          <p className="text-xs text-gray-400 mt-1">{m.totalCustomers} total customers</p>
+          <p className="text-xs text-gray-400 mt-1">{m.totalCustomers}  {t('pages.dashboard.total_customers')}</p>
         </div>
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <p className="text-sm text-gray-500">Active Menu Items</p>
+          <p className="text-sm text-gray-500">{t('pages.dashboard.active_menu_items')}</p>
           <p className="text-3xl font-bold text-gray-900 mt-1">{m.activeItems}</p>
-          <p className="text-xs text-gray-400 mt-1">{m.pendingReviews} reviews pending</p>
+          <p className="text-xs text-gray-400 mt-1">{m.pendingReviews}  {t('pages.dashboard.reviews_pending')}</p>
         </div>
       </div>
 
@@ -186,19 +193,19 @@ export default function Dashboard() {
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
             <div className="bg-gray-50 rounded-lg p-4 text-center">
               <p className="text-2xl font-bold text-gray-900">{m.totalOrders}</p>
-              <p className="text-xs text-gray-500">Total Orders</p>
+              <p className="text-xs text-gray-500">{t('pages.dashboard.total_orders')}</p>
             </div>
             <div className="bg-gray-50 rounded-lg p-4 text-center">
-              <p className="text-2xl font-bold text-gray-900">${m.totalRevenue.toFixed(2)}</p>
-              <p className="text-xs text-gray-500">Total Revenue</p>
+              <p className="text-2xl font-bold text-gray-900">{format(m.totalRevenue)}</p>
+              <p className="text-xs text-gray-500">{t('pages.dashboard.total_revenue')}</p>
             </div>
             <div className="bg-gray-50 rounded-lg p-4 text-center">
               <p className="text-2xl font-bold text-gray-900">{m.ordersThisMonth}</p>
-              <p className="text-xs text-gray-500">Orders This Month</p>
+              <p className="text-xs text-gray-500">{t('pages.dashboard.orders_this_month')}</p>
             </div>
             <div className="bg-gray-50 rounded-lg p-4 text-center">
-              <p className="text-2xl font-bold text-gray-900">${m.revenueThisWeek.toFixed(2)}</p>
-              <p className="text-xs text-gray-500">Revenue This Week</p>
+              <p className="text-2xl font-bold text-gray-900">{format(m.revenueThisWeek)}</p>
+              <p className="text-xs text-gray-500">{t('pages.dashboard.revenue_this_week')}</p>
             </div>
           </div>
 
@@ -206,13 +213,14 @@ export default function Dashboard() {
             {/* Recent Orders */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Recent Orders</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t('pages.dashboard.recent_orders')}</h3>
                 <Link to="/orders" className="text-primary-600 hover:text-primary-700 text-sm font-medium">
-                  View All
+
+                  {t('pages.dashboard.view_all')}
                 </Link>
               </div>
               {data.recentOrders.length === 0 ? (
-                <p className="text-gray-500 text-sm">No orders yet.</p>
+                <p className="text-gray-500 text-sm">{t('pages.dashboard.no_orders_yet')}</p>
               ) : (
                 <div className="space-y-3">
                   {data.recentOrders.map((order) => (
@@ -229,9 +237,9 @@ export default function Dashboard() {
                       </div>
                       <div className="flex items-center gap-2">
                         <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${STATUS_COLORS[order.status] || 'bg-gray-100'}`}>
-                          {order.status.replace(/_/g, ' ')}
+                          {translateStatus(t, order.status)}
                         </span>
-                        <span className="text-sm font-medium">${order.total.toFixed(2)}</span>
+                        <span className="text-sm font-medium">{format(order.total)}</span>
                       </div>
                     </Link>
                   ))}
@@ -242,13 +250,14 @@ export default function Dashboard() {
             {/* Top Selling Items */}
             <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
               <div className="flex items-center justify-between mb-4">
-                <h3 className="text-lg font-semibold text-gray-900">Top Selling Items</h3>
+                <h3 className="text-lg font-semibold text-gray-900">{t('pages.dashboard.top_selling_items')}</h3>
                 <Link to="/menu/items" className="text-primary-600 hover:text-primary-700 text-sm font-medium">
-                  View Menu
+
+                  {t('pages.dashboard.view_menu')}
                 </Link>
               </div>
               {data.topItems.length === 0 ? (
-                <p className="text-gray-500 text-sm">No sales data yet.</p>
+                <p className="text-gray-500 text-sm">{t('pages.dashboard.no_sales_data_yet')}</p>
               ) : (
                 <div className="space-y-3">
                   {data.topItems.map((item, idx) => (
@@ -257,7 +266,7 @@ export default function Dashboard() {
                         <span className="text-sm font-bold text-gray-400 w-5">{idx + 1}</span>
                         <span className="text-sm font-medium text-gray-900">{item.name}</span>
                       </div>
-                      <span className="text-sm text-gray-600">{item.totalQuantity} sold</span>
+                      <span className="text-sm text-gray-600">{item.totalQuantity}  {t('pages.dashboard.sold')}</span>
                     </div>
                   ))}
                 </div>
@@ -290,16 +299,18 @@ function AnalyticsPanel({
   days: number;
   onDaysChange: (d: number) => void;
 }) {
+  const { t } = useTranslation();
+  const { currency, format } = useCurrency();
   if (loading) {
     return (
       <div className="flex justify-center py-12">
-        <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" role="status" aria-label="Loading" />
+        <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" role="status" aria-label={t('pages.dashboard.loading')} />
       </div>
     );
   }
 
   if (!analytics) {
-    return <p className="text-gray-500 text-sm">Unable to load analytics data.</p>;
+    return <p className="text-gray-500 text-sm">{t('pages.dashboard.unable_to_load_analytics_data')}</p>;
   }
 
   const formatDate = (dateStr: string) => {
@@ -330,9 +341,9 @@ function AnalyticsPanel({
               onClick={() => onDaysChange(d)}
               className={`px-3 py-1 text-xs font-medium rounded-md transition-colors ${days === d ? 'bg-white shadow-sm text-gray-900' : 'text-gray-500 hover:text-gray-700'
                 }`}
-              aria-label={`Show last ${d} days`}
+              aria-label={t('a11y.showLastDays', { count: d })}
             >
-              {d}d
+              {d}{t('pages.dashboard.d')}
             </button>
           ))}
         </div>
@@ -340,7 +351,7 @@ function AnalyticsPanel({
 
       {/* Revenue Trend */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue Trend</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('pages.dashboard.revenue_trend')}</h3>
         <ResponsiveContainer width="100%" height={300}>
           <AreaChart data={analytics.dailyStats.map((d) => ({ ...d, label: formatDate(d.date) }))}>
             <defs>
@@ -351,9 +362,9 @@ function AnalyticsPanel({
             </defs>
             <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
             <XAxis dataKey="label" tick={{ fontSize: 11 }} />
-            <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${v}`} />
+            <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `${currency.symbol}${v}`} />
             <Tooltip
-              formatter={(value) => [`$${Number(value).toFixed(2)}`, 'Revenue']}
+              formatter={(value) => [format(Number(value)), 'Revenue']}
               contentStyle={{ borderRadius: 8, border: '1px solid #e5e7eb' }}
             />
             <Area type="monotone" dataKey="revenue" stroke="#ea580c" fill="url(#revenueGradient)" strokeWidth={2} />
@@ -363,7 +374,7 @@ function AnalyticsPanel({
 
       {/* Daily Orders */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Daily Orders</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('pages.dashboard.daily_orders')}</h3>
         <ResponsiveContainer width="100%" height={250}>
           <BarChart data={analytics.dailyStats.map((d) => ({ ...d, label: formatDate(d.date) }))}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
@@ -378,9 +389,9 @@ function AnalyticsPanel({
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Order Type Distribution */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Types</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('pages.dashboard.order_types')}</h3>
           {analytics.orderTypeDistribution.length === 0 ? (
-            <p className="text-gray-500 text-sm">No data available.</p>
+            <p className="text-gray-500 text-sm">{t('pages.dashboard.no_data_available')}</p>
           ) : (
             <ResponsiveContainer width="100%" height={250}>
               <PieChart>
@@ -406,9 +417,9 @@ function AnalyticsPanel({
 
         {/* Order Status Distribution */}
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Order Status</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('pages.dashboard.order_status')}</h3>
           {analytics.orderStatusDistribution.length === 0 ? (
-            <p className="text-gray-500 text-sm">No data available.</p>
+            <p className="text-gray-500 text-sm">{t('pages.dashboard.no_data_available')}</p>
           ) : (
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={analytics.orderStatusDistribution} layout="vertical">
@@ -434,7 +445,7 @@ function AnalyticsPanel({
 
       {/* Hourly Distribution */}
       <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-        <h3 className="text-lg font-semibold text-gray-900 mb-4">Orders by Hour of Day</h3>
+        <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('pages.dashboard.orders_by_hour_of_day')}</h3>
         <ResponsiveContainer width="100%" height={250}>
           <BarChart data={fullHourly}>
             <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
@@ -449,16 +460,16 @@ function AnalyticsPanel({
       {/* Category Revenue */}
       {analytics.categoryRevenue.length > 0 && (
         <div className="bg-white rounded-xl shadow-sm border border-gray-200 p-6">
-          <h3 className="text-lg font-semibold text-gray-900 mb-4">Revenue by Category</h3>
+          <h3 className="text-lg font-semibold text-gray-900 mb-4">{t('pages.dashboard.revenue_by_category')}</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart data={analytics.categoryRevenue}>
               <CartesianGrid strokeDasharray="3 3" stroke="#f3f4f6" />
               <XAxis dataKey="name" tick={{ fontSize: 11 }} />
-              <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `$${v}`} />
+              <YAxis tick={{ fontSize: 11 }} tickFormatter={(v) => `${currency.symbol}${v}`} />
               <Tooltip
                 contentStyle={{ borderRadius: 8, border: '1px solid #e5e7eb' }}
                 formatter={(value, name) => [
-                  name === 'Revenue' ? `$${Number(value).toFixed(2)}` : value,
+                  name === 'Revenue' ? format(Number(value)) : value,
                   name,
                 ]}
               />

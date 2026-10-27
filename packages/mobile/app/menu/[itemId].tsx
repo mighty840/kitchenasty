@@ -5,16 +5,18 @@ import { useTranslation } from 'react-i18next';
 import { menuApi } from '@/api/endpoints';
 import type { MenuItemDetail, MenuOption, MenuOptionValue } from '@/api/types';
 import { useCartStore } from '@/store/cart.store';
-import { formatCurrency } from '@/lib/formatters';
+import { formatCurrency, useCurrency } from '@/lib/formatters';
 import { API_BASE_URL } from '@/lib/constants';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import ErrorView from '@/components/ui/ErrorView';
 import Button from '@/components/ui/Button';
+import { calculateLineTotals } from '@kitchenasty/shared';
 
 export default function ItemDetailScreen() {
   const { itemId } = useLocalSearchParams<{ itemId: string }>();
   const router = useRouter();
   const { t } = useTranslation();
+  useCurrency();
   const addItem = useCartStore((s) => s.addItem);
 
   const [item, setItem] = useState<MenuItemDetail | null>(null);
@@ -55,7 +57,9 @@ export default function ItemDetailScreen() {
     }, 0);
   }, 0);
 
-  const totalPrice = (item.price + optionsTotal) * quantity;
+  const totalPrice = calculateLineTotals({
+    ...item, quantity, options: [{ priceModifier: optionsTotal }],
+  }).subtotal;
 
   function handleSelectOption(option: MenuOption, value: MenuOptionValue) {
     setSelectedOptions((prev) => {
@@ -93,6 +97,9 @@ export default function ItemDetailScreen() {
       menuItemId: item!.id,
       name: item!.name,
       price: item!.price,
+      taxRate: item!.taxRate,
+      surchargeEnabled: item!.surchargeEnabled,
+      surchargeAmount: item!.surchargeAmount,
       quantity,
       options: cartOptions,
     });
@@ -122,6 +129,10 @@ export default function ItemDetailScreen() {
             <Text className="text-2xl font-bold text-gray-900 flex-1">{item.name}</Text>
             <Text className="text-xl font-bold text-primary-600 ml-4">{formatCurrency(item.price)}</Text>
           </View>
+          {item.surchargeEnabled && item.surchargeAmount > 0 && (
+            <Text className="text-gray-500 text-sm mb-2">{t('pricing.surcharge')}: +{formatCurrency(item.surchargeAmount)} / {t('pricing.unit')}</Text>
+          )}
+          <Text className="text-gray-500 text-xs mb-2">{t('pricing.taxIncluded', { rate: item.taxRate })}</Text>
           {item.description && (
             <Text className="text-gray-500 text-base mb-4">{item.description}</Text>
           )}

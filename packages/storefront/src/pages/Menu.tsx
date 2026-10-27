@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useCurrency } from '../hooks/useCurrency.js';
 import { useApi } from '../hooks/useApi.js';
 import MenuItemModal from '../components/MenuItemModal.js';
 
@@ -35,6 +36,7 @@ interface MenuResponse {
 
 export default function Menu() {
   const { t } = useTranslation();
+  const { format } = useCurrency();
   const [searchParams, setSearchParams] = useSearchParams();
   const [selectedCategory, setSelectedCategory] = useState<string | null>(
     searchParams.get('category')
@@ -219,7 +221,7 @@ export default function Menu() {
                       <div className="flex items-start justify-between gap-2">
                         <h3 className="font-semibold text-gray-900">{item.name}</h3>
                         <span className="text-primary-600 font-bold whitespace-nowrap">
-                          ${item.price.toFixed(2)}
+                          {format(item.price)}
                         </span>
                       </div>
                       {item.description && (

@@ -188,12 +188,76 @@ describe('Location API - Integration Tests', () => {
 
       expect(res.status).toBe(400);
     });
+
+    it.each(['', 'contact@example.com'])('accepts optional email %j when creating a location', async (email) => {
+      mockedPrisma.location.findUnique.mockResolvedValue(null);
+      mockedPrisma.location.create.mockResolvedValue({
+        ...sampleLocation, email, isBusy: false, busyMessage: null,
+      });
+
+      const res = await request(app)
+        .post('/api/locations')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({ ...newLocation, email });
+
+      expect(res.status).toBe(201);
+      expect(res.body.data.email).toBe(email);
+      expect(mockedPrisma.location.create).toHaveBeenCalledWith(expect.objectContaining({
+        data: expect.objectContaining({ email }),
+      }));
+    });
+
+    it('rejects a malformed non-empty email when creating a location', async () => {
+      const res = await request(app)
+        .post('/api/locations')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({ ...newLocation, email: 'invalid-email' });
+
+      expect(res.status).toBe(400);
+      expect(res.body.error).toEqual(expect.arrayContaining([
+        expect.objectContaining({ path: ['email'] }),
+      ]));
+      expect(mockedPrisma.location.create).not.toHaveBeenCalled();
+    });
   });
 
   // ============================================================
   // UPDATE
   // ============================================================
   describe('PATCH /api/locations/:id', () => {
+    it.each(['', 'contact@example.com'])('accepts optional email %j when updating a location', async (email) => {
+      mockedPrisma.location.findUnique.mockResolvedValue({
+        ...sampleLocation, isBusy: false, busyMessage: null,
+      });
+      mockedPrisma.location.update.mockResolvedValue({
+        ...sampleLocation, email, isBusy: false, busyMessage: null,
+      });
+
+      const res = await request(app)
+        .patch('/api/locations/loc-1')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({ email });
+
+      expect(res.status).toBe(200);
+      expect(res.body.data.email).toBe(email);
+      expect(mockedPrisma.location.update).toHaveBeenCalledWith(expect.objectContaining({
+        data: expect.objectContaining({ email }),
+      }));
+    });
+
+    it('rejects a malformed non-empty email when updating a location', async () => {
+      const res = await request(app)
+        .patch('/api/locations/loc-1')
+        .set('Authorization', `Bearer ${adminToken}`)
+        .send({ email: 'invalid-email' });
+
+      expect(res.status).toBe(400);
+      expect(res.body.error).toEqual(expect.arrayContaining([
+        expect.objectContaining({ path: ['email'] }),
+      ]));
+      expect(mockedPrisma.location.update).not.toHaveBeenCalled();
+    });
+
     it('updates location name', async () => {
       mockedPrisma.location.findUnique.mockResolvedValue(sampleLocation as any);
       mockedPrisma.location.update.mockResolvedValue({ ...sampleLocation, name: 'Updated Name' } as any);

@@ -43,7 +43,7 @@ async function getAccessToken(): Promise<{ token: string; baseUrl: string }> {
   return { token: data.access_token, baseUrl };
 }
 
-export async function createPayPalOrder(amount: number, orderNumber: string): Promise<{ id: string; approvalUrl: string }> {
+export async function createPayPalOrder(amount: number, orderNumber: string, currency = 'USD'): Promise<{ id: string; approvalUrl: string }> {
   const { token: accessToken, baseUrl } = await getAccessToken();
 
   const res = await fetch(`${baseUrl}/v2/checkout/orders`, {
@@ -57,7 +57,7 @@ export async function createPayPalOrder(amount: number, orderNumber: string): Pr
       purchase_units: [{
         reference_id: orderNumber,
         amount: {
-          currency_code: 'USD',
+          currency_code: currency.toUpperCase(),
           value: amount.toFixed(2),
         },
       }],

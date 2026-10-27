@@ -51,6 +51,12 @@ test.describe('Admin Locations Page', () => {
     // Slug input is the second text input
     const slugInput = page.locator('input[type="text"]').nth(1);
     await expect(slugInput).toHaveValue('downtown-kitchen');
+
+    await nameInput.fill('G\u00f3rnicza');
+    await expect(slugInput).toHaveValue('gornicza');
+
+    await nameInput.fill('\u0141\u00f3d\u017a');
+    await expect(slugInput).toHaveValue('lodz');
   });
 
   test('shows all days in operating hours', async ({ page }) => {

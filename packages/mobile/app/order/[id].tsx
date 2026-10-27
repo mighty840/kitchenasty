@@ -4,7 +4,7 @@ import { useLocalSearchParams, useRouter } from 'expo-router';
 import { useTranslation } from 'react-i18next';
 import { orderApi } from '@/api/endpoints';
 import type { Order } from '@/api/types';
-import { formatCurrency, formatDateTime } from '@/lib/formatters';
+import { formatCurrency, formatDateTime, useCurrency } from '@/lib/formatters';
 import LoadingSpinner from '@/components/ui/LoadingSpinner';
 import ErrorView from '@/components/ui/ErrorView';
 import Button from '@/components/ui/Button';
@@ -13,6 +13,7 @@ export default function OrderConfirmationScreen() {
   const { id } = useLocalSearchParams<{ id: string }>();
   const router = useRouter();
   const { t } = useTranslation();
+  useCurrency();
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
@@ -66,6 +67,9 @@ export default function OrderConfirmationScreen() {
                 <Text className="text-gray-400">{item.quantity}x </Text>
                 {item.name}
               </Text>
+              {item.surchargeAmount > 0 && (
+                <Text className="text-gray-500 text-xs">{t('pricing.surcharge')}: {formatCurrency(item.surchargeAmount)} / {t('pricing.unit')}</Text>
+              )}
               {item.options.length > 0 && (
                 <Text className="text-gray-400 text-xs">
                   {item.options.map((o) => `${o.name}: ${o.value}`).join(', ')}

@@ -1,6 +1,9 @@
 import { useState, useEffect, useRef } from 'react';
 
+import { useTranslation } from 'react-i18next';
+
 export default function DesignBranding() {
+  const { t } = useTranslation();
   const token = localStorage.getItem('token') || '';
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
@@ -42,13 +45,13 @@ export default function DesignBranding() {
       });
       const data = await res.json();
       if (data.success) {
-        setSuccess('Branding updated successfully');
+        setSuccess(t('messages.branding_updated_successfully'));
         setTimeout(() => setSuccess(''), 3000);
       } else {
-        setError(typeof data.error === 'string' ? data.error : 'Failed to save');
+        setError(typeof data.error === 'string' ? data.error : t('messages.failed_to_save'));
       }
     } catch {
-      setError('Network error');
+      setError(t('messages.network_error'));
     } finally {
       setSaving(false);
     }
@@ -68,28 +71,28 @@ export default function DesignBranding() {
       if (data.success && data.data) {
         if (type === 'logo') setLogo(data.data.logo);
         else setFavicon(data.data.favicon);
-        setSuccess(`${type === 'logo' ? 'Logo' : 'Favicon'} uploaded successfully`);
+        setSuccess(t(type === 'logo' ? 'messages.logo_uploaded_successfully' : 'messages.favicon_uploaded_successfully'));
         setTimeout(() => setSuccess(''), 3000);
       } else {
-        setError(typeof data.error === 'string' ? data.error : 'Upload failed');
+        setError(typeof data.error === 'string' ? data.error : t('messages.upload_failed'));
       }
     } catch {
-      setError('Upload failed');
+      setError(t('messages.upload_failed'));
     }
   }
 
-  if (loading) return <div className="p-6 text-gray-500">Loading...</div>;
+  if (loading) return <div className="p-6 text-gray-500">{t('pages.design_branding.loading')}</div>;
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Branding</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t('pages.design_branding.branding')}</h1>
         <button
           onClick={handleSave}
           disabled={saving}
           className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50"
         >
-          {saving ? 'Saving...' : 'Save Changes'}
+          {saving ? t('pages.design_branding.saving') : t('pages.design_branding.save_changes')}
         </button>
       </div>
 
@@ -102,41 +105,42 @@ export default function DesignBranding() {
 
       <div className="bg-white rounded-lg border border-gray-200 p-6 mb-6 space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Site Name</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.design_branding.site_name')}</label>
           <input
             type="text"
             value={siteName}
             onChange={(e) => setSiteName(e.target.value)}
             className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            placeholder="KitchenAsty"
+            placeholder={t('pages.design_branding.kitchenasty')}
           />
-          <p className="mt-1 text-xs text-gray-500">Shown in the header, footer, and browser tab.</p>
+          <p className="mt-1 text-xs text-gray-500">{t('pages.design_branding.shown_in_the_header_footer_and_browser_tab')}</p>
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Site Title</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.design_branding.site_title')}</label>
           <input
             type="text"
             value={siteTitle}
             onChange={(e) => setSiteTitle(e.target.value)}
             className="w-full max-w-md px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-            placeholder="KitchenAsty - Order Online"
+            placeholder={t('pages.design_branding.kitchenasty_order_online')}
           />
-          <p className="mt-1 text-xs text-gray-500">Shown in the browser tab title.</p>
+          <p className="mt-1 text-xs text-gray-500">{t('pages.design_branding.shown_in_the_browser_tab_title')}</p>
         </div>
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         {/* Logo */}
         <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Logo</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('pages.design_branding.logo')}</h2>
           {logo ? (
             <div className="mb-4">
-              <img src={logo} alt="Logo" className="w-24 h-24 object-contain rounded-lg border border-gray-200" />
+              <img src={logo} alt={t('pages.design_branding.logo')} className="w-24 h-24 object-contain rounded-lg border border-gray-200" />
             </div>
           ) : (
             <div className="mb-4 w-24 h-24 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-sm">
-              No logo
+
+              {t('pages.design_branding.no_logo')}
             </div>
           )}
           <input
@@ -154,20 +158,22 @@ export default function DesignBranding() {
             onClick={() => logoInputRef.current?.click()}
             className="text-sm text-primary-600 hover:text-primary-700 font-medium"
           >
-            Upload Logo
+
+            {t('pages.design_branding.upload_logo')}
           </button>
         </div>
 
         {/* Favicon */}
         <div className="bg-white rounded-lg border border-gray-200 p-6">
-          <h2 className="text-lg font-semibold text-gray-900 mb-4">Favicon</h2>
+          <h2 className="text-lg font-semibold text-gray-900 mb-4">{t('pages.design_branding.favicon')}</h2>
           {favicon ? (
             <div className="mb-4">
-              <img src={favicon} alt="Favicon" className="w-16 h-16 object-contain rounded-lg border border-gray-200" />
+              <img src={favicon} alt={t('pages.design_branding.favicon')} className="w-16 h-16 object-contain rounded-lg border border-gray-200" />
             </div>
           ) : (
             <div className="mb-4 w-16 h-16 bg-gray-100 rounded-lg flex items-center justify-center text-gray-400 text-xs">
-              No icon
+
+              {t('pages.design_branding.no_icon')}
             </div>
           )}
           <input
@@ -185,7 +191,8 @@ export default function DesignBranding() {
             onClick={() => faviconInputRef.current?.click()}
             className="text-sm text-primary-600 hover:text-primary-700 font-medium"
           >
-            Upload Favicon
+
+            {t('pages.design_branding.upload_favicon')}
           </button>
         </div>
       </div>

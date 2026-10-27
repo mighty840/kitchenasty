@@ -1,10 +1,13 @@
 import { useEffect, useCallback } from 'react';
 import { Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useCurrency } from '../hooks/useCurrency.js';
 import { useCart } from '../context/CartContext.js';
+import { calculateLineTotals } from '@kitchenasty/shared';
 
 export default function CartDrawer() {
   const { t } = useTranslation();
+  const { format } = useCurrency();
   const { items, isOpen, setIsOpen, updateQuantity, removeItem, clear, subtotal } = useCart();
 
   const handleKeyDown = useCallback(
@@ -66,13 +69,15 @@ export default function CartDrawer() {
           ) : (
             <div className="space-y-4">
               {items.map((item) => {
-                const optionsTotal = item.options.reduce((s, o) => s + o.priceModifier, 0);
-                const lineTotal = (item.price + optionsTotal) * item.quantity;
+                const line = calculateLineTotals(item);
                 return (
                   <div key={item.id} className="flex gap-3 pb-4 border-b border-gray-100">
                     {/* Item info */}
                     <div className="flex-1 min-w-0">
                       <h3 className="font-medium text-gray-900 text-sm">{item.name}</h3>
+                      {line.surchargeAmount > 0 && (
+                        <p className="text-xs text-gray-500">{t('pricing.surcharge')}: {format(line.surchargeAmount)} / {t('pricing.unit')}</p>
+                      )}
                       {item.options.length > 0 && (
                         <p className="text-xs text-gray-500 mt-0.5">
                           {item.options.map((o) => o.valueName).join(', ')}
@@ -102,7 +107,7 @@ export default function CartDrawer() {
                     </div>
                     {/* Price */}
                     <div className="text-sm font-medium text-gray-900">
-                      ${lineTotal.toFixed(2)}
+                      {format(line.subtotal)}
                     </div>
                   </div>
                 );
@@ -116,7 +121,7 @@ export default function CartDrawer() {
           <div className="border-t border-gray-200 px-6 py-4 space-y-3">
             <div className="flex justify-between text-sm">
               <span className="text-gray-600">{t('cart.subtotal')}</span>
-              <span className="font-semibold text-gray-900">${subtotal.toFixed(2)}</span>
+              <span className="font-semibold text-gray-900">{format(subtotal)}</span>
             </div>
             <Link
               to="/checkout"

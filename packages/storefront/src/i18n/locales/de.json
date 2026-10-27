@@ -1,4 +1,10 @@
 {
+  "pricing": {
+    "surcharge": "Verpackungsaufschlag",
+    "unit": "Stück",
+    "taxIncluded": "Inklusive {{rate}}% Steuer",
+    "includedTax": "Enthaltene Steuer"
+  },
   "common": {
     "loading": "Laden...",
     "error": "Ein Fehler ist aufgetreten",
@@ -145,8 +151,11 @@
     "apply": "Einlösen",
     "couponApplied": "Gutschein eingelöst!",
     "paymentMethod": "Zahlungsart",
+    "paymentMethodsUnavailable": "Zahlungsoptionen konnten nicht geladen werden. Bitte versuchen Sie es erneut.",
+    "noPaymentMethods": "Derzeit sind keine Zahlungsmethoden verfügbar. Bitte kontaktieren Sie das Restaurant.",
     "creditCard": "Kreditkarte (Stripe)",
     "cashOnDelivery": "Barzahlung bei Lieferung",
+    "payu": "PayU",
     "orderSummary": "Bestellübersicht",
     "subtotal": "Zwischensumme",
     "tax": "MwSt.",

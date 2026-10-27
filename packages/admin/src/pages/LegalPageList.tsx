@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 
+import { useTranslation } from 'react-i18next';
+
 interface LegalPage {
   id: string;
   slug: string;
@@ -9,6 +11,7 @@ interface LegalPage {
 }
 
 export default function LegalPageList() {
+  const { t } = useTranslation();
   const [pages, setPages] = useState<LegalPage[]>([]);
   const [loading, setLoading] = useState(true);
   const token = localStorage.getItem('token') || '';
@@ -25,21 +28,23 @@ export default function LegalPageList() {
       .finally(() => setLoading(false));
   }, [token]);
 
-  if (loading) return <div className="p-6 text-gray-500">Loading...</div>;
+  if (loading) return <div className="p-6 text-gray-500">{t('pages.legal_page_list.loading')}</div>;
 
   return (
     <div>
-      <h1 className="text-2xl font-bold text-gray-900 mb-6">Legal Pages</h1>
+      <h1 className="text-2xl font-bold text-gray-900 mb-6">{t('pages.legal_page_list.legal_pages')}</h1>
 
       {pages.length === 0 ? (
         <div className="bg-white rounded-lg border border-gray-200 p-8 text-center text-gray-500">
-          <p>No legal pages yet. Create one by editing a slug below.</p>
+          <p>{t('pages.legal_page_list.no_legal_pages_yet_create_one_by_editing_a_slug_below')}</p>
           <div className="mt-4 flex gap-3 justify-center">
             <Link to="/legal/pages/privacy-policy" className="text-primary-600 hover:underline">
-              Create Privacy Policy
+
+              {t('pages.legal_page_list.create_privacy_policy')}
             </Link>
             <Link to="/legal/pages/impressum" className="text-primary-600 hover:underline">
-              Create Impressum
+
+              {t('pages.legal_page_list.create_impressum')}
             </Link>
           </div>
         </div>
@@ -48,10 +53,10 @@ export default function LegalPageList() {
           <table className="w-full text-sm">
             <thead className="bg-gray-50 text-gray-500 uppercase text-xs">
               <tr>
-                <th className="px-6 py-3 text-left">Title</th>
-                <th className="px-6 py-3 text-left">Slug</th>
-                <th className="px-6 py-3 text-left">Last Updated</th>
-                <th className="px-6 py-3 text-right">Actions</th>
+                <th className="px-6 py-3 text-left">{t('pages.legal_page_list.title')}</th>
+                <th className="px-6 py-3 text-left">{t('pages.legal_page_list.slug')}</th>
+                <th className="px-6 py-3 text-left">{t('pages.legal_page_list.last_updated')}</th>
+                <th className="px-6 py-3 text-right">{t('pages.legal_page_list.actions')}</th>
               </tr>
             </thead>
             <tbody className="divide-y divide-gray-100">
@@ -67,7 +72,8 @@ export default function LegalPageList() {
                       to={`/legal/pages/${page.slug}`}
                       className="text-primary-600 hover:text-primary-700 font-medium"
                     >
-                      Edit
+
+                      {t('pages.legal_page_list.edit')}
                     </Link>
                   </td>
                 </tr>

@@ -1,5 +1,13 @@
-export function formatCurrency(amount: number): string {
-  return `$${amount.toFixed(2)}`;
+import { formatPrice, type CurrencyConfig } from '@kitchenasty/shared';
+import { useSettingsStore } from '../store/settings.store';
+
+export function formatCurrency(amount: number, currency?: CurrencyConfig): string {
+  return formatPrice(amount, currency ?? useSettingsStore.getState().settings.currency);
+}
+
+/** Subscribes the calling screen to currency changes so formatCurrency output refreshes after settings load. */
+export function useCurrency(): CurrencyConfig {
+  return useSettingsStore((state) => state.settings.currency);
 }
 
 export function formatDate(date: string | Date): string {

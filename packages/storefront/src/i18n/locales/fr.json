@@ -1,4 +1,10 @@
 {
+  "pricing": {
+    "surcharge": "Supplément emballage/contenant",
+    "unit": "unité",
+    "taxIncluded": "Taxe de {{rate}}% incluse",
+    "includedTax": "Taxe incluse"
+  },
   "common": {
     "loading": "Chargement...",
     "error": "Une erreur est survenue",
@@ -145,8 +151,11 @@
     "apply": "Appliquer",
     "couponApplied": "Code promo appliqué !",
     "paymentMethod": "Mode de Paiement",
+    "paymentMethodsUnavailable": "Impossible de charger les options de paiement. Veuillez réessayer.",
+    "noPaymentMethods": "Aucun moyen de paiement n'est disponible. Veuillez contacter le restaurant.",
     "creditCard": "Carte Bancaire (Stripe)",
     "cashOnDelivery": "Paiement à la livraison",
+    "payu": "PayU",
     "orderSummary": "Récapitulatif",
     "subtotal": "Sous-total",
     "tax": "TVA",

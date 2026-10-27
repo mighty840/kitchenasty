@@ -1,8 +1,10 @@
 import { useState, useEffect } from 'react';
+
 import {
   AreaChart, Area, BarChart, Bar,
   XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
 } from 'recharts';
+import { useTranslation } from 'react-i18next';
 
 interface MetricsSummary {
   totalRequests: number;
@@ -45,6 +47,7 @@ const METHOD_COLORS: Record<string, string> = {
 };
 
 export default function DeveloperMetrics() {
+  const { t } = useTranslation();
   const [summary, setSummary] = useState<MetricsSummary | null>(null);
   const [hourly, setHourly] = useState<HourlyData[]>([]);
   const [endpoints, setEndpoints] = useState<EndpointData[]>([]);
@@ -85,7 +88,7 @@ export default function DeveloperMetrics() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">API Metrics</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t('pages.developer_metrics.api_metrics')}</h1>
         <div className="flex gap-1">
           {TIME_RANGES.map((r) => (
             <button
@@ -106,19 +109,19 @@ export default function DeveloperMetrics() {
       {/* Summary cards */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
         <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <p className="text-xs text-gray-500 uppercase">Total Requests</p>
+          <p className="text-xs text-gray-500 uppercase">{t('pages.developer_metrics.total_requests')}</p>
           <p className="text-2xl font-bold text-gray-900 mt-1">
             {loading ? '--' : summary?.totalRequests.toLocaleString()}
           </p>
         </div>
         <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <p className="text-xs text-gray-500 uppercase">Avg Response Time</p>
+          <p className="text-xs text-gray-500 uppercase">{t('pages.developer_metrics.avg_response_time')}</p>
           <p className="text-2xl font-bold text-gray-900 mt-1">
             {loading ? '--' : `${summary?.avgResponseTime}ms`}
           </p>
         </div>
         <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <p className="text-xs text-gray-500 uppercase">Error Rate</p>
+          <p className="text-xs text-gray-500 uppercase">{t('pages.developer_metrics.error_rate')}</p>
           <p className="text-2xl font-bold text-gray-900 mt-1">
             {loading ? '--' : `${summary?.errorRate}%`}
           </p>
@@ -127,7 +130,7 @@ export default function DeveloperMetrics() {
           </p>
         </div>
         <div className="bg-white rounded-lg border border-gray-200 p-4">
-          <p className="text-xs text-gray-500 uppercase">Req/min</p>
+          <p className="text-xs text-gray-500 uppercase">{t('pages.developer_metrics.req_min')}</p>
           <p className="text-2xl font-bold text-gray-900 mt-1">
             {loading ? '--' : summary?.requestsPerMinute}
           </p>
@@ -138,7 +141,7 @@ export default function DeveloperMetrics() {
       {!loading && hourly.length > 0 && (
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-6">
           <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <h3 className="text-sm font-semibold text-gray-700 mb-4">Requests Over Time</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-4">{t('pages.developer_metrics.requests_over_time')}</h3>
             <ResponsiveContainer width="100%" height={250}>
               <AreaChart data={hourly}>
                 <defs>
@@ -156,7 +159,7 @@ export default function DeveloperMetrics() {
             </ResponsiveContainer>
           </div>
           <div className="bg-white rounded-lg border border-gray-200 p-4">
-            <h3 className="text-sm font-semibold text-gray-700 mb-4">Avg Response Time (ms)</h3>
+            <h3 className="text-sm font-semibold text-gray-700 mb-4">{t('pages.developer_metrics.avg_response_time_ms')}</h3>
             <ResponsiveContainer width="100%" height={250}>
               <BarChart data={hourly}>
                 <CartesianGrid strokeDasharray="3 3" />
@@ -173,27 +176,27 @@ export default function DeveloperMetrics() {
       {/* Endpoints table */}
       <div className="bg-white rounded-lg border border-gray-200 overflow-hidden">
         <div className="px-6 py-4 border-b border-gray-200">
-          <h3 className="text-sm font-semibold text-gray-700">Top Endpoints</h3>
+          <h3 className="text-sm font-semibold text-gray-700">{t('pages.developer_metrics.top_endpoints')}</h3>
         </div>
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-gray-500 uppercase text-xs">
             <tr>
-              <th className="px-6 py-3 text-left">Method</th>
-              <th className="px-6 py-3 text-left">Path</th>
-              <th className="px-6 py-3 text-right">Requests</th>
-              <th className="px-6 py-3 text-right">Avg (ms)</th>
-              <th className="px-6 py-3 text-right">P95 (ms)</th>
-              <th className="px-6 py-3 text-right">Errors</th>
+              <th className="px-6 py-3 text-left">{t('pages.developer_metrics.method')}</th>
+              <th className="px-6 py-3 text-left">{t('pages.developer_metrics.path')}</th>
+              <th className="px-6 py-3 text-right">{t('pages.developer_metrics.requests')}</th>
+              <th className="px-6 py-3 text-right">{t('pages.developer_metrics.avg_ms')}</th>
+              <th className="px-6 py-3 text-right">{t('pages.developer_metrics.p95_ms')}</th>
+              <th className="px-6 py-3 text-right">{t('pages.developer_metrics.errors')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
             {loading ? (
               <tr>
-                <td colSpan={6} className="px-6 py-8 text-center text-gray-500">Loading...</td>
+                <td colSpan={6} className="px-6 py-8 text-center text-gray-500">{t('pages.developer_metrics.loading')}</td>
               </tr>
             ) : endpoints.length === 0 ? (
               <tr>
-                <td colSpan={6} className="px-6 py-8 text-center text-gray-500">No data yet.</td>
+                <td colSpan={6} className="px-6 py-8 text-center text-gray-500">{t('pages.developer_metrics.no_data_yet')}</td>
               </tr>
             ) : (
               endpoints.map((ep, i) => (

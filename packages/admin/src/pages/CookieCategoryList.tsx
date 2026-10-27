@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+import { useTranslation } from 'react-i18next';
+
 interface CookieCategory {
   id: string;
   name: string;
@@ -13,6 +15,7 @@ interface CookieCategory {
 const emptyForm = { name: '', label: '', description: '', isRequired: false, isActive: true, sortOrder: 0 };
 
 export default function CookieCategoryList() {
+  const { t } = useTranslation();
   const [categories, setCategories] = useState<CookieCategory[]>([]);
   const [loading, setLoading] = useState(true);
   const [form, setForm] = useState(emptyForm);
@@ -57,15 +60,15 @@ export default function CookieCategoryList() {
         setShowForm(false);
         loadCategories();
       } else {
-        setError(typeof data.error === 'string' ? data.error : 'Failed to save');
+        setError(typeof data.error === 'string' ? data.error : t('messages.failed_to_save'));
       }
     } catch {
-      setError('Network error');
+      setError(t('messages.network_error'));
     }
   }
 
   async function handleDelete(id: string) {
-    if (!confirm('Delete this cookie category?')) return;
+    if (!confirm(t('messages.delete_this_cookie_category'))) return;
     try {
       const res = await fetch(`/api/legal/cookie-categories/${id}`, {
         method: 'DELETE',
@@ -89,17 +92,17 @@ export default function CookieCategoryList() {
     setShowForm(true);
   }
 
-  if (loading) return <div className="p-6 text-gray-500">Loading...</div>;
+  if (loading) return <div className="p-6 text-gray-500">{t('pages.cookie_category_list.loading')}</div>;
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Cookie Categories</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t('pages.cookie_category_list.cookie_categories')}</h1>
         <button
           onClick={() => { setForm(emptyForm); setEditingId(null); setShowForm(!showForm); }}
           className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700"
         >
-          {showForm ? 'Cancel' : 'Add Category'}
+          {showForm ? t('pages.cookie_category_list.cancel') : t('pages.cookie_category_list.add_category')}
         </button>
       </div>
 
@@ -110,30 +113,30 @@ export default function CookieCategoryList() {
           )}
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Name (slug)</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.cookie_category_list.name_slug')}</label>
               <input
                 type="text"
                 value={form.name}
                 onChange={(e) => setForm({ ...form, name: e.target.value })}
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                placeholder="e.g. analytics"
+                placeholder={t('pages.cookie_category_list.e_g_analytics')}
               />
             </div>
             <div>
-              <label className="block text-sm font-medium text-gray-700 mb-1">Label</label>
+              <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.cookie_category_list.label')}</label>
               <input
                 type="text"
                 value={form.label}
                 onChange={(e) => setForm({ ...form, label: e.target.value })}
                 required
                 className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-                placeholder="e.g. Analytics Cookies"
+                placeholder={t('pages.cookie_category_list.e_g_analytics_cookies')}
               />
             </div>
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Description</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.cookie_category_list.description')}</label>
             <textarea
               value={form.description}
               onChange={(e) => setForm({ ...form, description: e.target.value })}
@@ -150,7 +153,8 @@ export default function CookieCategoryList() {
                 onChange={(e) => setForm({ ...form, isRequired: e.target.checked })}
                 className="h-4 w-4 rounded border-gray-300 text-primary-600"
               />
-              Required (cannot be disabled by user)
+
+              {t('pages.cookie_category_list.required_cannot_be_disabled_by_user')}
             </label>
             <label className="flex items-center gap-2 text-sm">
               <input
@@ -159,10 +163,11 @@ export default function CookieCategoryList() {
                 onChange={(e) => setForm({ ...form, isActive: e.target.checked })}
                 className="h-4 w-4 rounded border-gray-300 text-primary-600"
               />
-              Active
+
+              {t('pages.cookie_category_list.active')}
             </label>
             <div className="flex items-center gap-2">
-              <label className="text-sm font-medium text-gray-700">Sort Order</label>
+              <label className="text-sm font-medium text-gray-700">{t('pages.cookie_category_list.sort_order')}</label>
               <input
                 type="number"
                 value={form.sortOrder}
@@ -176,7 +181,7 @@ export default function CookieCategoryList() {
               type="submit"
               className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700"
             >
-              {editingId ? 'Update' : 'Create'}
+              {editingId ? t('pages.cookie_category_list.update') : t('pages.cookie_category_list.create')}
             </button>
           </div>
         </form>
@@ -186,12 +191,12 @@ export default function CookieCategoryList() {
         <table className="w-full text-sm">
           <thead className="bg-gray-50 text-gray-500 uppercase text-xs">
             <tr>
-              <th className="px-6 py-3 text-left">Name</th>
-              <th className="px-6 py-3 text-left">Label</th>
-              <th className="px-6 py-3 text-left">Description</th>
-              <th className="px-6 py-3 text-center">Required</th>
-              <th className="px-6 py-3 text-center">Active</th>
-              <th className="px-6 py-3 text-right">Actions</th>
+              <th className="px-6 py-3 text-left">{t('pages.cookie_category_list.name')}</th>
+              <th className="px-6 py-3 text-left">{t('pages.cookie_category_list.label')}</th>
+              <th className="px-6 py-3 text-left">{t('pages.cookie_category_list.description')}</th>
+              <th className="px-6 py-3 text-center">{t('pages.cookie_category_list.required')}</th>
+              <th className="px-6 py-3 text-center">{t('pages.cookie_category_list.active')}</th>
+              <th className="px-6 py-3 text-right">{t('pages.cookie_category_list.actions')}</th>
             </tr>
           </thead>
           <tbody className="divide-y divide-gray-100">
@@ -202,16 +207,16 @@ export default function CookieCategoryList() {
                 <td className="px-6 py-4 text-gray-500 max-w-xs truncate">{cat.description}</td>
                 <td className="px-6 py-4 text-center">
                   {cat.isRequired ? (
-                    <span className="text-green-600 font-medium">Yes</span>
+                    <span className="text-green-600 font-medium">{t('pages.cookie_category_list.yes')}</span>
                   ) : (
-                    <span className="text-gray-400">No</span>
+                    <span className="text-gray-400">{t('pages.cookie_category_list.no')}</span>
                   )}
                 </td>
                 <td className="px-6 py-4 text-center">
                   {cat.isActive ? (
-                    <span className="text-green-600 font-medium">Yes</span>
+                    <span className="text-green-600 font-medium">{t('pages.cookie_category_list.yes')}</span>
                   ) : (
-                    <span className="text-red-500">No</span>
+                    <span className="text-red-500">{t('pages.cookie_category_list.no')}</span>
                   )}
                 </td>
                 <td className="px-6 py-4 text-right space-x-3">
@@ -219,13 +224,15 @@ export default function CookieCategoryList() {
                     onClick={() => startEdit(cat)}
                     className="text-primary-600 hover:text-primary-700 font-medium"
                   >
-                    Edit
+
+                    {t('pages.cookie_category_list.edit')}
                   </button>
                   <button
                     onClick={() => handleDelete(cat.id)}
                     className="text-red-500 hover:text-red-600 font-medium"
                   >
-                    Delete
+
+                    {t('pages.cookie_category_list.delete')}
                   </button>
                 </td>
               </tr>
@@ -233,7 +240,8 @@ export default function CookieCategoryList() {
             {categories.length === 0 && (
               <tr>
                 <td colSpan={6} className="px-6 py-8 text-center text-gray-500">
-                  No cookie categories yet.
+
+                  {t('pages.cookie_category_list.no_cookie_categories_yet')}
                 </td>
               </tr>
             )}

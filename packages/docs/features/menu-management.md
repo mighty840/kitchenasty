@@ -42,7 +42,10 @@ Set `parentId` when creating a child category.
 | `name` | Item name |
 | `slug` | URL-friendly identifier (unique) |
 | `description` | Item description |
-| `price` | Base price |
+| `price` | Base price including tax |
+| `taxRate` | Item-specific percentage (0-100), default 8; included in price |
+| `surchargeEnabled` | Automatically charge a per-unit surcharge, default false |
+| `surchargeAmount` | Non-negative surcharge per unit, not taxed, default 0 |
 | `image` | Uploaded image path |
 | `isActive` | Show/hide on storefront |
 | `sortOrder` | Display order within category |
@@ -51,6 +54,20 @@ Set `parentId` when creating a child category.
 | `orderType` | Restrict to `DELIVERY` or `PICKUP` only (null = both) |
 | `categoryId` | Parent category |
 | `locationId` | Scope to a specific location (optional) |
+
+### Taxes and packaging/container surcharges
+
+Set each item's tax rate and enable or disable its surcharge in the menu item form.
+An enabled surcharge is mandatory for the customer and applies to every unit for both delivery and pickup.
+Disabling it retains the configured amount but stops charging it. The item's tax rate
+is already included in the base price and selected option modifiers.
+The packaging/container surcharge is not taxed and is excluded from the tax base.
+Tax is extracted for reporting, never added to these prices again.
+
+Existing menu items retain an 8% rate and have no surcharge after migration.
+Stored menu prices are not increased or converted; they are treated as tax-inclusive.
+Order items snapshot their applied `taxRate` and per-unit `surchargeAmount`, so later
+menu edits do not change existing orders.
 
 ## 🎛️ Menu Options
 

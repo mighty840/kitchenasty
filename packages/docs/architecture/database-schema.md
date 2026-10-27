@@ -66,7 +66,7 @@ The database schema is defined in `prisma/schema.prisma` using Prisma ORM. It ta
 | `Role` | `SUPER_ADMIN`, `MANAGER`, `STAFF` |
 | `OrderType` | `DELIVERY`, `PICKUP` |
 | `OrderStatus` | `PENDING`, `CONFIRMED`, `PREPARING`, `READY`, `OUT_FOR_DELIVERY`, `DELIVERED`, `PICKED_UP`, `CANCELLED` |
-| `PaymentMethod` | `CASH`, `STRIPE`, `PAYPAL` |
+| `PaymentMethod` | `CASH`, `STRIPE`, `PAYPAL`, `PAYU` |
 | `PaymentStatus` | `PENDING`, `COMPLETED`, `FAILED`, `REFUNDED` |
 | `ReservationStatus` | `PENDING`, `CONFIRMED`, `SEATED`, `COMPLETED`, `CANCELLED` |
 | `CouponType` | `PERCENTAGE`, `FIXED`, `FREE_DELIVERY` |

@@ -1,4 +1,5 @@
 import React, { createContext, useContext, useState, useCallback } from 'react';
+import { calculateCartTotals } from '@kitchenasty/shared';
 
 export interface CartItemOption {
   optionId: string;
@@ -13,6 +14,9 @@ export interface CartItem {
   menuItemId: string;
   name: string;
   price: number;
+  taxRate: number;
+  surchargeEnabled: boolean;
+  surchargeAmount: number;
   quantity: number;
   options: CartItemOption[];
   comment?: string;
@@ -28,6 +32,7 @@ interface CartContextType {
   clear: () => void;
   itemCount: number;
   subtotal: number;
+  tax: number;
 }
 
 const CartContext = createContext<CartContextType | null>(null);
@@ -61,13 +66,10 @@ export function CartProvider({ children }: { children: React.ReactNode }) {
 
   const itemCount = items.reduce((sum, i) => sum + i.quantity, 0);
 
-  const subtotal = items.reduce((sum, item) => {
-    const optionsTotal = item.options.reduce((s, o) => s + o.priceModifier, 0);
-    return sum + (item.price + optionsTotal) * item.quantity;
-  }, 0);
+  const { subtotal, tax } = calculateCartTotals(items);
 
   return (
-    <CartContext.Provider value={{ items, isOpen, setIsOpen, addItem, updateQuantity, removeItem, clear, itemCount, subtotal }}>
+    <CartContext.Provider value={{ items, isOpen, setIsOpen, addItem, updateQuantity, removeItem, clear, itemCount, subtotal, tax }}>
       {children}
     </CartContext.Provider>
   );

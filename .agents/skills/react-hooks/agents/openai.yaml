@@ -1,0 +1,4 @@
+interface:
+  display_name: "React Hooks"
+  short_description: "React Hooks including useState, useEffect, useContext…"
+  default_prompt: "Use $react-hooks to help with my current task: Provides comprehensive guidance for React Hooks including useState, useEffect, useContext, useReducer, useMemo, useCallback, custom hooks, and hook patterns."

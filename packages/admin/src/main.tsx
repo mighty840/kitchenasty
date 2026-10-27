@@ -2,6 +2,7 @@ import React from 'react';
 import ReactDOM from 'react-dom/client';
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider, useAuth } from './context/AuthContext.js';
+import { CurrencyProvider } from './context/CurrencyContext.js';
 import AdminLayout from './components/AdminLayout.js';
 import RequireRole from './components/RequireRole.js';
 import Login from './pages/Login.js';
@@ -51,14 +52,18 @@ import SettingsPayments from './pages/SettingsPayments.js';
 import SettingsReviews from './pages/SettingsReviews.js';
 import SettingsAdvanced from './pages/SettingsAdvanced.js';
 import './index.css';
+import './i18n/index.js';
+import { useTranslation } from 'react-i18next';
 
 function AppRoutes() {
+  const { t } = useTranslation();
   const { token, user, loading, login, logout } = useAuth();
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-900 flex items-center justify-center">
-        <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" />
+      <div className="min-h-screen bg-gray-900 flex items-center justify-center" role="status" aria-label={t('common.loading')}>
+        <span className="sr-only">{t('common.loading')}</span>
+        <div className="w-8 h-8 border-4 border-primary-200 border-t-primary-600 rounded-full animate-spin" aria-hidden="true" />
       </div>
     );
   }
@@ -146,7 +151,9 @@ function App() {
   return (
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <AuthProvider>
-        <AppRoutes />
+        <CurrencyProvider>
+          <AppRoutes />
+        </CurrencyProvider>
       </AuthProvider>
     </BrowserRouter>
   );

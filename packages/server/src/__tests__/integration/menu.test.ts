@@ -49,6 +49,9 @@ const sampleMenuItem = {
   slug: 'caesar-salad',
   description: 'Classic caesar',
   price: 12.99,
+  taxRate: 8,
+  surchargeEnabled: false,
+  surchargeAmount: 0,
   image: null,
   isActive: true,
   sortOrder: 0,
@@ -263,6 +266,9 @@ describe('Menu API - Integration Tests', () => {
       expect(res.status).toBe(200);
       expect(res.body.data.name).toBe('Caesar Salad');
       expect(res.body.data.price).toBe(12.99);
+      expect(res.body.data.taxRate).toBe(8);
+      expect(res.body.data.surchargeEnabled).toBe(false);
+      expect(res.body.data.surchargeAmount).toBe(0);
     });
 
     it('returns 404 for unknown id', async () => {
@@ -305,6 +311,9 @@ describe('Menu API - Integration Tests', () => {
 
       expect(res.status).toBe(201);
       expect(res.body.success).toBe(true);
+      expect(mockedPrisma.menuItem.create.mock.calls[0][0].data).toEqual(expect.objectContaining({
+        taxRate: 8, surchargeEnabled: false, surchargeAmount: 0,
+      }));
     });
 
     it('returns 409 for duplicate slug', async () => {
@@ -332,6 +341,26 @@ describe('Menu API - Integration Tests', () => {
   });
 
   describe('PATCH /api/menu/items/:id', () => {
+    it('updates an individual tax rate and surcharge', async () => {
+      const pricing = { taxRate: 19, surchargeEnabled: true, surchargeAmount: 0.5 };
+      mockedPrisma.menuItem.findUnique.mockResolvedValue(sampleMenuItem as any);
+      mockedPrisma.menuItem.update.mockResolvedValue({ ...sampleMenuItem, ...pricing } as any);
+      const res = await request(app).patch('/api/menu/items/item-1')
+        .set('Authorization', `Bearer ${managerToken}`).send(pricing);
+      expect(res.status).toBe(200);
+      expect(mockedPrisma.menuItem.update.mock.calls[0][0].data).toEqual(expect.objectContaining(pricing));
+    });
+
+    it.each([
+      { taxRate: -1 }, { taxRate: 101 }, { taxRate: '7' },
+      { surchargeAmount: -0.01 }, { surchargeEnabled: 'true' },
+    ])('rejects invalid pricing %j', async (pricing) => {
+      const res = await request(app).patch('/api/menu/items/item-1')
+        .set('Authorization', `Bearer ${managerToken}`).send(pricing);
+      expect(res.status).toBe(400);
+      expect(mockedPrisma.menuItem.update).not.toHaveBeenCalled();
+    });
+
     it('updates item price', async () => {
       mockedPrisma.menuItem.findUnique.mockResolvedValue(sampleMenuItem as any);
       mockedPrisma.menuItem.update.mockResolvedValue({
@@ -350,6 +379,10 @@ describe('Menu API - Integration Tests', () => {
 
       expect(res.status).toBe(200);
       expect(res.body.data.price).toBe(14.99);
+      const data = mockedPrisma.menuItem.update.mock.calls[0][0].data;
+      expect(data).not.toHaveProperty('taxRate');
+      expect(data).not.toHaveProperty('surchargeEnabled');
+      expect(data).not.toHaveProperty('surchargeAmount');
     });
 
     it('returns 404 for unknown id', async () => {

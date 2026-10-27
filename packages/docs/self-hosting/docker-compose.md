@@ -42,6 +42,13 @@ CORS_ORIGINS=https://admin.yourdomain.com,https://order.yourdomain.com
 STRIPE_SECRET_KEY=
 STRIPE_WEBHOOK_SECRET=
 
+# ── 🇪🇺 PayU Europe (optional) ───────────────────────────
+PAYU_POS_ID=
+PAYU_CLIENT_SECRET=
+PAYU_SECOND_KEY=
+PAYU_SANDBOX=true
+PAYU_NOTIFY_URL=
+
 # ── 📧 Email (optional) ─────────────────────────────────
 SMTP_HOST=
 SMTP_PORT=587
@@ -109,6 +116,11 @@ services:
       STOREFRONT_URL: https://${STOREFRONT_DOMAIN}
       STRIPE_SECRET_KEY: ${STRIPE_SECRET_KEY}
       STRIPE_WEBHOOK_SECRET: ${STRIPE_WEBHOOK_SECRET}
+      PAYU_POS_ID: ${PAYU_POS_ID}
+      PAYU_CLIENT_SECRET: ${PAYU_CLIENT_SECRET}
+      PAYU_SECOND_KEY: ${PAYU_SECOND_KEY}
+      PAYU_SANDBOX: ${PAYU_SANDBOX:-true}
+      PAYU_NOTIFY_URL: ${PAYU_NOTIFY_URL}
       SMTP_HOST: ${SMTP_HOST}
       SMTP_PORT: ${SMTP_PORT}
       SMTP_USER: ${SMTP_USER}

@@ -1,7 +1,10 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 
+import { useTranslation } from 'react-i18next';
+
 export default function LegalPageForm() {
+  const { t } = useTranslation();
   const { slug } = useParams<{ slug: string }>();
   const navigate = useNavigate();
   const token = localStorage.getItem('token') || '';
@@ -45,26 +48,27 @@ export default function LegalPageForm() {
       if (data.success) {
         navigate('/legal/pages');
       } else {
-        setError(typeof data.error === 'string' ? data.error : 'Failed to save');
+        setError(typeof data.error === 'string' ? data.error : t('messages.failed_to_save'));
       }
     } catch {
-      setError('Network error');
+      setError(t('messages.network_error'));
     } finally {
       setSaving(false);
     }
   }
 
-  if (loading) return <div className="p-6 text-gray-500">Loading...</div>;
+  if (loading) return <div className="p-6 text-gray-500">{t('pages.legal_page_form.loading')}</div>;
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h1 className="text-2xl font-bold text-gray-900">Edit Legal Page</h1>
+        <h1 className="text-2xl font-bold text-gray-900">{t('pages.legal_page_form.edit_legal_page')}</h1>
         <button
           onClick={() => navigate('/legal/pages')}
           className="text-sm text-gray-500 hover:text-gray-700"
         >
-          Back to list
+
+          {t('pages.legal_page_form.back_to_list')}
         </button>
       </div>
 
@@ -76,7 +80,7 @@ export default function LegalPageForm() {
 
       <form onSubmit={handleSubmit} className="bg-white rounded-lg border border-gray-200 p-6 space-y-4">
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Slug</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.legal_page_form.slug')}</label>
           <input
             type="text"
             value={slug}
@@ -85,7 +89,7 @@ export default function LegalPageForm() {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Title</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.legal_page_form.title')}</label>
           <input
             type="text"
             value={title}
@@ -95,7 +99,7 @@ export default function LegalPageForm() {
           />
         </div>
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Content (Markdown)</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.legal_page_form.content_markdown')}</label>
           <textarea
             value={content}
             onChange={(e) => setContent(e.target.value)}
@@ -110,7 +114,7 @@ export default function LegalPageForm() {
             disabled={saving}
             className="px-4 py-2 bg-primary-600 text-white rounded-lg text-sm font-medium hover:bg-primary-700 disabled:opacity-50"
           >
-            {saving ? 'Saving...' : 'Save'}
+            {saving ? t('pages.legal_page_form.saving') : t('pages.legal_page_form.save')}
           </button>
         </div>
       </form>

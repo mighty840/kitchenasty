@@ -2,7 +2,7 @@
  * Translation script using Ollama (OpenAI-compatible API).
  * Translates en.json into target locales using a local LLM.
  *
- * Usage: npx tsx scripts/translate.ts [--locales fr,de,it,pt] [--model llama3.1]
+ * Usage: npx tsx scripts/translate.ts [--locales fr,de,it,pt,pl,ru] [--model llama3.1]
  */
 
 import { readFileSync, writeFileSync } from 'fs';
@@ -21,6 +21,8 @@ const LANGUAGE_NAMES: Record<string, string> = {
   it: 'Italian',
   pt: 'Portuguese',
   es: 'Spanish',
+  ru: 'Russian',
+  pl: 'Polish',
 };
 
 type TranslationObject = Record<string, string | TranslationObject>;
@@ -131,7 +133,7 @@ async function translateLocale(targetLang: string) {
 
 async function main() {
   const args = process.argv.slice(2);
-  let locales = ['fr', 'de', 'it', 'pt'];
+  let locales = ['fr', 'de', 'it', 'pt', 'pl', 'ru'];
 
   const localeIdx = args.indexOf('--locales');
   if (localeIdx !== -1 && args[localeIdx + 1]) {

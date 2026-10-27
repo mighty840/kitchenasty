@@ -49,6 +49,8 @@ Authorization: Bearer <manager-token>
 
 **Request:**
 
+The admin form generates ASCII slugs from names, removing diacritics (for example, `Górnicza` becomes `gornicza` and `Łódź` becomes `lodz`). The same behavior applies to category and menu item forms. Existing slugs are not automatically changed when editing.
+
 ```json
 {
   "name": "Uptown Kitchen",
@@ -67,6 +69,8 @@ Authorization: Bearer <manager-token>
 ```
 
 ## ✏️ Update Location
+
+The `email` field is optional when creating or updating a location. Use an empty string (`""`) to leave it blank or clear an existing address. Non-empty values must be valid email addresses.
 
 ```
 PATCH /api/locations/:id

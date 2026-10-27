@@ -106,6 +106,45 @@ Authorization: Bearer <token> (optional)
 
 Called after the customer approves payment on PayPal.
 
+## 🇪🇺 Create PayU Europe Payment
+
+```
+POST /api/payments/payu/create
+Authorization: Bearer <customer-token> (optional)
+```
+
+**Request:**
+
+```json
+{
+  "orderId": "order-id"
+}
+```
+
+The server creates an order through PayU Europe REST API v2.1 and returns its hosted payment URL:
+
+```json
+{
+  "success": true,
+  "data": {
+    "url": "https://secure.snd.payu.com/...",
+    "payuOrderId": "PAYU-ORDER-ID"
+  }
+}
+```
+
+Redirect the buyer to `data.url`. Payment status is updated asynchronously from PayU notifications; do not treat the browser redirect alone as proof of payment.
+
+## 🔔 PayU Europe Notifications
+
+```
+POST /api/payments/payu/notify
+Content-Type: application/json
+OpenPayu-Signature: ...
+```
+
+Configure this URL as the `notifyUrl` for PayU orders. The server verifies the signature with the PayU second key, marks `COMPLETED` orders as paid, and acknowledges valid notifications with HTTP `200`.
+
 ## 🔒 Permissions Summary
 
 | Action | Required Role |
@@ -114,3 +153,5 @@ Called after the customer approves payment on PayPal.
 | 🔔 Stripe webhook | Stripe (signature verified) |
 | 💵 Mark cash payment | Staff |
 | 🅿️ Create/capture PayPal | Customer or guest |
+| 🇪🇺 Create PayU payment | Customer or guest |
+| 🔔 PayU notification | PayU signature verified |

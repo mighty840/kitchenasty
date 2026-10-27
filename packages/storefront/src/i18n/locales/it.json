@@ -1,4 +1,10 @@
 {
+  "pricing": {
+    "surcharge": "Supplemento imballaggio/contenitore",
+    "unit": "unità",
+    "taxIncluded": "Include {{rate}}% di imposte",
+    "includedTax": "Imposta inclusa"
+  },
   "common": {
     "loading": "Caricamento...",
     "error": "Si è verificato un errore",
@@ -145,8 +151,11 @@
     "apply": "Applica",
     "couponApplied": "Codice sconto applicato!",
     "paymentMethod": "Metodo di Pagamento",
+    "paymentMethodsUnavailable": "Impossibile caricare le opzioni di pagamento. Riprova.",
+    "noPaymentMethods": "Nessun metodo di pagamento è attualmente disponibile. Contatta il ristorante.",
     "creditCard": "Carta di Credito (Stripe)",
     "cashOnDelivery": "Pagamento alla consegna",
+    "payu": "PayU",
     "orderSummary": "Riepilogo Ordine",
     "subtotal": "Subtotale",
     "tax": "IVA",

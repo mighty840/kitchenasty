@@ -5,8 +5,9 @@ import { useTranslation } from 'react-i18next';
 import { useCartStore } from '@/store/cart.store';
 import { useAuthStore } from '@/store/auth.store';
 import { orderApi, loyaltyApi, locationApi } from '@/api/endpoints';
-import { formatCurrency } from '@/lib/formatters';
-import { TAX_RATE, DEFAULT_DELIVERY_FEE } from '@/lib/constants';
+import { formatCurrency, useCurrency } from '@/lib/formatters';
+import { DEFAULT_DELIVERY_FEE } from '@/lib/constants';
+import { calculateCartTotals, roundMoney } from '@kitchenasty/shared';
 import Button from '@/components/ui/Button';
 import TextInput from '@/components/ui/TextInput';
 import EmptyState from '@/components/ui/EmptyState';
@@ -16,9 +17,10 @@ type PaymentMethod = 'cash' | 'stripe';
 
 export default function CheckoutScreen() {
   const { t } = useTranslation();
+  useCurrency();
   const router = useRouter();
   const items = useCartStore((s) => s.items);
-  const subtotal = useCartStore((s) => s.subtotal());
+  const { subtotal, tax } = calculateCartTotals(items);
   const clearCart = useCartStore((s) => s.clear);
   const user = useAuthStore((s) => s.user);
   const token = useAuthStore((s) => s.token);
@@ -45,8 +47,7 @@ export default function CheckoutScreen() {
   const [isBusy, setIsBusy] = useState(false);
 
   const deliveryFee = orderType === 'delivery' ? DEFAULT_DELIVERY_FEE : 0;
-  const tax = subtotal * TAX_RATE;
-  const total = subtotal + tax + deliveryFee - loyaltyDiscount;
+  const total = roundMoney(subtotal + deliveryFee - loyaltyDiscount);
 
   useEffect(() => {
     locationApi
@@ -298,7 +299,7 @@ export default function CheckoutScreen() {
         })}
         <View className="border-t border-gray-100 mt-2 pt-2">
           <SummaryRow label={t('checkout.subtotal')} value={formatCurrency(subtotal)} />
-          <SummaryRow label={t('checkout.tax')} value={formatCurrency(tax)} />
+          <SummaryRow label={t('pricing.includedTax')} value={formatCurrency(tax)} />
           {orderType === 'delivery' && (
             <SummaryRow label={t('checkout.deliveryFee')} value={formatCurrency(deliveryFee)} />
           )}

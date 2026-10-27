@@ -3,6 +3,7 @@ import { z } from 'zod';
 import nodemailer from 'nodemailer';
 import prisma from '../lib/db.js';
 import { auditLog } from '../lib/audit.js';
+import { resolveCurrency } from '@kitchenasty/shared';
 
 const updateSettingsSchema = z.object({
   siteName: z.string().min(1).optional(),
@@ -56,6 +57,7 @@ function toPublicSettings(settings: Awaited<ReturnType<typeof getOrCreateSetting
     heroSection: settings.heroSection,
     featuresSection: settings.featuresSection,
     ctaSection: settings.ctaSection,
+    currency: resolveCurrency(settings.generalSettings as Record<string, any> | null),
     createdAt: settings.createdAt,
     updatedAt: settings.updatedAt,
   };
@@ -219,6 +221,11 @@ const paymentSettingsSchema = z.object({
   paypalClientId: z.string().optional(),
   paypalClientSecret: z.string().optional(),
   paypalSandbox: z.boolean().optional(),
+  payuEnabled: z.boolean().optional(),
+  payuPosId: z.string().optional(),
+  payuClientSecret: z.string().optional(),
+  payuSecondKey: z.string().optional(),
+  payuSandbox: z.boolean().optional(),
   cashEnabled: z.boolean().optional(),
 });
 
@@ -378,6 +385,8 @@ export async function getPaymentSettings(_req: Request, res: Response): Promise<
       stripeSecretKey: maskSecret(data.stripeSecretKey),
       stripeWebhookSecret: maskSecret(data.stripeWebhookSecret),
       paypalClientSecret: maskSecret(data.paypalClientSecret),
+      payuClientSecret: maskSecret(data.payuClientSecret),
+      payuSecondKey: maskSecret(data.payuSecondKey),
     },
   });
 }
@@ -395,6 +404,8 @@ export async function updatePaymentSettings(req: Request, res: Response): Promis
     stripeSecretKey: preserveIfMasked(parsed.data.stripeSecretKey, existing.stripeSecretKey),
     stripeWebhookSecret: preserveIfMasked(parsed.data.stripeWebhookSecret, existing.stripeWebhookSecret),
     paypalClientSecret: preserveIfMasked(parsed.data.paypalClientSecret, existing.paypalClientSecret),
+    payuClientSecret: preserveIfMasked(parsed.data.payuClientSecret, existing.payuClientSecret),
+    payuSecondKey: preserveIfMasked(parsed.data.payuSecondKey, existing.payuSecondKey),
   };
 
   const data = await updateSettingsGroup('paymentSettings', mergedData);
@@ -405,6 +416,8 @@ export async function updatePaymentSettings(req: Request, res: Response): Promis
       stripeSecretKey: maskSecret(data.stripeSecretKey),
       stripeWebhookSecret: maskSecret(data.stripeWebhookSecret),
       paypalClientSecret: maskSecret(data.paypalClientSecret),
+      payuClientSecret: maskSecret(data.payuClientSecret),
+      payuSecondKey: maskSecret(data.payuSecondKey),
     },
   });
 }

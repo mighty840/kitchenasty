@@ -1,5 +1,7 @@
 import { useState, useEffect } from 'react';
 
+import { useTranslation } from 'react-i18next';
+
 interface TemplateDef {
   id: string;
   name: string;
@@ -295,6 +297,7 @@ const previewComponents: Record<string, React.FC> = {
 /* ── Main page ──────────────────────────────────────────────── */
 
 export default function DesignTemplates() {
+  const { t } = useTranslation();
   const token = localStorage.getItem('token') || '';
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState<string | null>(null);
@@ -327,26 +330,28 @@ export default function DesignTemplates() {
       const data = await res.json();
       if (data.success) {
         setCurrent(id);
-        setSuccess(`Template "${templates.find((t) => t.id === id)?.name}" applied successfully`);
+        setSuccess(t('messages.template_applied_successfully', {
+          name: templates.find((template) => template.id === id)?.name ?? '',
+        }));
         setTimeout(() => setSuccess(''), 3000);
       } else {
-        setError(typeof data.error === 'string' ? data.error : 'Failed to apply template');
+        setError(typeof data.error === 'string' ? data.error : t('messages.failed_to_apply_template'));
       }
     } catch {
-      setError('Network error');
+      setError(t('messages.network_error'));
     } finally {
       setSaving(null);
     }
   }
 
-  if (loading) return <div className="p-6 text-gray-500">Loading...</div>;
+  if (loading) return <div className="p-6 text-gray-500">{t('pages.design_templates.loading')}</div>;
 
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
         <div>
-          <h1 className="text-2xl font-bold text-gray-900">Templates</h1>
-          <p className="text-sm text-gray-500 mt-1">Choose a storefront layout template. This changes the header, hero, features, CTA, and footer style.</p>
+          <h1 className="text-2xl font-bold text-gray-900">{t('pages.design_templates.templates')}</h1>
+          <p className="text-sm text-gray-500 mt-1">{t('pages.design_templates.choose_a_storefront_layout_template_this_changes_the_h')}</p>
         </div>
       </div>
 
@@ -391,7 +396,7 @@ export default function DesignTemplates() {
                 <div className="flex items-center justify-between mb-1">
                   <h3 className="text-sm font-semibold text-gray-900">{tpl.name}</h3>
                   {isActive && (
-                    <span className="text-[10px] font-medium text-primary-600 bg-primary-50 px-1.5 py-0.5 rounded-full">Active</span>
+                    <span className="text-[10px] font-medium text-primary-600 bg-primary-50 px-1.5 py-0.5 rounded-full">{t('pages.design_templates.active')}</span>
                   )}
                 </div>
                 <p className="text-xs text-gray-500 leading-relaxed mb-3">{tpl.description}</p>
@@ -404,7 +409,7 @@ export default function DesignTemplates() {
                       : 'bg-primary-600 text-white hover:bg-primary-700 disabled:opacity-50'
                   }`}
                 >
-                  {isSaving ? 'Applying...' : isActive ? 'Current Template' : 'Apply Template'}
+                  {isSaving ? t('pages.design_templates.applying') : isActive ? t('pages.design_templates.current_template') : t('pages.design_templates.apply_template')}
                 </button>
               </div>
             </div>

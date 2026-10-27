@@ -2,9 +2,11 @@ import { useState, useEffect } from 'react';
 import { useAuth } from '../context/AuthContext.js';
 import { Navigate, Link } from 'react-router-dom';
 import { useTranslation } from 'react-i18next';
+import { useCurrency } from '../hooks/useCurrency.js';
 
 export default function Account() {
   const { t } = useTranslation();
+  const { format } = useCurrency();
   const { user, token, isLoading, logout } = useAuth();
   const [loyaltyPoints, setLoyaltyPoints] = useState<number | null>(null);
 
@@ -64,7 +66,7 @@ export default function Account() {
             <h2 className="text-lg font-semibold text-gray-900 mb-2">Loyalty Points</h2>
             <div className="flex items-baseline gap-3">
               <span className="text-3xl font-bold text-primary-600">{loyaltyPoints}</span>
-              <span className="text-sm text-gray-500">points (${(loyaltyPoints / 100).toFixed(2)} value)</span>
+              <span className="text-sm text-gray-500">points ({format(loyaltyPoints / 100)} value)</span>
             </div>
             <p className="text-xs text-gray-400 mt-1">Earn 1 point per $1 spent. 100 points = $1 off your order.</p>
           </div>

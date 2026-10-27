@@ -1,7 +1,12 @@
 import { useState, useEffect } from 'react';
 import { useParams, useNavigate, Link } from 'react-router-dom';
 
+import { useTranslation } from 'react-i18next';
+import { useCurrency } from '../context/CurrencyContext.js';
+
 export default function CouponForm() {
+  const { t } = useTranslation();
+  const { currency } = useCurrency();
   const { id } = useParams();
   const navigate = useNavigate();
   const isEdit = Boolean(id);
@@ -29,7 +34,7 @@ export default function CouponForm() {
       headers: { Authorization: `Bearer ${token}` },
     })
       .then((res) => {
-        if (!res.ok) throw new Error('Failed to load coupon');
+        if (!res.ok) throw new Error(t('messages.failed_to_load_coupon'));
         return res.json();
       })
       .then((data) => {
@@ -47,7 +52,7 @@ export default function CouponForm() {
       })
       .catch((err) => setError(err.message))
       .finally(() => setLoading(false));
-  }, [id, token]);
+  }, [id, token, t]);
 
   async function handleSubmit(e: React.FormEvent) {
     e.preventDefault();
@@ -75,7 +80,7 @@ export default function CouponForm() {
         body: JSON.stringify(body),
       });
       const data = await res.json();
-      if (!res.ok) throw new Error(typeof data.error === 'string' ? data.error : 'Failed to save');
+      if (!res.ok) throw new Error(typeof data.error === 'string' ? data.error : t('messages.failed_to_save'));
       navigate('/coupons');
     } catch (err: any) {
       setError(err.message);
@@ -101,32 +106,32 @@ export default function CouponForm() {
           </svg>
         </Link>
         <h1 className="text-2xl font-bold text-gray-900">
-          {isEdit ? 'Edit Coupon' : 'New Coupon'}
+          {isEdit ? t('pages.coupon_form.edit_coupon') : t('pages.coupon_form.new_coupon')}
         </h1>
       </div>
 
       <form onSubmit={handleSubmit} className="bg-white rounded-xl shadow-sm border border-gray-200 p-6 space-y-4">
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Code</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.coupon_form.code')}</label>
             <input
               value={code}
               onChange={(e) => setCode(e.target.value.toUpperCase())}
-              placeholder="SAVE20"
+              placeholder={t('pages.coupon_form.save20')}
               required
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none font-mono"
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Type</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.coupon_form.type')}</label>
             <select
               value={type}
               onChange={(e) => setType(e.target.value)}
               className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
             >
-              <option value="PERCENTAGE">Percentage Off</option>
-              <option value="FIXED">Fixed Amount Off</option>
-              <option value="FREE_DELIVERY">Free Delivery</option>
+              <option value="PERCENTAGE">{t('pages.coupon_form.percentage_off')}</option>
+              <option value="FIXED">{t('pages.coupon_form.fixed_amount_off')}</option>
+              <option value="FREE_DELIVERY">{t('pages.coupon_form.free_delivery')}</option>
             </select>
           </div>
         </div>
@@ -135,7 +140,8 @@ export default function CouponForm() {
           <div className="grid grid-cols-2 gap-4">
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1">
-                Value {type === 'PERCENTAGE' ? '(%)' : '($)'}
+
+                {t('pages.coupon_form.value')} {type === 'PERCENTAGE' ? '(%)' : `(${currency.symbol})`}
               </label>
               <input
                 type="number"
@@ -148,14 +154,14 @@ export default function CouponForm() {
             </div>
             {type === 'PERCENTAGE' && (
               <div>
-                <label className="block text-sm font-medium text-gray-700 mb-1">Max Discount ($)</label>
+                <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.coupon_form.max_discount')}</label>
                 <input
                   type="number"
                   step="0.01"
                   min="0"
                   value={maxDiscount}
                   onChange={(e) => setMaxDiscount(e.target.value)}
-                  placeholder="No cap"
+                  placeholder={t('pages.coupon_form.no_cap')}
                   className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
                 />
               </div>
@@ -165,7 +171,7 @@ export default function CouponForm() {
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Min Order ($)</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.coupon_form.min_order')}</label>
             <input
               type="number"
               step="0.01"
@@ -176,7 +182,7 @@ export default function CouponForm() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Per Customer Limit</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.coupon_form.per_customer_limit')}</label>
             <input
               type="number"
               min="1"
@@ -188,20 +194,20 @@ export default function CouponForm() {
         </div>
 
         <div>
-          <label className="block text-sm font-medium text-gray-700 mb-1">Total Usage Limit</label>
+          <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.coupon_form.total_usage_limit')}</label>
           <input
             type="number"
             min="1"
             value={usageLimit}
             onChange={(e) => setUsageLimit(e.target.value)}
-            placeholder="Unlimited"
+            placeholder={t('pages.coupon_form.unlimited')}
             className="w-full px-3 py-2 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-primary-500 outline-none"
           />
         </div>
 
         <div className="grid grid-cols-2 gap-4">
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Valid From</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.coupon_form.valid_from')}</label>
             <input
               type="date"
               value={startsAt}
@@ -210,7 +216,7 @@ export default function CouponForm() {
             />
           </div>
           <div>
-            <label className="block text-sm font-medium text-gray-700 mb-1">Valid Until</label>
+            <label className="block text-sm font-medium text-gray-700 mb-1">{t('pages.coupon_form.valid_until')}</label>
             <input
               type="date"
               value={expiresAt}
@@ -228,7 +234,7 @@ export default function CouponForm() {
             onChange={(e) => setIsActive(e.target.checked)}
             className="rounded border-gray-300 text-primary-600 focus:ring-primary-500"
           />
-          <label htmlFor="isActive" className="text-sm text-gray-700">Active</label>
+          <label htmlFor="isActive" className="text-sm text-gray-700">{t('pages.coupon_form.active')}</label>
         </div>
 
         {error && <div className="text-red-600 text-sm">{error}</div>}
@@ -239,13 +245,14 @@ export default function CouponForm() {
             disabled={saving}
             className="bg-primary-600 text-white px-6 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors disabled:opacity-50"
           >
-            {saving ? 'Saving...' : isEdit ? 'Update Coupon' : 'Create Coupon'}
+            {saving ? t('pages.coupon_form.saving') : isEdit ? t('pages.coupon_form.update_coupon') : t('pages.coupon_form.create_coupon')}
           </button>
           <Link
             to="/coupons"
             className="border border-gray-300 text-gray-700 px-6 py-2 rounded-lg text-sm font-medium hover:bg-gray-50 transition-colors"
           >
-            Cancel
+
+            {t('pages.coupon_form.cancel')}
           </Link>
         </div>
       </form>

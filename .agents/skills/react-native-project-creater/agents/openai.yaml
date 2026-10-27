@@ -1,0 +1,4 @@
+interface:
+  display_name: "React Native Project Creater"
+  short_description: "Provides one-command project creation for React Native…"
+  default_prompt: "Use $react-native-project-creater to help with my current task: Provides one-command project creation for React Native including project initialization, configuration, and template generation."

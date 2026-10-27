@@ -35,7 +35,11 @@ Online ordering configuration:
 | `enableFutureOrdering` | 📅 Allow customers to schedule future orders |
 | `enableTipping` | 💰 Show tipping options at checkout |
 | `tipOptions` | 💵 Array of tip percentages (e.g. `[10, 15, 20, 25]`) |
-| `taxRate` | 🧾 Tax rate percentage |
+
+Tax rates and packaging/container surcharges are configured **per menu item**
+in [Menu Management](/features/menu-management), not in order settings.
+The legacy order-settings `taxRate` field remains accepted by the API for
+compatibility but is not used for order calculations.
 
 ### 🪑 Reservations
 
@@ -70,6 +74,8 @@ A **Send Test Email** feature lets you verify the configuration works.
 
 Payment provider configuration (Super Admin only):
 
+Payment methods are disabled by default unless their corresponding `*Enabled` flag is explicitly set to `true`. The storefront only shows enabled methods, and payment creation endpoints enforce the same setting.
+
 **Stripe:**
 | Field | Description |
 |-------|-------------|
@@ -85,6 +91,16 @@ Payment provider configuration (Super Admin only):
 | `paypalClientId` | 🔑 PayPal client ID |
 | `paypalClientSecret` | 🔐 PayPal client secret (masked) |
 | `paypalSandbox` | 🧪 Use PayPal sandbox environment |
+
+**PayU Europe:**
+
+| Field | Description |
+|-------|-------------|
+| `payuEnabled` | ✅ Enable PayU payments |
+| `payuPosId` | 🔑 PayU Europe POS ID |
+| `payuClientSecret` | 🔐 OAuth client secret (masked) |
+| `payuSecondKey` | 🛡️ Notification signature key (masked) |
+| `payuSandbox` | 🧪 Use the PayU Europe sandbox environment |
 
 **Cash:**
 | Field | Description |

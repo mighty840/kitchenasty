@@ -5,6 +5,8 @@ import { emitNewOrder, emitOrderStatusUpdate } from '../lib/socket.js';
 import { isPointInPolygon } from '../lib/geo.js';
 import { sendEmail, orderConfirmationEmail, orderStatusEmail } from '../lib/email.js';
 import { auditLog } from '../lib/audit.js';
+import { calculateLineTotals, roundMoney } from '@kitchenasty/shared';
+import { isPaymentMethodEnabled } from '../lib/payment-methods.js';
 
 const orderItemOptionSchema = z.object({
   menuOptionValueId: z.string().min(1),
@@ -23,6 +25,7 @@ const orderItemSchema = z.object({
 
 const createOrderSchema = z.object({
   orderType: z.enum(['DELIVERY', 'PICKUP']),
+  paymentMethod: z.enum(['cash', 'stripe', 'paypal', 'payu']).optional(),
   items: z.array(orderItemSchema).min(1),
   comment: z.string().optional(),
   scheduledAt: z.string().optional(),
@@ -53,6 +56,11 @@ export async function createOrder(req: Request, res: Response): Promise<void> {
   const parsed = createOrderSchema.safeParse(req.body);
   if (!parsed.success) {
     res.status(400).json({ success: false, error: parsed.error.errors });
+    return;
+  }
+
+  if (parsed.data.paymentMethod && !(await isPaymentMethodEnabled(parsed.data.paymentMethod))) {
+    res.status(403).json({ success: false, error: `${parsed.data.paymentMethod} payments are disabled` });
     return;
   }
 
@@ -204,15 +212,14 @@ export async function createOrder(req: Request, res: Response): Promise<void> {
 
   // Calculate totals
   let subtotal = 0;
+  let tax = 0;
   const orderItemsData = items.map((item) => {
     const menuItem = menuItemMap.get(item.menuItemId)!;
-    let unitPrice = menuItem.price;
 
     // Price options from the menu, never from the request body.
     const optionsData = (item.options || []).map((opt) => {
       const option = menuItem.options.find((o) => o.values.some((v) => v.id === opt.menuOptionValueId))!;
       const value = option.values.find((v) => v.id === opt.menuOptionValueId)!;
-      unitPrice += value.priceModifier;
       return {
         menuOptionValueId: value.id,
         name: option.name,
@@ -221,15 +228,22 @@ export async function createOrder(req: Request, res: Response): Promise<void> {
       };
     });
 
-    const itemSubtotal = unitPrice * item.quantity;
-    subtotal += itemSubtotal;
+    const line = calculateLineTotals({
+      ...menuItem,
+      quantity: item.quantity,
+      options: optionsData,
+    });
+    subtotal += line.subtotal;
+    tax += line.tax;
 
     return {
       menuItemId: item.menuItemId,
       name: menuItem.name,
       quantity: item.quantity,
-      unitPrice,
-      subtotal: itemSubtotal,
+      unitPrice: line.unitPrice,
+      subtotal: line.subtotal,
+      taxRate: menuItem.taxRate,
+      surchargeAmount: line.surchargeAmount,
       comment: item.comment,
       options: { create: optionsData },
     };
@@ -268,9 +282,9 @@ export async function createOrder(req: Request, res: Response): Promise<void> {
     }
   }
 
-  const TAX_RATE = 0.08;
-  const tax = subtotal * TAX_RATE;
-  const total = subtotal + tax + deliveryFee - loyaltyDiscount;
+  subtotal = roundMoney(subtotal);
+  tax = roundMoney(tax);
+  const total = roundMoney(subtotal + deliveryFee - loyaltyDiscount);
 
   const order = await prisma.order.create({
     data: {
@@ -398,6 +412,7 @@ export async function listOrders(req: Request, res: Response): Promise<void> {
         customer: { select: { id: true, name: true, email: true } },
         location: { select: { id: true, name: true } },
         _count: { select: { items: true } },
+        payments: { select: { id: true, method: true, status: true, amount: true, transactionId: true, createdAt: true }, orderBy: { createdAt: 'desc' } },
         ...(includeItems ? { items: { include: { options: true } } } : {}),
       },
     }),
@@ -425,6 +440,7 @@ export async function getOrder(req: Request<{ id: string }>, res: Response): Pro
           options: true,
         },
       },
+      payments: { select: { id: true, method: true, status: true, amount: true, transactionId: true, createdAt: true }, orderBy: { createdAt: 'desc' } },
     },
   });
 

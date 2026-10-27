@@ -2,6 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { api } from '../lib/api.js';
 
+import { useTranslation } from 'react-i18next';
+import { useCurrency } from '../context/CurrencyContext.js';
+
 interface MenuItem {
   id: string;
   name: string;
@@ -28,6 +31,8 @@ interface MenuItemResponse {
 }
 
 export default function MenuItemList() {
+  const { t } = useTranslation();
+  const { format } = useCurrency();
   const [items, setItems] = useState<MenuItem[]>([]);
   const [categories, setCategories] = useState<Category[]>([]);
   const [loading, setLoading] = useState(true);
@@ -62,7 +67,7 @@ export default function MenuItemList() {
   }, [search, categoryFilter]);
 
   const handleDelete = async (id: string, name: string) => {
-    if (!confirm(`Delete "${name}"?`)) return;
+    if (!confirm(t('a11y.confirmDeleteNamed', { name }))) return;
     try {
       await api.delete(`/menu/items/${id}`);
       fetchItems(pagination.page);
@@ -74,12 +79,13 @@ export default function MenuItemList() {
   return (
     <div>
       <div className="flex items-center justify-between mb-6">
-        <h2 className="text-2xl font-semibold text-gray-800">Menu Items</h2>
+        <h2 className="text-2xl font-semibold text-gray-800">{t('pages.menu_item_list.menu_items')}</h2>
         <Link
           to="/menu/items/new"
           className="bg-primary-600 text-white px-4 py-2 rounded-lg text-sm font-medium hover:bg-primary-700 transition-colors"
         >
-          Add Item
+
+          {t('pages.menu_item_list.add_item')}
         </Link>
       </div>
 
@@ -87,37 +93,38 @@ export default function MenuItemList() {
       <div className="bg-white rounded-lg shadow p-4 mb-6 flex gap-4">
         <input
           type="text"
-          placeholder="Search items..."
+          placeholder={t('pages.menu_item_list.search_items')}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
           className="flex-1 border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-          aria-label="Search menu items"
+          aria-label={t('pages.menu_item_list.search_menu_items')}
         />
         <select
           value={categoryFilter}
           onChange={(e) => setCategoryFilter(e.target.value)}
           className="border border-gray-300 rounded-lg px-3 py-2 text-sm focus:ring-2 focus:ring-primary-500 focus:border-primary-500"
-          aria-label="Filter by category"
+          aria-label={t('pages.menu_item_list.filter_by_category')}
         >
-          <option value="">All Categories</option>
+          <option value="">{t('pages.menu_item_list.all_categories')}</option>
           {categories.map((c) => (
             <option key={c.id} value={c.id}>{c.name}</option>
           ))}
         </select>
       </div>
 
-      {error && <p className="text-red-600 mb-4">Error: {error}</p>}
+      {error && <p className="text-red-600 mb-4">{t('pages.menu_item_list.error')} {error}</p>}
 
       {!loading && items.length === 0 && (
         <div className="bg-white rounded-lg shadow p-8 text-center">
-          <p className="text-gray-500 mb-4">No menu items found.</p>
+          <p className="text-gray-500 mb-4">{t('pages.menu_item_list.no_menu_items_found')}</p>
           <Link to="/menu/items/new" className="text-primary-600 hover:text-primary-700 font-medium">
-            Create your first menu item
+
+            {t('pages.menu_item_list.create_your_first_menu_item')}
           </Link>
         </div>
       )}
 
-      {loading && <p className="text-gray-500">Loading menu items...</p>}
+      {loading && <p className="text-gray-500">{t('pages.menu_item_list.loading_menu_items')}</p>}
 
       {!loading && items.length > 0 && (
         <>
@@ -125,12 +132,12 @@ export default function MenuItemList() {
             <table className="min-w-full divide-y divide-gray-200">
               <thead className="bg-gray-50">
                 <tr>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Item</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Category</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Price</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Status</th>
-                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">Extras</th>
-                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">Actions</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.menu_item_list.item')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.menu_item_list.category')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.menu_item_list.price')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.menu_item_list.status')}</th>
+                  <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.menu_item_list.extras')}</th>
+                  <th className="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase tracking-wider">{t('pages.menu_item_list.actions')}</th>
                 </tr>
               </thead>
               <tbody className="bg-white divide-y divide-gray-200">
@@ -157,31 +164,34 @@ export default function MenuItemList() {
                       {item.category.name}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                      ${item.price.toFixed(2)}
+                      {format(item.price)}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap">
                       <div className="flex gap-1">
                         <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${item.isActive ? 'bg-green-100 text-green-800' : 'bg-red-100 text-red-800'
                           }`}>
-                          {item.isActive ? 'Active' : 'Inactive'}
+                          {item.isActive ? t('pages.menu_item_list.active') : t('pages.menu_item_list.inactive')}
                         </span>
                         {item.trackStock && (
                           <span className={`inline-flex items-center px-2 py-0.5 rounded-full text-xs font-medium ${item.stockQty > 0 ? 'bg-blue-100 text-blue-800' : 'bg-yellow-100 text-yellow-800'
                             }`}>
-                            Stock: {item.stockQty}
+
+                            {t('pages.menu_item_list.stock')} {item.stockQty}
                           </span>
                         )}
                       </div>
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-xs text-gray-500">
-                      {item._count.options} options &middot; {item._count.allergens} allergens
+                      {item._count.options} options &middot; {item._count.allergens}  {t('pages.menu_item_list.allergens')}
                     </td>
                     <td className="px-6 py-4 whitespace-nowrap text-right text-sm space-x-3">
-                      <Link to={`/menu/items/${item.id}`} className="text-primary-600 hover:text-primary-900 font-medium" aria-label={`Edit ${item.name}`}>
-                        Edit
+                      <Link to={`/menu/items/${item.id}`} className="text-primary-600 hover:text-primary-900 font-medium" aria-label={t('a11y.editNamed', { name: item.name })}>
+
+                        {t('pages.menu_item_list.edit')}
                       </Link>
-                      <button onClick={() => handleDelete(item.id, item.name)} className="text-red-600 hover:text-red-900 font-medium" aria-label={`Delete ${item.name}`}>
-                        Delete
+                      <button onClick={() => handleDelete(item.id, item.name)} className="text-red-600 hover:text-red-900 font-medium" aria-label={t('a11y.deleteNamed', { name: item.name })}>
+
+                        {t('pages.menu_item_list.delete')}
                       </button>
                     </td>
                   </tr>
@@ -193,24 +203,27 @@ export default function MenuItemList() {
           {/* Pagination */}
           {pagination.totalPages > 1 && (
             <div className="flex items-center justify-between mt-4">
-              <p className="text-sm text-gray-500">{pagination.total} items total</p>
+              <p className="text-sm text-gray-500">{pagination.total}  {t('pages.menu_item_list.items_total')}</p>
               <div className="flex gap-2">
                 <button
                   onClick={() => fetchItems(pagination.page - 1)}
                   disabled={pagination.page <= 1}
                   className="px-3 py-1 border rounded text-sm disabled:opacity-50"
                 >
-                  Previous
+
+                  {t('pages.menu_item_list.previous')}
                 </button>
                 <span className="px-3 py-1 text-sm text-gray-600">
-                  Page {pagination.page} of {pagination.totalPages}
+
+                  {t('pages.menu_item_list.page')} {pagination.page}  {t('pages.menu_item_list.of')} {pagination.totalPages}
                 </span>
                 <button
                   onClick={() => fetchItems(pagination.page + 1)}
                   disabled={pagination.page >= pagination.totalPages}
                   className="px-3 py-1 border rounded text-sm disabled:opacity-50"
                 >
-                  Next
+
+                  {t('pages.menu_item_list.next')}
                 </button>
               </div>
             </div>
